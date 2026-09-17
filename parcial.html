@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial Resuelto — App. Distribuidas UADE</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f0ff;color:#1a001a;line-height:1.68}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#4a148c;padding:.45rem .8rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+nav span{font-weight:800;font-size:.9rem;color:#fff;margin-right:.5rem;white-space:nowrap}
+nav a{color:#e1bee7;text-decoration:none;font-size:.73rem;padding:.2rem .45rem;border-radius:4px;white-space:nowrap}
+nav a:hover,nav a.active{background:#6a1b9a;color:#fff}
+main{max-width:920px;margin:0 auto;padding:68px 1rem 3rem}
+h1{color:#4a148c;font-size:1.7rem;margin-bottom:.3rem}
+.sub{color:#555;font-size:.93rem;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.8rem;box-shadow:0 2px 10px rgba(0,0,0,.09)}
+.card h2{font-size:1.15rem;color:#4a148c;padding-bottom:.5rem;border-bottom:3px solid #7b1fa2;margin-bottom:1rem}
+.card h3{color:#6a1b9a;font-size:1rem;margin:1rem 0 .5rem}
+.enunciado{background:#ede7f6;border-left:4px solid #4a148c;border-radius:6px;padding:.85rem 1rem;margin:.7rem 0;font-size:.93rem;font-style:italic}
+.tip{background:#f3e5f5;border-left:4px solid #7b1fa2;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.ok{background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+pre{background:#2d0057;color:#e1bee7;padding:1rem;border-radius:8px;font-size:.85rem;margin:.6rem 0;white-space:pre-wrap;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.87rem;margin:.7rem 0}
+th{background:#4a148c;color:#fff;padding:6px 10px;text-align:left}
+td{padding:6px 10px;border:1px solid #ce93d8}
+tr:nth-child(even) td{background:#f3e5f5}
+.layer{border-radius:8px;padding:.8rem 1rem;margin:.4rem 0;border-left:5px solid}
+.l1{background:#e3f2fd;border-color:#1565c0}
+.l2{background:#e8f5e9;border-color:#2e7d32}
+.l3{background:#fff3e0;border-color:#e65100}
+.l4{background:#f3e5f5;border-color:#6a1b9a}
+.l5{background:#fce4ec;border-color:#880e4f}
+.layer h4{font-size:.9rem;margin-bottom:.2rem}
+.layer p{font-size:.84rem;color:#444}
+.wf{border:2px solid #4a148c;border-radius:10px;background:#fafafa;padding:.75rem;margin:.7rem 0;font-size:.8rem}
+.wf-title{background:#4a148c;color:#fff;border-radius:6px 6px 0 0;margin:-.75rem -.75rem .5rem;padding:.4rem .75rem;font-size:.85rem;font-weight:700}
+.wf-input{border:1px solid #aaa;border-radius:4px;padding:.2rem .5rem;display:block;width:100%;margin:.2rem 0;font-size:.76rem;background:#fff}
+.wf-btn{background:#4a148c;color:#fff;border-radius:4px;padding:.25rem .6rem;display:block;text-align:center;margin:.3rem 0;font-size:.78rem}
+.wf-box{border:1px dashed #aaa;border-radius:4px;padding:.3rem;margin:.2rem 0;font-size:.75rem;color:#666;text-align:center}
+.heu{background:#f3e5f5;border-radius:6px;padding:.5rem .8rem;margin:.3rem 0;font-size:.85rem;border-left:3px solid #7b1fa2}
+@media(max-width:700px){nav{flex-wrap:nowrap;overflow-x:auto;padding:.3rem .5rem}nav a{font-size:.7rem;padding:.18rem .35rem;flex-shrink:0}main{padding:58px .85rem 2rem}h1{font-size:1.35rem}pre{font-size:.76rem}table{font-size:.78rem}}
+</style>
+</head>
+<body>
+<nav>
+  <span>📝 Parcial</span>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="#ej1">Ej 1 - Capas</a>
+  <a href="#ej2">Ej 2 - Compilación</a>
+  <a href="#ej3">Ej 3 - Layouts</a>
+  <a href="#ej4">Ej 4 - JIT vs AOT</a>
+  <a href="#ej5">Ej 5 - HCI</a>
+</nav>
+<main>
+<h1>📝 Parcialito Resuelto — Aplicaciones Distribuidas</h1>
+<p class="sub">Trabajo Práctico · Depto. Tecnología Informática UADE · 02/10/2025</p>
+
+<!-- EJ 1 -->
+<div class="card" id="ej1">
+<h2>Ejercicio 1 — Capas de la Arquitectura Android</h2>
+<div class="enunciado">Mencione y explique al menos 3 capas de la arquitectura de Android. Explique de qué manera un desarrollador puede interactuar con las diferentes capas. Ejemplifique cada una.</div>
+
+<p style="margin-bottom:.8rem">La arquitectura de Android se organiza en <strong>5 capas apiladas</strong> de abajo hacia arriba:</p>
+
+<div class="layer l5">
+  <h4>🔴 Capa 1 — Linux Kernel</h4>
+  <p>Base del sistema. Gestiona drivers de hardware (cámara, audio, WiFi, Binder IPC), memoria, procesos y seguridad.<br><strong>Interacción del dev:</strong> no se accede directamente desde apps. Solo fabricantes y ROM developers.<br><strong>Ejemplo:</strong> el driver de la cámara vive aquí. El dev nunca lo toca directamente.</p>
+</div>
+
+<div class="layer l4">
+  <h4>🟣 Capa 2 — HAL (Hardware Abstraction Layer)</h4>
+  <p>Define interfaces estándar para que el Framework acceda al hardware sin depender de la implementación específica del fabricante.<br><strong>Interacción del dev:</strong> transparente. El Framework abstrae el HAL.<br><strong>Ejemplo:</strong> al usar <code>CameraManager</code>, el sistema llama al módulo HAL de cámara del fabricante.</p>
+</div>
+
+<div class="layer l3">
+  <h4>🟠 Capa 3 — Libraries + Android Runtime (ART)</h4>
+  <p>Librerías nativas C/C++ (SQLite, OpenGL, WebKit) y la VM ART que ejecuta bytecode .dex.<br><strong>Interacción del dev:</strong> indirectamente vía Framework, o directo con NDK/JNI para C/C++.<br><strong>Ejemplo:</strong> usar Room Database (que usa SQLite). Usar OpenGL para gráficos 3D con el NDK.</p>
+</div>
+
+<div class="layer l2">
+  <h4>🟢 Capa 4 — Application Framework</h4>
+  <p>APIs de alto nivel en Java/Kotlin: Activity Manager, Window Manager, Content Providers, View System, Notification Manager, Location Manager.<br><strong>Interacción del dev:</strong> es la capa principal de trabajo. Se usa el SDK de Android.<br><strong>Ejemplo:</strong> <code>startActivity(intent)</code>, <code>getSystemService(LOCATION_SERVICE)</code>, usar <code>RecyclerView</code>.</p>
+</div>
+
+<div class="layer l1">
+  <h4>🔵 Capa 5 — Applications</h4>
+  <p>Las apps instaladas en el dispositivo: el sistema (Teléfono, Contactos, Ajustes) y las apps de terceros.<br><strong>Interacción del dev:</strong> el desarrollador CONSTRUYE la app que vive en esta capa.<br><strong>Ejemplo:</strong> tu app de comercio electrónico, una app de noticias, o una app de delivery.</p>
+</div>
+
+<div class="ok"><strong>Resumen clave:</strong> el desarrollador trabaja principalmente con el <strong>Application Framework</strong> (capa 4) y construye en la capa de <strong>Applications</strong> (capa 5). Las capas inferiores son abstraídas por el sistema.</div>
+</div>
+
+<!-- EJ 2 -->
+<div class="card" id="ej2">
+<h2>Ejercicio 2 — Proceso de compilación de una app Android</h2>
+<div class="enunciado">Describa y realice un diagrama orientativo del proceso de compilación de una aplicación Android con cada una de sus fases.</div>
+
+<pre>
+CÓDIGO FUENTE (.java / .kt)
+         │
+         ▼  javac / kotlinc
+  BYTECODE JVM (.class)
+         │
+         ▼  d8 (DEX compiler)
+  DALVIK BYTECODE (.dex)
+         │
+         ├──────────────────────────────┐
+         │                              │
+         │                   RECURSOS (XML, PNG, etc.)
+         │                              │
+         │                   AAPT2 → recursos compilados
+         │                              │
+         └──────────────────────────────┘
+                        │
+                        ▼  APK Builder
+              APK SIN FIRMAR (.apk)
+                        │
+                        ▼  apksigner
+              APK FIRMADO (.apk)
+                        │
+                        ▼  zipalign
+              APK FINAL (listo para distribuir)
+                        │
+                        ▼  (en el dispositivo)
+              ART compila .dex → código nativo
+              via JIT en ejecución + AOT guiado por perfil
+</pre>
+
+<h3>Descripción de cada fase</h3>
+<table>
+  <tr><th>Fase</th><th>Herramienta</th><th>Qué hace</th></tr>
+  <tr><td>1. Compilación</td><td>javac / kotlinc</td><td>Convierte .java/.kt a bytecode JVM (.class)</td></tr>
+  <tr><td>2. DEX conversion</td><td>d8</td><td>Convierte bytecode JVM a bytecode Dalvik (.dex), optimizado para Android</td></tr>
+  <tr><td>3. Recursos</td><td>AAPT2</td><td>Compila recursos XML (layouts, strings) y genera R.java con las referencias</td></tr>
+  <tr><td>4. Packaging</td><td>APK Builder</td><td>Empaqueta .dex + recursos compilados + AndroidManifest + .so en un APK</td></tr>
+  <tr><td>5. Firma</td><td>apksigner</td><td>Firma el APK con un keystore. Android no instala APKs sin firmar.</td></tr>
+  <tr><td>6. Optimización</td><td>zipalign</td><td>Alinea recursos a 4 bytes para optimizar acceso en RAM</td></tr>
+  <tr><td>7. Runtime</td><td>ART</td><td>En el dispositivo: JIT compila hot code + AOT profile-guided en background</td></tr>
+</table>
+<div class="tip"><strong>Lo más importante:</strong> el formato .dex es exclusivo de Android. No es bytecode JVM estándar — está optimizado para procesadores ARM con memoria limitada.</div>
+</div>
+
+<!-- EJ 3 -->
+<div class="card" id="ej3">
+<h2>Ejercicio 3 — LinearLayout vs ConstraintLayout</h2>
+<div class="enunciado">Compare los layouts LinearLayout y ConstraintLayout. ¿Qué diferencias conceptuales existen entre ambos y cuándo es recomendable utilizar cada uno? Justifique y proporcione un ejemplo de un uso hipotético de cada uno.</div>
+
+<h3>Diferencia conceptual</h3>
+<table>
+  <tr><th></th><th>LinearLayout</th><th>ConstraintLayout</th></tr>
+  <tr><td><strong>Concepto</strong></td><td>Organiza hijos en UNA dirección (horizontal o vertical)</td><td>Posiciona cada view en relación a otros views o al padre</td></tr>
+  <tr><td><strong>Jerarquía</strong></td><td>Requiere anidamiento para layouts complejos</td><td>Plana — un solo nivel, sin anidamiento</td></tr>
+  <tr><td><strong>Rendimiento</strong></td><td>Bueno si no se anida</td><td>Muy bueno (una sola pasada de medición)</td></tr>
+  <tr><td><strong>Complejidad</strong></td><td>Baja — fácil de aprender</td><td>Mayor — curva de aprendizaje</td></tr>
+  <tr><td><strong>Recomendado</strong></td><td>Layouts simples y lineales</td><td>Cualquier layout, especialmente complejos</td></tr>
+</table>
+
+<h3>¿Cuándo usar cada uno?</h3>
+<p><strong>LinearLayout:</strong> cuando los elementos se organizan simple y linealmente, sin relaciones entre sí. Ej: un formulario de 3 campos apilados verticalmente, una barra de botones horizontal, una lista de opciones.</p>
+<p style="margin-top:.5rem"><strong>ConstraintLayout:</strong> cuando necesitás posicionar elementos en relación a otros, centrar elementos, crear layouts con proporciones, o cualquier diseño que requeriría anidar múltiples LinearLayouts.</p>
+
+<h3>Ejemplo LinearLayout — Formulario de búsqueda</h3>
+<pre>
+Caso: barra de búsqueda con campo de texto y botón lado a lado
+&lt;LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"&gt;
+    
+    &lt;EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Buscar..." /&gt;
+    
+    &lt;Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔍" /&gt;
+&lt;/LinearLayout&gt;
+
+→ layout_weight="1" hace que el EditText ocupe todo el espacio
+  disponible dejando el botón con su tamaño natural.
+</pre>
+
+<h3>Ejemplo ConstraintLayout — Pantalla de perfil</h3>
+<pre>
+Caso: foto de perfil centrada con nombre debajo y bio debajo del nombre
+&lt;ConstraintLayout&gt;
+    &lt;ImageView android:id="@+id/foto"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" /&gt;
+    
+    &lt;TextView android:id="@+id/nombre"
+        app:layout_constraintTop_toBottomOf="@id/foto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" /&gt;
+    
+    &lt;TextView android:id="@+id/bio"
+        app:layout_constraintTop_toBottomOf="@id/nombre"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" /&gt;
+&lt;/ConstraintLayout&gt;
+
+→ Cada elemento se posiciona en relación al anterior.
+  Sin ConstraintLayout, necesitarías 2-3 LinearLayouts anidados.
+</pre>
+</div>
+
+<!-- EJ 4 -->
+<div class="card" id="ej4">
+<h2>Ejercicio 4 — JIT vs AOT</h2>
+<div class="enunciado">Explique las diferencias entre JIT y AOT. Mencione ventajas y desventajas de cada una y cuál es el modelo de runtime que hoy persiste a partir de Android 7.0 (Nougat). Tener en cuenta el consumo de CPU, memoria y experiencia al usuario al elaborar la respuesta.</div>
+
+<table>
+  <tr><th>Aspecto</th><th>JIT (Just-In-Time)</th><th>AOT (Ahead-Of-Time)</th></tr>
+  <tr><td><strong>¿Cuándo compila?</strong></td><td>Durante la ejecución de la app</td><td>Durante la instalación de la app</td></tr>
+  <tr><td><strong>Instalación</strong></td><td>✅ Rápida — no compila al instalar</td><td>❌ Lenta — compila todo al instalar</td></tr>
+  <tr><td><strong>Primer arranque</strong></td><td>❌ Lento — warm-up period</td><td>✅ Rápido — ya compilado</td></tr>
+  <tr><td><strong>CPU en uso</strong></td><td>❌ Alto — compila mientras ejecuta</td><td>✅ Bajo — código ya compilado</td></tr>
+  <tr><td><strong>Memoria RAM</strong></td><td>❌ Alta — compilador en memoria</td><td>✅ Menor</td></tr>
+  <tr><td><strong>Almacenamiento</strong></td><td>✅ Menor — no guarda en disco</td><td>❌ Mayor — guarda código nativo</td></tr>
+  <tr><td><strong>Experiencia usuario</strong></td><td>❌ Inconsistente (lag inicial)</td><td>✅ Consistente y fluida</td></tr>
+  <tr><td><strong>Optimización</strong></td><td>✅ Dinámica — aprende el uso real</td><td>❌ Estática — no adapta al uso</td></tr>
+</table>
+
+<h3>Modelo actual: Híbrido JIT + AOT (Android 7+)</h3>
+<p>Desde Android 7.0 (Nougat), ART usa un modelo híbrido que combina ambos:</p>
+<pre>
+1. INSTALACIÓN: rápida, sin compilación AOT completa
+
+2. PRIMERAS EJECUCIONES (JIT):
+   → JIT compila hot code en RAM
+   → Guarda un perfil de uso (.prof) en disco
+
+3. DISPOSITIVO EN REPOSO + CARGANDO (AOT selectivo):
+   → dex2oat lee el perfil
+   → Compila a AOT SOLO el hot code (~20-30% del total)
+
+4. EJECUCIONES SIGUIENTES:
+   → Hot code: corre en AOT (rápido, bajo CPU)
+   → Cold code: JIT bajo demanda
+</pre>
+<div class="ok"><strong>Resultado:</strong> instalación rápida como JIT + rendimiento en ejecución similar a AOT + menor uso de almacenamiento (solo compila el hot code). La compilación AOT ocurre cuando el dispositivo está en reposo y cargando, por lo que el usuario no lo nota.</div>
+</div>
+
+<!-- EJ 5 -->
+<div class="card" id="ej5">
+<h2>Ejercicio 5 — HCI (Interacción Humano-Computadora)</h2>
+<div class="enunciado">Mencione y explique qué áreas intervienen en la investigación HCI. (a) ¿Qué diferencia y relación existe entre la UX, la UI y la CX? (b) Mencione y explique al menos 3 heurísticas de Nielsen a tener en cuenta al momento de desarrollar interfaces para dispositivos móviles. (c) Realice un wireframe de una activity en donde se apliquen los conceptos descriptos en el apartado anterior.</div>
+
+<h3>¿Qué es HCI y qué áreas intervienen?</h3>
+<p>HCI (Interacción Humano-Computadora) estudia cómo las personas interactúan con sistemas digitales y cómo diseñar esa interacción de forma eficiente y agradable. Intervienen: <strong>psicología cognitiva</strong> (modelos mentales, percepción), <strong>diseño gráfico</strong> (visual, tipografía, color), <strong>ergonomía</strong> (accesibilidad física, tamaño de targets táctiles), <strong>ingeniería de software</strong> (implementación) y <strong>sociología</strong> (contexto cultural, patrones de uso).</p>
+
+<h3>(a) UX vs UI vs CX</h3>
+<table>
+  <tr><th></th><th>UX (User Experience)</th><th>UI (User Interface)</th><th>CX (Customer Experience)</th></tr>
+  <tr><td><strong>Qué es</strong></td><td>Experiencia total de uso del producto</td><td>Diseño visual de la interfaz</td><td>Experiencia con toda la empresa</td></tr>
+  <tr><td><strong>Pregunta</strong></td><td>¿Es fácil y agradable de usar?</td><td>¿Se ve bien?</td><td>¿Es buena experiencia de cliente?</td></tr>
+  <tr><td><strong>Incluye</strong></td><td>Flujos, usabilidad, arquitectura info</td><td>Colores, tipografía, íconos, botones</td><td>Soporte, delivery, marketing, billing</td></tr>
+</table>
+<p style="margin-top:.5rem"><strong>Relación:</strong> UI ⊂ UX ⊂ CX. La UI es parte de la UX, y la UX es parte de la CX. Una buena UI no garantiza buena UX. Una buena UX no garantiza buena CX.</p>
+
+<h3>(b) Heurísticas de Nielsen para mobile</h3>
+
+<div class="heu"><strong>1. Visibilidad del estado del sistema:</strong> la app siempre informa al usuario qué está pasando. En mobile: mostrar spinner al cargar datos, barra de progreso en uploads, badge con notificaciones pendientes. El usuario nunca debe preguntarse "¿qué está haciendo la app?"</div>
+
+<div class="heu"><strong>5. Prevención de errores:</strong> mejor prevenir que mostrar mensajes de error. En mobile: deshabilitar el botón "Enviar" mientras el formulario está incompleto, mostrar el teclado numérico para campos de teléfono, validar email en tiempo real con indicador visual.</div>
+
+<div class="heu"><strong>8. Diseño estético y minimalista:</strong> en pantallas pequeñas cada elemento compite por la atención. Solo mostrar lo necesario. Eliminar elementos decorativos que no aportan información. Usar espaciado generoso para que los elementos táctiles sean fáciles de presionar (mínimo 48dp según Material Design).</div>
+
+<div class="heu"><strong>3. Control y libertad del usuario:</strong> siempre ofrecer una salida. En mobile: botón "Deshacer" al eliminar, confirmación antes de acciones destructivas, poder cancelar cualquier flujo con el botón Back del sistema.</div>
+
+<h3>(c) Wireframe — Activity: Pantalla de Búsqueda de Productos</h3>
+<div class="wf">
+  <div class="wf-title">📱 Buscar Productos — [App Name]</div>
+  <div style="padding:0 .4rem">
+    <div style="display:flex;gap:.3rem;margin:.3rem 0">
+      <input class="wf-input" style="flex:1" placeholder="🔍 Buscar productos..." readonly>
+      <span style="background:#4a148c;color:#fff;padding:.2rem .5rem;border-radius:4px;font-size:.75rem;cursor:pointer">Buscar</span>
+    </div>
+    <div style="display:flex;gap:.3rem;margin:.3rem 0;flex-wrap:wrap">
+      <span style="border:1px solid #4a148c;border-radius:12px;padding:.1rem .5rem;font-size:.72rem;color:#4a148c">Electrónica</span>
+      <span style="border:1px solid #4a148c;border-radius:12px;padding:.1rem .5rem;font-size:.72rem;color:#4a148c">Ropa</span>
+      <span style="border:1px solid #4a148c;border-radius:12px;padding:.1rem .5rem;font-size:.72rem;color:#4a148c">Hogar</span>
+    </div>
+    <div style="font-size:.75rem;color:#888;margin:.3rem 0">Resultados (24)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+      <div class="wf-box" style="height:90px;display:flex;flex-direction:column;justify-content:space-between;padding:.4rem">
+        <div style="height:50px;background:#ddd;border-radius:4px"></div>
+        <div>Producto 1<br><span style="color:#4a148c;font-weight:700">$1.200</span></div>
+      </div>
+      <div class="wf-box" style="height:90px;display:flex;flex-direction:column;justify-content:space-between;padding:.4rem">
+        <div style="height:50px;background:#ddd;border-radius:4px"></div>
+        <div>Producto 2<br><span style="color:#4a148c;font-weight:700">$850</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin:.4rem 0">
+      <div class="wf-box" style="font-size:.73rem">⏳ Cargando más resultados...</div>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top:.5rem;font-size:.87rem"><strong>Heurísticas aplicadas:</strong></p>
+<div class="heu">🔍 <strong>Heurística 1 (Visibilidad):</strong> "Cargando más resultados..." informa el estado al hacer scroll. El contador "Resultados (24)" muestra cuántos hay.</div>
+<div class="heu">🏷️ <strong>Heurística 5 (Prevención):</strong> filtros por categoría antes de buscar reducen resultados irrelevantes. El campo de búsqueda es prominente desde el inicio.</div>
+<div class="heu">🎯 <strong>Heurística 8 (Minimalismo):</strong> solo imagen, nombre y precio en cada producto. Sin información irrelevante. Grid de 2 columnas aprovecha el espacio sin saturar.</div>
+</div>
+
+</main>
+<script>
+const s=document.querySelectorAll('[id]'),l=document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{let c='';s.forEach(x=>{if(window.scrollY>=x.offsetTop-85)c=x.id});l.forEach(a=>{a.classList.remove('active');if(a.getAttribute('href')==='#'+c)a.classList.add('active')});});
+</script>
+</body>
+</html>

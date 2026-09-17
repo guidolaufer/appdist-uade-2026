@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aplicaciones Distribuidas — UADE 2026</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#1a237e;min-height:100vh;padding:0}
+.header{background:linear-gradient(135deg,#1a237e 0%,#283593 60%,#3949ab 100%);color:#fff;padding:2.5rem 1rem 2rem;text-align:center}
+.header h1{font-size:2rem;font-weight:800;margin-bottom:.4rem}
+.header p{color:#c5cae9;font-size:.95rem}
+.badge{display:inline-block;background:rgba(255,255,255,.15);border-radius:20px;padding:.25rem .9rem;font-size:.78rem;color:#e8eaf6;margin-top:.5rem}
+.content{background:#f0f4f8;min-height:calc(100vh - 160px);padding:2rem 1rem 3rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.4rem;width:100%;max-width:1000px}
+.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.12);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.card-header{padding:1.3rem 1.3rem .9rem;display:flex;align-items:center;gap:.9rem}
+.card-icon{font-size:2.4rem;flex-shrink:0}
+.card-title h2{font-size:1.1rem;color:#1a237e;margin-bottom:.15rem}
+.card-title p{font-size:.81rem;color:#666;line-height:1.4}
+.card-body{padding:0 1.3rem .9rem;flex:1}
+.temas{list-style:none;padding:0}
+.temas li{padding:.3rem 0;font-size:.84rem;color:#444;border-bottom:1px solid #f0f4f8}
+.temas li:last-child{border:none}
+.temas li::before{content:"→ ";color:#3949ab;font-weight:700}
+.card-footer{padding:.9rem 1.3rem 1.3rem}
+.btn{display:block;text-align:center;padding:.65rem 1rem;border-radius:8px;color:#fff;text-decoration:none;font-weight:700;font-size:.88rem}
+.b1{background:#1a237e}.b2{background:#1b5e20}.b3{background:#e65100}.b4{background:#880e4f}.b5{background:#4a148c}
+.divider{border:none;border-top:1px solid #ddd;width:100%;max-width:1000px;margin:.5rem 0}
+.footer{color:#9fa8da;font-size:.8rem;text-align:center;padding-bottom:1.5rem}
+@media(max-width:600px){.header h1{font-size:1.5rem}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📡 Aplicaciones Distribuidas</h1>
+  <p>Material de estudio completo · UADE 2026</p>
+  <span class="badge">Android · HCI · Compilación · Layouts · Runtime</span>
+</div>
+<div class="content">
+<div class="grid">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🏗️</div>
+      <div class="card-title">
+        <h2>Arquitectura Android</h2>
+        <p>Capas, compilación y ciclo de vida</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="temas">
+        <li>Las 5 capas de la arquitectura Android</li>
+        <li>Proceso de compilación paso a paso</li>
+        <li>Diagrama del build process</li>
+        <li>Cómo interactúa el desarrollador con cada capa</li>
+      </ul>
+    </div>
+    <div class="card-footer"><a href="arquitectura.html" class="btn b1">Ver Arquitectura →</a></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📐</div>
+      <div class="card-title">
+        <h2>Layouts</h2>
+        <p>LinearLayout vs ConstraintLayout</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="temas">
+        <li>LinearLayout — cuándo y cómo usarlo</li>
+        <li>ConstraintLayout — ventajas y atributos</li>
+        <li>Comparación con ejemplos visuales</li>
+        <li>Casos de uso recomendados</li>
+      </ul>
+    </div>
+    <div class="card-footer"><a href="layouts.html" class="btn b2">Ver Layouts →</a></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">
+        <h2>JIT vs AOT</h2>
+        <p>Compilación en runtime — Android 7+</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="temas">
+        <li>JIT — Just In Time, ventajas y desventajas</li>
+        <li>AOT — Ahead Of Time, ventajas y desventajas</li>
+        <li>Modelo híbrido desde Android 7 (Nougat)</li>
+        <li>Impacto en CPU, memoria y experiencia</li>
+      </ul>
+    </div>
+    <div class="card-footer"><a href="runtime.html" class="btn b3">Ver JIT vs AOT →</a></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">
+        <h2>HCI &amp; UX</h2>
+        <p>Interacción Humano-Computadora</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="temas">
+        <li>UX vs UI vs CX — diferencias y relaciones</li>
+        <li>Heurísticas de Nielsen para mobile</li>
+        <li>Wireframes de activities Android</li>
+        <li>Material Design guidelines</li>
+      </ul>
+    </div>
+    <div class="card-footer"><a href="hci.html" class="btn b4">Ver HCI &amp; UX →</a></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📝</div>
+      <div class="card-title">
+        <h2>Parcial Resuelto</h2>
+        <p>Las 5 preguntas del parcialito resueltas</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="temas">
+        <li>Capas de arquitectura Android explicadas</li>
+        <li>Diagrama de compilación completo</li>
+        <li>LinearLayout vs ConstraintLayout</li>
+        <li>JIT vs AOT con tabla comparativa</li>
+        <li>HCI, UX/UI/CX y wireframe</li>
+      </ul>
+    </div>
+    <div class="card-footer"><a href="parcial.html" class="btn b5">Ver Parcial Resuelto →</a></div>
+  </div>
+</div>
+
+<hr class="divider">
+<p class="footer">Material generado con Claude · Aplicaciones Distribuidas UADE 2026 · <a href="https://github.com/guidolaufer/appdist-uade-2026" style="color:#7986cb">github.com/guidolaufer/appdist-uade-2026</a></p>
+</div>
+</body>
+</html>

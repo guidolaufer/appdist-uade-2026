@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitectura Android — App. Distribuidas UADE</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#1a1a2e;line-height:1.68}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#1a237e;padding:.45rem .8rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+nav span{font-weight:800;font-size:.9rem;color:#fff;margin-right:.5rem;white-space:nowrap}
+nav a{color:#c5cae9;text-decoration:none;font-size:.73rem;padding:.2rem .45rem;border-radius:4px;white-space:nowrap}
+nav a:hover,nav a.active{background:#283593;color:#fff}
+main{max-width:920px;margin:0 auto;padding:68px 1rem 3rem}
+h1{color:#1a237e;font-size:1.7rem;margin-bottom:.3rem}
+.sub{color:#555;font-size:.93rem;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.8rem;box-shadow:0 2px 10px rgba(0,0,0,.09)}
+.card h2{font-size:1.15rem;color:#1a237e;padding-bottom:.5rem;border-bottom:3px solid #3949ab;margin-bottom:1rem}
+.card h3{color:#283593;font-size:1rem;margin:1rem 0 .5rem}
+.tip{background:#e8eaf6;border-left:4px solid #3949ab;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.ok{background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.warn{background:#fff9c4;border-left:4px solid #f9a825;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+pre{background:#1a237e;color:#e8eaf6;padding:1rem;border-radius:8px;font-size:.87rem;margin:.6rem 0;white-space:pre-wrap;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.87rem;margin:.7rem 0}
+th{background:#1a237e;color:#fff;padding:6px 10px;text-align:left}
+td{padding:6px 10px;border:1px solid #c5cae9}
+tr:nth-child(even) td{background:#f5f7ff}
+.layer{border-radius:8px;padding:1rem 1.2rem;margin:.5rem 0;border-left:6px solid}
+.l1{background:#e3f2fd;border-color:#1565c0}.l2{background:#e8f5e9;border-color:#2e7d32}
+.l3{background:#fff3e0;border-color:#e65100}.l4{background:#f3e5f5;border-color:#6a1b9a}
+.l5{background:#fce4ec;border-color:#880e4f}
+.layer h4{font-size:.95rem;margin-bottom:.3rem}
+.layer p{font-size:.87rem;color:#444;line-height:1.5}
+.quiz-item{background:#e8eaf6;border:1px solid #9fa8da;border-radius:8px;padding:.8rem 1rem;margin:.45rem 0;cursor:pointer;font-weight:600;color:#1a237e;user-select:none}
+.quiz-item:hover{background:#c5cae9}
+.quiz-item .resp{display:none;font-weight:400;color:#222;background:#fff;border-radius:6px;padding:.7rem;margin-top:.5rem;border-left:3px solid #3949ab;line-height:1.6}
+.quiz-item.open .resp{display:block}
+.quiz-item::before{content:"❓ "}.quiz-item.open::before{content:"✅ "}
+@media(max-width:700px){nav{flex-wrap:nowrap;overflow-x:auto;padding:.3rem .5rem}nav a{font-size:.7rem;padding:.18rem .35rem;flex-shrink:0}main{padding:58px .85rem 2rem}h1{font-size:1.35rem}pre{font-size:.78rem}}
+</style>
+</head>
+<body>
+<nav>
+  <span>🏗️ Arquitectura</span>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="#capas">Capas</a>
+  <a href="#interaccion">Interacción Dev</a>
+  <a href="#compilacion">Compilación</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+<main>
+<h1>🏗️ Arquitectura Android</h1>
+<p class="sub">Las capas del sistema, cómo interactúa el desarrollador y el proceso de compilación · UADE 2026</p>
+
+<!-- CAPAS -->
+<div class="card" id="capas">
+<h2>Las 5 capas de la arquitectura Android</h2>
+<p style="margin-bottom:1rem">Android está organizado en capas apiladas. Cada capa provee servicios a la capa superior y consume servicios de la inferior.</p>
+
+<div class="layer l1">
+  <h4>🔵 Capa 5 — Applications (Aplicaciones)</h4>
+  <p>Es la capa más alta. Contiene todas las apps instaladas: el teléfono, el navegador, los contactos, el calendario, y también tus propias apps. Es lo que el usuario ve y toca directamente.</p>
+  <p style="margin-top:.4rem"><strong>Ejemplos:</strong> Gmail, Chrome, tu app Android que estás desarrollando.</p>
+</div>
+
+<div class="layer l2">
+  <h4>🟢 Capa 4 — Application Framework</h4>
+  <p>Provee APIs de alto nivel para que los desarrolladores construyan apps. Incluye managers y providers que exponen funcionalidades del sistema operativo.</p>
+  <p style="margin-top:.4rem"><strong>Componentes clave:</strong> Activity Manager (ciclo de vida), Window Manager (ventanas), Content Providers (datos compartidos), View System (UI), Notification Manager, Location Manager, Package Manager.</p>
+</div>
+
+<div class="layer l3">
+  <h4>🟠 Capa 3 — Libraries + Android Runtime</h4>
+  <p>Dos subsistemas en paralelo:</p>
+  <p style="margin-top:.3rem"><strong>Libraries (C/C++):</strong> SQLite, OpenGL ES, WebKit, Media Framework, libc. Son librerías nativas compiladas para el hardware específico.</p>
+  <p style="margin-top:.3rem"><strong>Android Runtime (ART):</strong> máquina virtual que ejecuta el bytecode de las apps (archivos .dex). Gestiona la memoria con garbage collector, ejecuta el código con JIT/AOT.</p>
+</div>
+
+<div class="layer l4">
+  <h4>🟣 Capa 2 — Hardware Abstraction Layer (HAL)</h4>
+  <p>Define interfaces estándar que permiten al Application Framework acceder al hardware sin conocer los detalles de implementación. Cada fabricante implementa el HAL para su hardware específico.</p>
+  <p style="margin-top:.4rem"><strong>Módulos HAL:</strong> cámara, bluetooth, audio, sensores, GPS, radio.</p>
+</div>
+
+<div class="layer l5">
+  <h4>🔴 Capa 1 — Linux Kernel</h4>
+  <p>La base de todo el sistema. Maneja drivers de hardware, gestión de memoria, gestión de procesos, red, seguridad y el modelo de permisos. Android usa una versión modificada del kernel de Linux.</p>
+  <p style="margin-top:.4rem"><strong>Drivers incluidos:</strong> pantalla, cámara, flash, audio, WiFi, Bluetooth, binder (IPC).</p>
+</div>
+
+<div class="tip"><strong>Mnemónico para recordar el orden (de abajo hacia arriba):</strong><br>
+<strong>L</strong>inux → <strong>H</strong>AL → <strong>L</strong>ibraries+Runtime → <strong>F</strong>ramework → <strong>A</strong>pps<br>
+"<strong>L</strong>os <strong>H</strong>ackers <strong>L</strong>inkearon el <strong>F</strong>ramework de <strong>A</strong>ndroid"</div>
+</div>
+
+<!-- INTERACCIÓN DESARROLLADOR -->
+<div class="card" id="interaccion">
+<h2>¿Cómo interactúa el desarrollador con cada capa?</h2>
+
+<table>
+  <tr><th>Capa</th><th>¿Cómo interactúa el desarrollador?</th><th>Ejemplo concreto</th></tr>
+  <tr>
+    <td><strong>Applications</strong></td>
+    <td>Directamente — el dev construye la app que vive en esta capa</td>
+    <td>Crear una Activity, escribir el código Java/Kotlin</td>
+  </tr>
+  <tr>
+    <td><strong>App Framework</strong></td>
+    <td>Usando las APIs del SDK de Android (clases Java/Kotlin)</td>
+    <td><code>getSystemService(LOCATION_SERVICE)</code>, <code>startActivity(intent)</code>, usar <code>RecyclerView</code></td>
+  </tr>
+  <tr>
+    <td><strong>Libraries</strong></td>
+    <td>Indirectamente a través del Framework, o directo con NDK/JNI para C/C++</td>
+    <td>Usar Room Database (sobre SQLite), reproducir video (Media Framework), código nativo con NDK</td>
+  </tr>
+  <tr>
+    <td><strong>HAL</strong></td>
+    <td>No se accede directamente — el Framework abstrae el hardware</td>
+    <td>Usar <code>CameraManager</code> sin saber qué cámara tiene el dispositivo</td>
+  </tr>
+  <tr>
+    <td><strong>Linux Kernel</strong></td>
+    <td>No se accede desde apps normales. Solo fabricantes y ROM developers</td>
+    <td>Compilar un driver personalizado (requiere permisos root)</td>
+  </tr>
+</table>
+<div class="ok"><strong>Regla práctica:</strong> el desarrollador de apps trabaja casi exclusivamente con las capas <strong>Application Framework</strong> y <strong>Applications</strong>. El resto está encapsulado por el sistema.</div>
+</div>
+
+<!-- COMPILACIÓN -->
+<div class="card" id="compilacion">
+<h2>Proceso de compilación de una app Android</h2>
+<p style="margin-bottom:.8rem">Desde que escribís el código hasta que el APK corre en el dispositivo, hay varios pasos:</p>
+
+<pre>
+CÓDIGO FUENTE
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  1. COMPILACIÓN JAVA/KOTLIN             │
+│  javac / kotlinc                        │
+│  .java / .kt  →  .class (bytecode JVM)  │
+└─────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  2. DEX COMPILATION                     │
+│  d8 / dx tool                           │
+│  .class (JVM bytecode)  →  .dex         │
+│  (Dalvik Executable — bytecode Android) │
+└─────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  3. RESOURCES PROCESSING               │
+│  AAPT2 (Android Asset Packaging Tool)  │
+│  XML layouts, drawables, strings       │
+│  → recursos compilados + R.java        │
+└─────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  4. PACKAGING                           │
+│  APK Builder                           │
+│  .dex + recursos + AndroidManifest.xml │
+│  + librerías nativas (.so)             │
+│  → APK sin firmar                      │
+└─────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  5. SIGNING                             │
+│  apksigner / jarsigner                 │
+│  → APK firmado (con keystore)          │
+└─────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  6. ZIPALIGN (optimización)             │
+│  Alinea recursos a 4 bytes            │
+│  → APK optimizado listo para instalar  │
+└─────────────────────────────────────────┘
+    │
+    ▼
+INSTALACIÓN EN DISPOSITIVO
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  7. ART COMPILATION (en el dispositivo) │
+│  JIT durante ejecución                 │
+│  AOT en background (profile-guided)    │
+│  .dex → código máquina nativo          │
+└─────────────────────────────────────────┘
+</pre>
+
+<h3>Resumen de herramientas</h3>
+<table>
+  <tr><th>Fase</th><th>Herramienta</th><th>Input</th><th>Output</th></tr>
+  <tr><td>Compilar código</td><td>javac / kotlinc</td><td>.java / .kt</td><td>.class</td></tr>
+  <tr><td>Convertir a Dalvik</td><td>d8</td><td>.class</td><td>.dex</td></tr>
+  <tr><td>Procesar recursos</td><td>AAPT2</td><td>XML, PNG, etc.</td><td>recursos compilados</td></tr>
+  <tr><td>Empaquetar</td><td>APK Builder</td><td>.dex + recursos</td><td>APK sin firmar</td></tr>
+  <tr><td>Firmar</td><td>apksigner</td><td>APK + keystore</td><td>APK firmado</td></tr>
+  <tr><td>Optimizar</td><td>zipalign</td><td>APK firmado</td><td>APK final</td></tr>
+</table>
+
+<div class="tip"><strong>Para el parcial:</strong> lo más importante es el orden y los formatos intermedios: .java/.kt → .class → .dex → APK. El .dex es exclusivo de Android (no es bytecode JVM estándar).</div>
+</div>
+
+<!-- QUIZ -->
+<div class="card" id="quiz">
+<h2>🧠 Quiz — Arquitectura Android</h2>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Por qué Android usa .dex en vez de bytecode JVM estándar?
+  <div class="resp">El bytecode JVM (.class) fue diseñado para computadoras de escritorio con memoria y CPU abundante. Android corre en dispositivos con recursos limitados. El formato .dex (Dalvik Executable) está optimizado para: (1) menor uso de memoria — múltiples clases se agrupan en un solo .dex; (2) mejor rendimiento en ARM; (3) compartir clases entre procesos de forma eficiente. Además, Dalvik/ART fue diseñado desde cero para mobile.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Para qué sirve el AndroidManifest.xml?
+  <div class="resp">Es el "contrato" de la app con el sistema Android. Declara: (1) todas las Activities, Services, Receivers y Content Providers de la app; (2) los permisos que la app necesita (cámara, internet, GPS); (3) el package name único de la app; (4) la versión mínima de Android requerida; (5) los intent-filters (qué intents puede manejar la app). Sin el Manifest, Android no sabe cómo tratar la app.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Qué es el Binder y para qué sirve?
+  <div class="resp">El Binder es el mecanismo de IPC (Inter-Process Communication) de Android, implementado como driver en el Linux Kernel. Permite que los procesos de Android se comuniquen entre sí de forma eficiente y segura. Lo usás cuando tu app llama a un servicio del sistema (como el GPS o la cámara) — tu proceso se comunica con el proceso del sistema a través del Binder. También es la base de AIDL (Android Interface Definition Language).</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Qué diferencia hay entre Dalvik y ART?
+  <div class="resp"><strong>Dalvik</strong> (hasta Android 4.4): la VM original de Android. Usaba JIT (Just-In-Time) — compilaba el bytecode .dex a código máquina en tiempo de ejecución, cada vez que corrías la app. Mayor uso de CPU al arrancar.<br><br><strong>ART</strong> (Android 5+ en adelante): la VM actual. Usa AOT (Ahead-Of-Time) — compila el .dex a código nativo durante la instalación. Arranque más rápido, mejor rendimiento, mayor uso de almacenamiento. Desde Android 7, usa un modelo híbrido JIT+AOT.</div>
+</div>
+</div>
+</main>
+<script>
+const s=document.querySelectorAll('[id]'),l=document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{let c='';s.forEach(x=>{if(window.scrollY>=x.offsetTop-85)c=x.id});l.forEach(a=>{a.classList.remove('active');if(a.getAttribute('href')==='#'+c)a.classList.add('active')});});
+</script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCI & UX — App. Distribuidas UADE</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf0ff;color:#1a001a;line-height:1.68}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#880e4f;padding:.45rem .8rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+nav span{font-weight:800;font-size:.9rem;color:#fff;margin-right:.5rem;white-space:nowrap}
+nav a{color:#f8bbd0;text-decoration:none;font-size:.73rem;padding:.2rem .45rem;border-radius:4px;white-space:nowrap}
+nav a:hover,nav a.active{background:#6a0036;color:#fff}
+main{max-width:920px;margin:0 auto;padding:68px 1rem 3rem}
+h1{color:#880e4f;font-size:1.7rem;margin-bottom:.3rem}
+.sub{color:#555;font-size:.93rem;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.8rem;box-shadow:0 2px 10px rgba(0,0,0,.09)}
+.card h2{font-size:1.15rem;color:#880e4f;padding-bottom:.5rem;border-bottom:3px solid #ad1457;margin-bottom:1rem}
+.card h3{color:#ad1457;font-size:1rem;margin:1rem 0 .5rem}
+.tip{background:#fce4ec;border-left:4px solid #880e4f;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.ok{background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.warn{background:#fff9c4;border-left:4px solid #f9a825;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+table{border-collapse:collapse;width:100%;font-size:.87rem;margin:.7rem 0}
+th{background:#880e4f;color:#fff;padding:6px 10px;text-align:left}
+td{padding:6px 10px;border:1px solid #f48fb1}
+tr:nth-child(even) td{background:#fce4ec}
+.heuristic{background:#fff;border:2px solid #f48fb1;border-radius:10px;padding:1rem;margin:.5rem 0}
+.heuristic h4{color:#880e4f;font-size:.95rem;margin-bottom:.35rem}
+.heuristic p{font-size:.87rem;color:#444;line-height:1.5}
+.heuristic .ejemplo{background:#fce4ec;border-radius:5px;padding:.35rem .6rem;font-size:.82rem;margin-top:.4rem;color:#6a0036}
+/* Wireframe */
+.wf{border:2px solid #880e4f;border-radius:10px;background:#fafafa;padding:.75rem;margin:.7rem 0;font-family:monospace;font-size:.8rem;line-height:1.8;color:#333}
+.wf-title{background:#880e4f;color:#fff;border-radius:6px 6px 0 0;margin:-.75rem -.75rem .5rem;padding:.4rem .75rem;font-size:.85rem;font-weight:700}
+.wf-bar{background:#ddd;height:8px;border-radius:4px;margin:.3rem 0}
+.wf-btn{background:#880e4f;color:#fff;border-radius:4px;padding:.2rem .6rem;display:inline-block;font-size:.75rem;margin:.1rem}
+.wf-btn-outline{border:2px solid #880e4f;color:#880e4f;border-radius:4px;padding:.2rem .6rem;display:inline-block;font-size:.75rem;margin:.1rem}
+.wf-input{border:1px solid #aaa;border-radius:4px;padding:.25rem .5rem;display:block;width:100%;margin:.2rem 0;font-size:.78rem;background:#fff}
+.wf-box{border:1px dashed #aaa;border-radius:4px;padding:.3rem;margin:.2rem 0;font-size:.75rem;color:#666;text-align:center}
+.ux-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.8rem 0}
+.ux-card{border-radius:8px;padding:1rem;text-align:center;font-size:.87rem}
+.quiz-item{background:#fce4ec;border:1px solid #f48fb1;border-radius:8px;padding:.8rem 1rem;margin:.45rem 0;cursor:pointer;font-weight:600;color:#880e4f;user-select:none}
+.quiz-item:hover{background:#f8bbd0}
+.quiz-item .resp{display:none;font-weight:400;color:#222;background:#fff;border-radius:6px;padding:.7rem;margin-top:.5rem;border-left:3px solid #880e4f;line-height:1.6}
+.quiz-item.open .resp{display:block}
+.quiz-item::before{content:"❓ "}.quiz-item.open::before{content:"✅ "}
+@media(max-width:700px){nav{flex-wrap:nowrap;overflow-x:auto;padding:.3rem .5rem}nav a{font-size:.7rem;padding:.18rem .35rem;flex-shrink:0}main{padding:58px .85rem 2rem}h1{font-size:1.35rem}.ux-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <span>🎨 HCI & UX</span>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="#hci">HCI</a>
+  <a href="#uxuicx">UX vs UI vs CX</a>
+  <a href="#nielsen">Nielsen</a>
+  <a href="#wireframe">Wireframe</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+<main>
+<h1>🎨 HCI — Interacción Humano-Computadora</h1>
+<p class="sub">UX, UI, CX · Heurísticas de Nielsen · Wireframes para mobile · UADE 2026</p>
+
+<!-- HCI -->
+<div class="card" id="hci">
+<h2>¿Qué es HCI?</h2>
+<p>HCI (Human-Computer Interaction / Interacción Humano-Computadora) es la disciplina que estudia el <strong>diseño, evaluación e implementación de sistemas interactivos para uso humano</strong>. Se enfoca en cómo las personas interactúan con las computadoras y cómo hacer esa interacción más eficiente, agradable y accesible.</p>
+
+<h3>Áreas que intervienen en HCI</h3>
+<table>
+  <tr><th>Área</th><th>Qué aporta</th></tr>
+  <tr><td><strong>Psicología cognitiva</strong></td><td>Cómo los humanos perciben, aprenden y procesan información. Modelos mentales del usuario.</td></tr>
+  <tr><td><strong>Diseño gráfico</strong></td><td>Principios visuales: jerarquía, color, tipografía, espacio en blanco, consistencia.</td></tr>
+  <tr><td><strong>Ergonomía</strong></td><td>Postura, tamaño de elementos táctiles, fatiga visual, accesibilidad física.</td></tr>
+  <tr><td><strong>Ingeniería de software</strong></td><td>Implementación técnica de la interfaz, arquitectura de UI, frameworks.</td></tr>
+  <tr><td><strong>Sociología / Antropología</strong></td><td>Contexto cultural, patrones de uso, investigación de usuarios (user research).</td></tr>
+  <tr><td><strong>Lingüística</strong></td><td>Lenguaje de los mensajes de error, etiquetas, microcopy de la interfaz.</td></tr>
+</table>
+</div>
+
+<!-- UX vs UI vs CX -->
+<div class="card" id="uxuicx">
+<h2>UX vs UI vs CX — Diferencias y relaciones</h2>
+
+<div class="ux-grid">
+  <div class="ux-card" style="background:#e3f2fd;border:2px solid #1565c0">
+    <div style="font-size:2rem">🎯</div>
+    <strong style="color:#1565c0">UX</strong><br>
+    <em>User Experience</em>
+    <p style="margin-top:.4rem;font-size:.82rem">La experiencia TOTAL del usuario al usar el producto. Cómo se siente, qué tan fácil es, si logra sus objetivos.</p>
+  </div>
+  <div class="ux-card" style="background:#fce4ec;border:2px solid #880e4f">
+    <div style="font-size:2rem">🖼️</div>
+    <strong style="color:#880e4f">UI</strong><br>
+    <em>User Interface</em>
+    <p style="margin-top:.4rem;font-size:.82rem">El diseño VISUAL de la interfaz. Colores, tipografías, botones, iconos, layouts. Lo que el usuario VE.</p>
+  </div>
+  <div class="ux-card" style="background:#e8f5e9;border:2px solid #2e7d32">
+    <div style="font-size:2rem">🌐</div>
+    <strong style="color:#2e7d32">CX</strong><br>
+    <em>Customer Experience</em>
+    <p style="margin-top:.4rem;font-size:.82rem">La experiencia del CLIENTE con TODA la empresa (no solo la app). Incluye soporte, marketing, delivery, etc.</p>
+  </div>
+</div>
+
+<table>
+  <tr><th>Aspecto</th><th>UX</th><th>UI</th><th>CX</th></tr>
+  <tr><td>Alcance</td><td>El producto digital</td><td>La interfaz visual</td><td>Toda la empresa/marca</td></tr>
+  <tr><td>Pregunta</td><td>¿Es fácil de usar?</td><td>¿Se ve bien?</td><td>¿Es buena marca?</td></tr>
+  <tr><td>Incluye</td><td>Flujos, arquitectura, usabilidad</td><td>Colores, tipografía, componentes</td><td>Soporte, delivery, marketing</td></tr>
+  <tr><td>Herramientas</td><td>Wireframes, prototipos, user testing</td><td>Figma, Sketch, Design systems</td><td>NPS, encuestas, CRM</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Relación entre los tres:</strong> UI ⊂ UX ⊂ CX<br>
+  Una UI hermosa no garantiza buena UX (puede ser confusa). Buena UX no garantiza buena CX (si el soporte es pésimo). Son capas concéntricas donde CX es la más amplia.
+</div>
+</div>
+
+<!-- NIELSEN -->
+<div class="card" id="nielsen">
+<h2>Heurísticas de Nielsen para mobile</h2>
+<p style="margin-bottom:.8rem">Jakob Nielsen definió 10 principios generales de diseño de interfaces. Aplicadas a mobile:</p>
+
+<div class="heuristic">
+  <h4>1. Visibilidad del estado del sistema</h4>
+  <p>La app siempre debe informar al usuario qué está pasando, con feedback apropiado y en tiempo razonable.</p>
+  <div class="ejemplo">📱 Mobile: mostrar barra de progreso al cargar, spinner al conectar a la red, badge en el ícono con notificaciones pendientes.</div>
+</div>
+
+<div class="heuristic">
+  <h4>2. Coincidencia entre el sistema y el mundo real</h4>
+  <p>Usar palabras, frases y conceptos familiares para el usuario. Seguir convenciones del mundo real.</p>
+  <div class="ejemplo">📱 Mobile: ícono de "lupa" para buscar, "corazón" para favoritos, "basura" para eliminar. Evitar términos técnicos como "sincronización de caché".</div>
+</div>
+
+<div class="heuristic">
+  <h4>3. Control y libertad del usuario</h4>
+  <p>Los usuarios cometen errores. Ofrecer siempre una salida clara: deshacer, rehacer, cancelar.</p>
+  <div class="ejemplo">📱 Mobile: botón "Deshacer" al eliminar un elemento, confirmación antes de borrar, poder salir de cualquier flujo con el botón atrás del sistema.</div>
+</div>
+
+<div class="heuristic">
+  <h4>4. Consistencia y estándares</h4>
+  <p>Los usuarios no deberían preguntarse si diferentes palabras, situaciones o acciones significan lo mismo. Seguir las convenciones de la plataforma.</p>
+  <div class="ejemplo">📱 Mobile: usar patrones de Material Design, el botón de acción principal siempre en el mismo lugar, colores consistentes en toda la app.</div>
+</div>
+
+<div class="heuristic">
+  <h4>5. Prevención de errores</h4>
+  <p>Mejor que un buen mensaje de error es un diseño que previene que el problema ocurra.</p>
+  <div class="ejemplo">📱 Mobile: deshabilitar el botón "Enviar" si el formulario está incompleto, mostrar el teclado numérico para campos de teléfono, autocompletar dirección.</div>
+</div>
+
+<div class="heuristic">
+  <h4>6. Reconocimiento en lugar de recuerdo</h4>
+  <p>Minimizar la carga cognitiva. El usuario no debería tener que recordar información de una pantalla a la siguiente.</p>
+  <div class="ejemplo">📱 Mobile: mostrar el resumen del pedido en la pantalla de pago, mantener el término buscado visible mientras se ven los resultados.</div>
+</div>
+
+<div class="heuristic">
+  <h4>7. Flexibilidad y eficiencia de uso</h4>
+  <p>Atajos para usuarios avanzados, sin perjudicar a los nuevos.</p>
+  <div class="ejemplo">📱 Mobile: gestos swipe para acciones frecuentes, 3D Touch / long press para opciones rápidas, notificaciones accionables directamente.</div>
+</div>
+
+<div class="heuristic">
+  <h4>8. Diseño estético y minimalista</h4>
+  <p>Las interfaces no deben contener información irrelevante. Cada elemento compite por la atención del usuario.</p>
+  <div class="ejemplo">📱 Mobile: pantallas con pocos elementos, jerarquía visual clara, espaciado generoso. Especialmente importante en pantallas pequeñas.</div>
+</div>
+
+<div class="heuristic">
+  <h4>9. Ayuda a reconocer, diagnosticar y recuperarse de errores</h4>
+  <p>Los mensajes de error deben ser en lenguaje claro, indicar el problema y sugerir solución.</p>
+  <div class="ejemplo">📱 Mobile: "Sin conexión a Internet. Verificá tu WiFi o datos móviles y volvé a intentar" en vez de "Error 503".</div>
+</div>
+
+<div class="heuristic">
+  <h4>10. Ayuda y documentación</h4>
+  <p>Aunque es mejor que un sistema no necesite documentación, puede ser necesario proveer ayuda contextual.</p>
+  <div class="ejemplo">📱 Mobile: tooltips en el primer uso (onboarding), tutorial interactivo inicial, sección de ayuda accesible desde el menú.</div>
+</div>
+</div>
+
+<!-- WIREFRAME -->
+<div class="card" id="wireframe">
+<h2>Wireframe de una Activity Android</h2>
+<p style="margin-bottom:.8rem">Un wireframe es un esquema de baja fidelidad que muestra la estructura y layout de una pantalla sin colores ni detalles visuales. Aplicando las heurísticas de Nielsen:</p>
+
+<h3>Activity: Pantalla de Login</h3>
+<div class="wf">
+  <div class="wf-title">📱 Login Screen — [App Name]</div>
+  <div style="text-align:center;padding:.5rem 0">
+    <div class="wf-box" style="width:80px;height:80px;margin:0 auto;line-height:80px">LOGO</div>
+    <div style="font-size:.9rem;font-weight:700;margin:.4rem 0">Bienvenido</div>
+  </div>
+  <div style="padding:0 .5rem">
+    <div style="font-size:.75rem;color:#666;margin-bottom:.1rem">Email</div>
+    <input class="wf-input" placeholder="usuario@email.com" readonly>
+    <div style="font-size:.75rem;color:#666;margin:.4rem 0 .1rem">Contraseña</div>
+    <input class="wf-input" placeholder="••••••••" readonly>
+    <div style="text-align:right;font-size:.75rem;color:#880e4f;margin:.2rem 0">¿Olvidaste tu contraseña?</div>
+    <div class="wf-btn" style="display:block;text-align:center;margin:.5rem 0">INGRESAR</div>
+    <div style="text-align:center;font-size:.75rem;color:#888;margin:.3rem 0">— o ingresá con —</div>
+    <div style="display:flex;gap:.3rem;justify-content:center">
+      <span class="wf-btn-outline">G Google</span>
+      <span class="wf-btn-outline">f Facebook</span>
+    </div>
+    <div style="text-align:center;font-size:.75rem;margin-top:.5rem">¿No tenés cuenta? <span style="color:#880e4f;font-weight:700">Registrate</span></div>
+  </div>
+</div>
+
+<h3>Heurísticas aplicadas en este wireframe</h3>
+<table>
+  <tr><th>Heurística</th><th>Cómo se aplica</th></tr>
+  <tr><td>1. Visibilidad del estado</td><td>Spinner/loader al presionar "Ingresar" (no mostrado en wireframe estático)</td></tr>
+  <tr><td>2. Mundo real</td><td>Etiquetas claras "Email" y "Contraseña" en vez de "username" o "pwd"</td></tr>
+  <tr><td>3. Control y libertad</td><td>Enlace "¿Olvidaste tu contraseña?" siempre visible</td></tr>
+  <tr><td>5. Prevención de errores</td><td>Placeholder con formato esperado, teclado correcto por tipo de campo</td></tr>
+  <tr><td>7. Eficiencia</td><td>Opciones de login social (Google, Facebook) para usuarios frecuentes</td></tr>
+  <tr><td>8. Minimalismo</td><td>Solo los elementos necesarios: logo, dos campos, botón, recuperar contraseña</td></tr>
+</table>
+</div>
+
+<!-- QUIZ -->
+<div class="card" id="quiz">
+<h2>🧠 Quiz — HCI & UX</h2>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Cuál es la diferencia principal entre UX y UI?
+  <div class="resp">UI (User Interface) es el diseño visual de la interfaz: los colores, la tipografía, los botones, los iconos, el spacing. Es lo que el usuario VE.<br><br>UX (User Experience) es la experiencia completa del usuario al usar el producto: qué tan fácil es lograr sus objetivos, si los flujos son intuitivos, si la app responde como se espera. Es lo que el usuario SIENTE y EXPERIMENTA.<br><br>Una app puede tener una UI hermosa pero una UX pésima (hermosa pero confusa). Y puede tener una UI simple pero excelente UX (fea pero intuitiva).</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Para qué sirve un wireframe y por qué se hace antes del diseño visual?
+  <div class="resp">Un wireframe es un esquema de baja fidelidad que define la <strong>estructura y el layout</strong> de una pantalla sin entrar en detalles visuales (sin colores reales, sin tipografías finales, sin imágenes). Se hace antes del diseño visual por varias razones: (1) es más rápido y barato de crear y modificar; (2) permite validar el flujo y la arquitectura de información con el cliente antes de invertir en diseño; (3) fuerza a pensar en la funcionalidad antes que en la estética; (4) facilita la comunicación entre diseñadores, desarrolladores y stakeholders.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Por qué el "minimalismo" (heurística 8) es especialmente importante en mobile?
+  <div class="resp">En mobile el espacio de pantalla es muy limitado (4-6 pulgadas vs 13-27 en desktop). Cada elemento visual compite por la atención del usuario en ese espacio reducido. Además, los usuarios de mobile suelen estar en movimiento, distracted, con poco tiempo. Un diseño minimalista: (1) reduce la carga cognitiva; (2) hace que los elementos importantes sean más fáciles de encontrar; (3) mejora el rendimiento (menos elementos = menos tiempo de renderizado); (4) es más fácil de usar con un solo pulgar.</div>
+</div>
+</div>
+</main>
+<script>
+const s=document.querySelectorAll('[id]'),l=document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{let c='';s.forEach(x=>{if(window.scrollY>=x.offsetTop-85)c=x.id});l.forEach(a=>{a.classList.remove('active');if(a.getAttribute('href')==='#'+c)a.classList.add('active')});});
+</script>
+</body>
+</html>

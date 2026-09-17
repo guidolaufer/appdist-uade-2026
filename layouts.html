@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layouts Android — App. Distribuidas UADE</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f7f0;color:#1a2e1a;line-height:1.68}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#1b5e20;padding:.45rem .8rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+nav span{font-weight:800;font-size:.9rem;color:#fff;margin-right:.5rem;white-space:nowrap}
+nav a{color:#c8e6c9;text-decoration:none;font-size:.73rem;padding:.2rem .45rem;border-radius:4px;white-space:nowrap}
+nav a:hover,nav a.active{background:#2e7d32;color:#fff}
+main{max-width:920px;margin:0 auto;padding:68px 1rem 3rem}
+h1{color:#1b5e20;font-size:1.7rem;margin-bottom:.3rem}
+.sub{color:#555;font-size:.93rem;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.8rem;box-shadow:0 2px 10px rgba(0,0,0,.09)}
+.card h2{font-size:1.15rem;color:#1b5e20;padding-bottom:.5rem;border-bottom:3px solid #2e7d32;margin-bottom:1rem}
+.card h3{color:#2e7d32;font-size:1rem;margin:1rem 0 .5rem}
+.tip{background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.ok{background:#dcedc8;border-left:4px solid #558b2f;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.warn{background:#fff9c4;border-left:4px solid #f9a825;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+pre{background:#1b5e20;color:#e8f5e9;padding:1rem;border-radius:8px;font-size:.84rem;margin:.6rem 0;white-space:pre-wrap;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.87rem;margin:.7rem 0}
+th{background:#1b5e20;color:#fff;padding:6px 10px;text-align:left}
+td{padding:6px 10px;border:1px solid #a5d6a7}
+tr:nth-child(even) td{background:#f1f8e9}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.8rem 0}
+.compare-box{border-radius:8px;padding:1rem;font-size:.88rem}
+.linear-box{background:#e3f2fd;border:2px solid #1565c0}
+.constraint-box{background:#fce4ec;border:2px solid #880e4f}
+.compare-box h4{margin-bottom:.5rem;font-size:.95rem}
+.mock{border:2px solid #ccc;border-radius:6px;background:#fafafa;padding:.5rem;margin:.5rem 0;font-size:.78rem}
+.mock-btn{background:#1b5e20;color:#fff;border-radius:4px;padding:.2rem .5rem;display:inline-block;margin:.15rem;font-size:.75rem}
+.mock-input{background:#fff;border:1px solid #aaa;border-radius:4px;padding:.2rem .5rem;display:block;margin:.15rem 0;width:100%;font-size:.75rem}
+.quiz-item{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:.8rem 1rem;margin:.45rem 0;cursor:pointer;font-weight:600;color:#2e7d32;user-select:none}
+.quiz-item:hover{background:#dcedc8}
+.quiz-item .resp{display:none;font-weight:400;color:#222;background:#fff;border-radius:6px;padding:.7rem;margin-top:.5rem;border-left:3px solid #2e7d32;line-height:1.6}
+.quiz-item.open .resp{display:block}
+.quiz-item::before{content:"❓ "}.quiz-item.open::before{content:"✅ "}
+@media(max-width:700px){nav{flex-wrap:nowrap;overflow-x:auto;padding:.3rem .5rem}nav a{font-size:.7rem;padding:.18rem .35rem;flex-shrink:0}main{padding:58px .85rem 2rem}h1{font-size:1.35rem}pre{font-size:.75rem}.compare{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <span>📐 Layouts</span>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="#linear">LinearLayout</a>
+  <a href="#constraint">ConstraintLayout</a>
+  <a href="#comparacion">Comparación</a>
+  <a href="#ejemplos">Ejemplos XML</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+<main>
+<h1>📐 LinearLayout vs ConstraintLayout</h1>
+<p class="sub">Diferencias conceptuales, cuándo usar cada uno y ejemplos XML · UADE 2026</p>
+
+<!-- LINEAR -->
+<div class="card" id="linear">
+<h2>LinearLayout</h2>
+<p>Organiza sus hijos en una sola dirección: <strong>horizontal</strong> o <strong>vertical</strong>. Es el layout más simple y predecible de Android.</p>
+
+<h3>Características principales</h3>
+<pre>
+Atributo clave: android:orientation
+  → "vertical"   : hijos apilados de arriba hacia abajo
+  → "horizontal" : hijos apilados de izquierda a derecha
+
+Otros atributos importantes:
+  android:layout_weight → distribuir espacio proporcionalmente
+  android:gravity       → alinear contenido interno
+  android:layout_gravity → alinear el view dentro del padre
+</pre>
+
+<h3>Ejemplo visual — LinearLayout vertical</h3>
+<div class="mock">
+  <div style="text-align:center;padding:.3rem;background:#e3f2fd;border-radius:4px;margin:.15rem 0;font-size:.78rem">📧 Campo Email</div>
+  <div style="text-align:center;padding:.3rem;background:#e3f2fd;border-radius:4px;margin:.15rem 0;font-size:.78rem">🔒 Campo Contraseña</div>
+  <div style="text-align:center;padding:.45rem;background:#1b5e20;color:#fff;border-radius:4px;margin:.15rem 0;font-size:.78rem">INGRESAR</div>
+</div>
+
+<h3>Ejemplo XML</h3>
+<pre>
+&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"&gt;
+
+    &lt;EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email" /&gt;
+
+    &lt;EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:layout_marginTop="8dp" /&gt;
+
+    &lt;Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingresar"
+        android:layout_marginTop="16dp" /&gt;
+
+&lt;/LinearLayout&gt;
+</pre>
+
+<h3>Caso de uso de layout_weight</h3>
+<pre>
+&lt;LinearLayout android:orientation="horizontal"&gt;
+    &lt;Button android:layout_weight="1" ... /&gt;  &lt;!-- 33% del ancho --&gt;
+    &lt;Button android:layout_weight="2" ... /&gt;  &lt;!-- 67% del ancho --&gt;
+&lt;/LinearLayout&gt;
+
+El peso total es 3. El primer botón ocupa 1/3, el segundo 2/3.
+Muy útil para dividir la pantalla proporcionalmente.
+</pre>
+
+<div class="warn"><strong>Problema del LinearLayout:</strong> si necesitás layouts complejos (elementos posicionados en relación a otros, diagonales, superposiciones), tenés que anidar múltiples LinearLayouts. Anidar layouts degrada el rendimiento porque Android tiene que medir y dibujar múltiples niveles.</div>
+</div>
+
+<!-- CONSTRAINT -->
+<div class="card" id="constraint">
+<h2>ConstraintLayout</h2>
+<p>Permite posicionar cada vista en relación a <strong>otras vistas o al contenedor</strong> mediante restricciones (constraints). Es el layout recomendado por Google desde 2016.</p>
+
+<h3>Concepto de restricción (constraint)</h3>
+<pre>
+Una restricción conecta un lado de una vista con:
+  → el lado de otra vista
+  → el borde del contenedor padre
+  → una guía (Guideline)
+
+Cada vista necesita al menos:
+  → 1 constraint horizontal (izquierda o derecha)
+  → 1 constraint vertical (arriba o abajo)
+
+Si no tiene constraints en algún eje → se va al origen (0,0).
+</pre>
+
+<h3>Atributos de constraints</h3>
+<pre>
+app:layout_constraintTop_toTopOf="parent"
+app:layout_constraintTop_toBottomOf="@id/otroView"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintBottom_toBottomOf="parent"
+
+Bias (sesgo): cuánto se acerca a uno u otro extremo
+app:layout_constraintHorizontal_bias="0.3"  → 30% hacia la izquierda
+app:layout_constraintVertical_bias="0.5"    → centrado verticalmente
+</pre>
+
+<h3>Ejemplo XML — formulario de login</h3>
+<pre>
+&lt;androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"&gt;
+
+    &lt;EditText
+        android:id="@+id/etEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        android:layout_margin="16dp" /&gt;
+
+    &lt;EditText
+        android:id="@+id/etPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        app:layout_constraintTop_toBottomOf="@id/etEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_margin="16dp" /&gt;
+
+    &lt;Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingresar"
+        app:layout_constraintTop_toBottomOf="@id/etPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp" /&gt;
+
+&lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;
+</pre>
+<div class="ok"><strong>Ventaja clave:</strong> layout_width="0dp" con constraints en ambos lados = "ocupar todo el espacio disponible entre esos dos constraints". Equivale a match_parent pero respetando las restricciones.</div>
+</div>
+
+<!-- COMPARACIÓN -->
+<div class="card" id="comparacion">
+<h2>Comparación directa</h2>
+<div class="compare">
+  <div class="compare-box linear-box">
+    <h4>📏 LinearLayout</h4>
+    <p>✅ Simple y fácil de entender<br>
+    ✅ Ideal para listas simples (vertical/horizontal)<br>
+    ✅ layout_weight para proporciones<br>
+    ❌ Requiere anidamiento para layouts complejos<br>
+    ❌ Anidamiento profundo → mal rendimiento<br>
+    ❌ No permite posicionamiento relativo entre vistas hermanas</p>
+  </div>
+  <div class="compare-box constraint-box">
+    <h4>🎯 ConstraintLayout</h4>
+    <p>✅ Jerarquía plana (sin anidamiento)<br>
+    ✅ Posicionamiento relativo entre cualquier vista<br>
+    ✅ Recomendado por Google, integrado con el editor visual<br>
+    ✅ Chains, barriers, guidelines para layouts complejos<br>
+    ❌ Curva de aprendizaje más alta<br>
+    ❌ XML más verboso</p>
+  </div>
+</div>
+
+<table>
+  <tr><th>Criterio</th><th>LinearLayout</th><th>ConstraintLayout</th></tr>
+  <tr><td>Complejidad</td><td>Baja</td><td>Media-Alta</td></tr>
+  <tr><td>Rendimiento</td><td>Bueno si no hay anidamiento</td><td>Muy bueno (jerarquía plana)</td></tr>
+  <tr><td>Layouts complejos</td><td>Difícil (anidamiento)</td><td>Excelente</td></tr>
+  <tr><td>Editor visual AS</td><td>Básico</td><td>Excelente (drag & drop)</td></tr>
+  <tr><td>Uso recomendado</td><td>Formularios simples, listas</td><td>Cualquier layout, especialmente complejos</td></tr>
+  <tr><td>Versión Android</td><td>Desde el inicio</td><td>Desde API 9 (con support library)</td></tr>
+</table>
+
+<div class="tip"><strong>Regla general:</strong> usá LinearLayout cuando el layout es simple y lineal (formulario de login, lista de botones). Usá ConstraintLayout para cualquier cosa más compleja. En proyectos nuevos, Google recomienda siempre ConstraintLayout.</div>
+</div>
+
+<!-- QUIZ -->
+<div class="card" id="quiz">
+<h2>🧠 Quiz — Layouts</h2>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Qué pasa si un View en ConstraintLayout no tiene constraints definidos?
+  <div class="resp">Se posiciona en la esquina superior izquierda (posición 0,0) del contenedor. Cada View en ConstraintLayout necesita al menos un constraint horizontal y uno vertical para posicionarse correctamente. Sin el constraint vertical, el View se va al top. Sin el horizontal, se va al start (izquierda). Si no tiene ninguno, va a la esquina (0,0). Android Studio muestra una advertencia en estos casos.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Qué es layout_weight en LinearLayout y cómo se calcula?
+  <div class="resp">layout_weight distribuye el espacio sobrante del LinearLayout entre los hijos de forma proporcional. Para usarlo correctamente, el View debe tener layout_width="0dp" (en horizontal) o layout_height="0dp" (en vertical), para que todo el tamaño venga del weight.<br><br>Cálculo: si tenés 3 views con weights 1, 2 y 3 → el total es 6. El primero ocupa 1/6, el segundo 2/6 y el tercero 3/6 del espacio disponible.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Por qué anidar LinearLayouts es malo para el rendimiento?
+  <div class="resp">Cada vez que Android dibuja la UI, mide y distribuye el espacio de cada View (dos pasadas: measure y layout). Con LinearLayouts anidados, cada nivel interno requiere sus propias pasadas de medición. Si tenés 3 niveles de anidamiento con varios Views cada uno, el número de operaciones crece exponencialmente. ConstraintLayout resuelve esto teniendo una jerarquía plana (un solo nivel) con constraints que expresan el mismo layout — Android solo necesita una pasada de medición.</div>
+</div>
+</div>
+</main>
+<script>
+const s=document.querySelectorAll('[id]'),l=document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{let c='';s.forEach(x=>{if(window.scrollY>=x.offsetTop-85)c=x.id});l.forEach(a=>{a.classList.remove('active');if(a.getAttribute('href')==='#'+c)a.classList.add('active')});});
+</script>
+</body>
+</html>

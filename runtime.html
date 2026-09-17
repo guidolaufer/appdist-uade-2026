@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JIT vs AOT — App. Distribuidas UADE</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fff8f0;color:#2e1a00;line-height:1.68}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#e65100;padding:.45rem .8rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+nav span{font-weight:800;font-size:.9rem;color:#fff;margin-right:.5rem;white-space:nowrap}
+nav a{color:#ffe0b2;text-decoration:none;font-size:.73rem;padding:.2rem .45rem;border-radius:4px;white-space:nowrap}
+nav a:hover,nav a.active{background:#bf360c;color:#fff}
+main{max-width:920px;margin:0 auto;padding:68px 1rem 3rem}
+h1{color:#e65100;font-size:1.7rem;margin-bottom:.3rem}
+.sub{color:#555;font-size:.93rem;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.8rem;box-shadow:0 2px 10px rgba(0,0,0,.09)}
+.card h2{font-size:1.15rem;color:#e65100;padding-bottom:.5rem;border-bottom:3px solid #e65100;margin-bottom:1rem}
+.card h3{color:#bf360c;font-size:1rem;margin:1rem 0 .5rem}
+.tip{background:#fff3e0;border-left:4px solid #e65100;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.ok{background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+.warn{background:#fff9c4;border-left:4px solid #f9a825;border-radius:6px;padding:.75rem 1rem;margin:.7rem 0;font-size:.91rem}
+pre{background:#3e2000;color:#ffccbc;padding:1rem;border-radius:8px;font-size:.87rem;margin:.6rem 0;white-space:pre-wrap;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.87rem;margin:.7rem 0}
+th{background:#e65100;color:#fff;padding:6px 10px;text-align:left}
+td{padding:6px 10px;border:1px solid #ffccbc}
+tr:nth-child(even) td{background:#fff8f0}
+td.good{background:#e8f5e9;color:#1b5e20;font-weight:600}
+td.bad{background:#ffebee;color:#b71c1c;font-weight:600}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.8rem 0}
+.jit-box{background:#e3f2fd;border:2px solid #1565c0;border-radius:8px;padding:1rem}
+.aot-box{background:#fce4ec;border:2px solid #880e4f;border-radius:8px;padding:1rem}
+.compare-box h4{margin-bottom:.5rem}
+.quiz-item{background:#fff3e0;border:1px solid #ffcc80;border-radius:8px;padding:.8rem 1rem;margin:.45rem 0;cursor:pointer;font-weight:600;color:#e65100;user-select:none}
+.quiz-item:hover{background:#ffe0b2}
+.quiz-item .resp{display:none;font-weight:400;color:#222;background:#fff;border-radius:6px;padding:.7rem;margin-top:.5rem;border-left:3px solid #e65100;line-height:1.6}
+.quiz-item.open .resp{display:block}
+.quiz-item::before{content:"❓ "}.quiz-item.open::before{content:"✅ "}
+@media(max-width:700px){nav{flex-wrap:nowrap;overflow-x:auto;padding:.3rem .5rem}nav a{font-size:.7rem;padding:.18rem .35rem;flex-shrink:0}main{padding:58px .85rem 2rem}h1{font-size:1.35rem}.compare{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <span>⚙️ JIT vs AOT</span>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="#jit">JIT</a>
+  <a href="#aot">AOT</a>
+  <a href="#hibrido">Modelo Híbrido</a>
+  <a href="#comparacion">Comparación</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+<main>
+<h1>⚙️ JIT vs AOT — Compilación en Runtime</h1>
+<p class="sub">Just-In-Time vs Ahead-Of-Time · Modelo híbrido desde Android 7 · UADE 2026</p>
+
+<!-- JIT -->
+<div class="card" id="jit">
+<h2>JIT — Just-In-Time Compilation</h2>
+<p><strong>JIT compila el bytecode (.dex) a código máquina nativo EN EL MOMENTO en que se va a ejecutar</strong>, durante la ejecución de la app.</p>
+
+<h3>¿Cómo funciona?</h3>
+<pre>
+App se inicia
+    ↓
+ART empieza a INTERPRETAR el bytecode .dex
+    ↓
+JIT compiler monitorea cuál código se ejecuta frecuentemente
+("hot code" = código caliente = muy usado)
+    ↓
+Cuando detecta hot code → lo compila a código máquina nativo
+    ↓
+Las próximas ejecuciones usan el código nativo (más rápido)
+    ↓
+El código compilado se guarda en memoria RAM (NO en disco)
+→ Se pierde al cerrar la app / reiniciar el dispositivo
+</pre>
+
+<h3>Ventajas del JIT</h3>
+<pre>
+✅ Instalación RÁPIDA — no compila nada al instalar, solo copia el APK
+✅ Menor uso de almacenamiento — no guarda código nativo compilado
+✅ Optimizaciones dinámicas — puede optimizar según cómo USA
+   realmente la app (qué código es hot code)
+✅ Menor tiempo hasta primera ejecución de la app
+</pre>
+
+<h3>Desventajas del JIT</h3>
+<pre>
+❌ Mayor uso de CPU al arrancar — tiene que compilar mientras ejecuta
+❌ Mayor uso de RAM — mantiene el compilador en memoria
+❌ Arranque más lento las primeras veces
+❌ Comportamiento inconsistente — el primer arranque es más lento
+   que los siguientes (warm-up period)
+❌ Consumo de batería al compilar en background
+</pre>
+<div class="tip">JIT fue el modelo de Dalvik (Android 1 hasta Android 4.4). La experiencia era "laggy" comparada con iOS, precisamente por este warm-up inicial.</div>
+</div>
+
+<!-- AOT -->
+<div class="card" id="aot">
+<h2>AOT — Ahead-Of-Time Compilation</h2>
+<p><strong>AOT compila el bytecode .dex a código máquina nativo ANTES de la primera ejecución</strong>, generalmente durante la instalación de la app.</p>
+
+<h3>¿Cómo funciona?</h3>
+<pre>
+Se instala el APK
+    ↓
+dex2oat convierte TODO el bytecode .dex → código máquina nativo
+(esto ocurre durante la instalación, puede tardar varios segundos)
+    ↓
+El código compilado se guarda en disco como archivo .oat
+    ↓
+Cuando se abre la app → ART ejecuta directamente el código nativo
+sin necesidad de compilar nada
+    ↓
+Arranque rápido, ejecución rápida siempre
+</pre>
+
+<h3>Ventajas del AOT</h3>
+<pre>
+✅ Ejecución MÁS RÁPIDA — código ya compilado, sin warm-up
+✅ Arranque consistente — siempre el mismo rendimiento
+✅ Menor uso de CPU durante la ejecución
+✅ Mejor experiencia de usuario (sin lag inicial)
+✅ Menor consumo de batería durante el uso normal
+</pre>
+
+<h3>Desventajas del AOT</h3>
+<pre>
+❌ Instalación LENTA — compilar toda la app tarda tiempo
+❌ Mayor uso de almacenamiento — guarda el código nativo en disco
+   (puede ser 2-3x el tamaño del APK original)
+❌ Sin optimizaciones dinámicas — compila basándose en el código
+   estático, no sabe cómo usará la app el usuario real
+❌ Updates lentos — hay que recompilar en cada actualización
+</pre>
+<div class="tip">AOT fue introducido con ART en Android 5.0 (Lollipop). La instalación se volvió más lenta pero la experiencia de uso mejoró notablemente — Google lo popularizó con el slogan "smoother, faster".</div>
+</div>
+
+<!-- MODELO HÍBRIDO -->
+<div class="card" id="hibrido">
+<h2>Modelo Híbrido — Android 7.0+ (Nougat)</h2>
+<p>Desde Android 7, Google introdujo un <strong>modelo que combina JIT y AOT</strong> para obtener lo mejor de ambos mundos.</p>
+
+<pre>
+PRIMERA INSTALACIÓN:
+    APK instalado sin compilación AOT completa
+    → Instalación rápida ✅
+
+PRIMERAS EJECUCIONES (JIT activo):
+    ART usa JIT para compilar hot code en RAM
+    JIT también guarda un "perfil de uso" (.prof)
+    → El perfil registra qué código se usa más
+
+DISPOSITIVO EN REPOSO + CARGANDO (AOT selectivo):
+    dex2oat lee el perfil de uso (.prof)
+    Compila a AOT SOLO el código marcado como hot code
+    Guarda en disco (.odex / .vdex)
+    → Solo compila ~20-30% del código total
+
+EJECUCIONES SIGUIENTES:
+    El código hot (compilado AOT) corre nativo → rápido
+    El código frío (poco usado) sigue con JIT
+    → Lo mejor de ambos mundos ✅
+</pre>
+
+<div class="ok">
+  <strong>Resultado del modelo híbrido:</strong><br>
+  🚀 Instalación rápida (como JIT puro)<br>
+  💾 Menor uso de almacenamiento (solo compila el hot code, ~20-30%)<br>
+  ⚡ Rendimiento excelente (el código más usado corre en AOT)<br>
+  🔋 Bajo consumo (AOT se ejecuta solo cuando está cargando y en reposo)
+</div>
+
+<h3>Archivos generados</h3>
+<table>
+  <tr><th>Archivo</th><th>Qué contiene</th><th>Cuándo se crea</th></tr>
+  <tr><td>.dex</td><td>Bytecode Dalvik original</td><td>Al compilar la app (build)</td></tr>
+  <tr><td>.prof</td><td>Perfil de uso (hot code)</td><td>Durante la ejecución con JIT</td></tr>
+  <tr><td>.odex / .vdex</td><td>Código nativo AOT</td><td>En reposo, guiado por .prof</td></tr>
+  <tr><td>.art</td><td>Caché de objetos precargados</td><td>En background</td></tr>
+</table>
+</div>
+
+<!-- COMPARACIÓN TABLA -->
+<div class="card" id="comparacion">
+<h2>Tabla comparativa completa</h2>
+<table>
+  <tr><th>Aspecto</th><th>JIT puro (Dalvik)</th><th>AOT puro (ART 5-6)</th><th>Híbrido JIT+AOT (ART 7+)</th></tr>
+  <tr><td>Velocidad instalación</td><td class="good">Rápida</td><td class="bad">Lenta</td><td class="good">Rápida</td></tr>
+  <tr><td>Arranque de app</td><td class="bad">Lento (warm-up)</td><td class="good">Rápido</td><td class="good">Rápido</td></tr>
+  <tr><td>Rendimiento en uso</td><td class="bad">Variable</td><td class="good">Consistente</td><td class="good">Muy bueno</td></tr>
+  <tr><td>Uso de RAM</td><td class="bad">Alto (compilador activo)</td><td class="good">Bajo</td><td>Medio</td></tr>
+  <tr><td>Uso de almacenamiento</td><td class="good">Bajo</td><td class="bad">Alto (todo compilado)</td><td class="good">Medio (solo hot code)</td></tr>
+  <tr><td>Consumo CPU</td><td class="bad">Alto durante uso</td><td class="good">Bajo durante uso</td><td class="good">Bajo durante uso</td></tr>
+  <tr><td>Consumo batería</td><td class="bad">Alto</td><td>Medio</td><td class="good">Bajo</td></tr>
+  <tr><td>Optimización dinámica</td><td class="good">Sí</td><td class="bad">No</td><td class="good">Sí (via perfil)</td></tr>
+  <tr><td>Android version</td><td>1.0 - 4.4</td><td>5.0 - 6.0</td><td><strong>7.0+</strong></td></tr>
+</table>
+</div>
+
+<!-- QUIZ -->
+<div class="card" id="quiz">
+<h2>🧠 Quiz — JIT vs AOT</h2>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Por qué Android 7 no usa AOT puro si es más rápido en ejecución?
+  <div class="resp">Porque AOT puro tiene dos problemas críticos en mobile: (1) <strong>instalación lenta</strong> — compilar toda la app al instalar puede tardar minutos, lo cual es inaceptable para el usuario; (2) <strong>mayor uso de almacenamiento</strong> — el código nativo compilado puede ocupar 2-3x el espacio del APK original, problemático en dispositivos con poco storage. El modelo híbrido resuelve ambos problemas compilando solo el hot code (20-30%) y haciéndolo cuando el dispositivo está en reposo y cargando.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Qué es el "warm-up period" de JIT y por qué afecta la experiencia?
+  <div class="resp">El warm-up period es el tiempo inicial donde JIT todavía está detectando cuál es el hot code. Durante este período, el código se interpreta (más lento) o se compila on-the-fly (usa CPU). El usuario nota lag, frames perdidos, o animaciones lentas en los primeros segundos de uso de la app. A medida que JIT aprende el patrón de uso, el rendimiento mejora. En AOT no existe este período porque el código ya está compilado antes de la primera ejecución.</div>
+</div>
+
+<div class="quiz-item" onclick="this.classList.toggle('open')">¿Qué es dex2oat?
+  <div class="resp">dex2oat es la herramienta de Android que realiza la compilación AOT: toma archivos .dex (bytecode Dalvik) y los convierte en código máquina nativo para el procesador del dispositivo (archivo .odex u .oat). Se ejecuta durante la instalación de la app (AOT completo en versiones antiguas) o en background cuando el dispositivo está en reposo y cargando (AOT selectivo/guiado por perfil en Android 7+). El nombre viene de "dex to oat" (dex → oat format).</div>
+</div>
+</div>
+</main>
+<script>
+const s=document.querySelectorAll('[id]'),l=document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{let c='';s.forEach(x=>{if(window.scrollY>=x.offsetTop-85)c=x.id});l.forEach(a=>{a.classList.remove('active');if(a.getAttribute('href')==='#'+c)a.classList.add('active')});});
+</script>
+</body>
+</html>
