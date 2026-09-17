@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Práctica: Encontrá los 10 errores — AppDist UADE</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+  header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+  }
+  header h1 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+  .badge {
+    display: inline-block;
+    background: #ef5350;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-top: 0.6rem;
+    letter-spacing: 0.5px;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  .exercise-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .card-header {
+    background: #1a237e;
+    color: white;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .card-header .num {
+    background: white;
+    color: #1a237e;
+    font-weight: bold;
+    font-size: 0.85rem;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-header .title { font-size: 1rem; font-weight: 600; }
+  .card-header .topic { font-size: 0.8rem; opacity: 0.8; }
+  .card-body { padding: 1.2rem; }
+
+  .instructions {
+    background: #e8eaf6;
+    border-left: 4px solid #3f51b5;
+    padding: 0.7rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #283593;
+  }
+  .instructions strong { display: block; margin-bottom: 0.2rem; }
+
+  pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 8px;
+    padding: 1.2rem;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .line-error { color: #f38ba8; background: rgba(243,139,168,0.1); display: block; }
+  .keyword { color: #cba6f7; }
+  .string { color: #a6e3a1; }
+  .annotation { color: #fab387; }
+  .comment { color: #6c7086; font-style: italic; }
+  .number { color: #fab387; }
+  .type { color: #89dceb; }
+  .func { color: #89b4fa; }
+
+  .reveal-btn {
+    background: #1a237e;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .reveal-btn:hover { background: #283593; }
+
+  .solution {
+    display: none;
+    margin-top: 1rem;
+  }
+  .solution.visible { display: block; }
+
+  .error-list {
+    background: #fff3e0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  .error-item {
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #ffe0b2;
+  }
+  .error-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .error-num {
+    background: #ef5350;
+    color: white;
+    font-weight: bold;
+    font-size: 0.75rem;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .error-text { font-size: 0.88rem; line-height: 1.5; }
+  .error-text strong { color: #e65100; }
+  .error-text code {
+    background: #f5e6d3;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.82rem;
+  }
+
+  .correct-code {
+    margin-top: 0.8rem;
+  }
+  .correct-label {
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: #2e7d32;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+  }
+  pre.correct {
+    background: #1b2820;
+    border: 1px solid #2e7d32;
+  }
+  .line-fix { color: #a6e3a1; background: rgba(166,227,161,0.08); display: block; }
+
+  .hint-box {
+    background: #e3f2fd;
+    border-left: 4px solid #1565c0;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0 6px 6px 0;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #0d47a1;
+  }
+  .hint-box strong { margin-right: 4px; }
+
+  .nav-bar {
+    background: #283593;
+    padding: 0.7rem 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+  .nav-bar a {
+    color: #90caf9;
+    text-decoration: none;
+    margin: 0 0.5rem;
+  }
+  .nav-bar a:hover { color: white; }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.82rem;
+    color: #666;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.2rem; }
+    pre { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔍 Práctica: Encontrá los 10 Errores</h1>
+  <p>Aplicaciones Distribuidas — Kotlin & Jetpack Compose</p>
+  <span class="badge">Ejercicios 1 al 10</span>
+</header>
+
+<div class="nav-bar">
+  <a href="index.html">← Portal</a>
+  <a href="parcial.html">Parcial Resuelto</a>
+</div>
+
+<div class="container">
+
+  <div style="background:#fff8e1; border-radius:10px; padding:1rem 1.2rem; margin-bottom:1.5rem; border-left:4px solid #f9a825; font-size:0.9rem;">
+    <strong>📋 Instrucciones</strong><br>
+    Cada bloque muestra código con <strong>errores deliberados</strong> cubriendo los temas de la guía (Ejs 1–10).
+    Intentá encontrarlos y anotarlos <em>antes</em> de revelar la solución.
+    En el parcial el profe puede dar código similar y pedirte identificar 10 errores.
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 1: Composable básico + Preview (Ejs 2–3) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">1</div>
+      <div>
+        <div class="title">Ficha de estudiante — @Composable y variables</div>
+        <div class="topic">Ejercicios 2 y 3 — @Composable, val/var, String templates</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores en este código</strong>
+        El código intenta mostrar una ficha de estudiante usando Jetpack Compose. Tiene varios errores. Identificalos antes de revelar la solución.
+      </div>
+<pre>
+<span class="keyword">import</span> androidx.compose.runtime.Composable
+<span class="keyword">import</span> androidx.compose.ui.tooling.preview.Preview
+
+<span class="annotation">@composable</span>                          <span class="comment">// línea A</span>
+<span class="keyword">fun</span> <span class="func">FichaEstudiante</span>() {
+    <span class="keyword">var</span> nombre = <span class="string">"Ana"</span>                   <span class="comment">// línea B</span>
+    <span class="keyword">val</span> edad: <span class="type">String</span> = <span class="number">20</span>               <span class="comment">// línea C</span>
+    <span class="keyword">val</span> promedio = <span class="number">8.25</span>
+
+    Text(<span class="string">"Nombre: "</span> + nombre)
+    Text(<span class="string">"Edad: $edad"</span>)
+    Text(<span class="string">"Promedio: ${promedio}"</span>)
+    Text(<span class="string">"El año que viene tendrá: ${edad + <span class="number">1</span>}"</span>)  <span class="comment">// línea D</span>
+}
+
+<span class="annotation">@Preview</span>(showBackground = <span class="keyword">true</span>)
+<span class="keyword">fun</span> <span class="func">FichaPreview</span>() {               <span class="comment">// línea E</span>
+    FichaEstudiante()
+}
+</pre>
+      <div class="hint-box"><strong>Pista:</strong> hay errores de anotación, tipo de dato, operación sobre String, y falta de anotación en la preview.</div>
+
+      <button class="reveal-btn" onclick="toggleSolution('sol1')">Ver solución</button>
+      <div class="solution" id="sol1">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Anotación en minúscula:</strong> <code>@composable</code> no existe. Kotlin es <em>case-sensitive</em>. Debe ser <code>@Composable</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>Usar <code>var</code> cuando corresponde <code>val</code>:</strong> <code>nombre</code> no se reasigna en ningún momento. En Kotlin se prefiere <code>val</code> para inmutabilidad. Usar <code>var</code> innecesariamente es un error de diseño.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>Tipo incompatible:</strong> <code>val edad: String = 20</code> falla en compilación. <code>20</code> es un <code>Int</code>, no un <code>String</code>. Debe ser <code>val edad: Int = 20</code> (o bien <code>val edad = 20</code>).</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">D</div>
+            <div class="error-text"><strong>Operación aritmética sobre String:</strong> como <code>edad</code> quedó declarada como <code>String</code> (por el error C), <code>edad + 1</code> intenta sumar un Int a un String, lo cual falla. Corregido el tipo a <code>Int</code>, la expresión funciona.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">E</div>
+            <div class="error-text"><strong>Falta <code>@Composable</code> en la función Preview:</strong> <code>FichaPreview()</code> llama a <code>FichaEstudiante()</code>, que es <code>@Composable</code>. Una función que invoca composables también debe ser <code>@Composable</code>.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="annotation">@Composable</span>                          <span class="comment">// A: mayúscula</span>
+<span class="keyword">fun</span> <span class="func">FichaEstudiante</span>() {
+    <span class="keyword">val</span> nombre = <span class="string">"Ana"</span>                   <span class="comment">// B: val, no var</span>
+    <span class="keyword">val</span> edad: <span class="type">Int</span> = <span class="number">20</span>                  <span class="comment">// C: tipo Int</span>
+    <span class="keyword">val</span> promedio = <span class="number">8.25</span>
+
+    Text(<span class="string">"Nombre: $nombre"</span>)
+    Text(<span class="string">"Edad: $edad"</span>)
+    Text(<span class="string">"Promedio: $promedio"</span>)
+    Text(<span class="string">"El año que viene tendrá: ${edad + <span class="number">1</span>}"</span>)  <span class="comment">// D: ok porque edad es Int</span>
+}
+
+<span class="annotation">@Preview</span>(showBackground = <span class="keyword">true</span>)
+<span class="annotation">@Composable</span>                          <span class="comment">// E: falta esta anotación</span>
+<span class="keyword">fun</span> <span class="func">FichaPreview</span>() {
+    FichaEstudiante()
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 2: Parámetros y función con retorno (Ej 4) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">2</div>
+      <div>
+        <div class="title">Composable reutilizable y función con retorno</div>
+        <div class="topic">Ejercicio 4 — Parámetros, tipos de retorno, if</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores</strong>
+        Función reutilizable DatoEstudiante y función descripcionEdad con if. Hay errores de parámetros, retorno y lógica.
+      </div>
+<pre>
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">DatoEstudiante</span>(etiqueta: <span class="type">String</span>) {   <span class="comment">// línea A</span>
+    Text(<span class="string">"$etiqueta: $valor"</span>)              <span class="comment">// línea B</span>
+}
+
+<span class="keyword">fun</span> <span class="func">descripcionEdad</span>(edad: <span class="type">Int</span>): <span class="type">String</span> {
+    <span class="keyword">if</span> (edad >= <span class="number">18</span>)
+        <span class="keyword">return</span> <span class="string">"Mayor de edad"</span>
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> <span class="string">"Menor de edad"</span>
+}
+
+<span class="comment">// En el composable principal:</span>
+DatoEstudiante(<span class="string">"Nombre"</span>, <span class="string">"Ana"</span>)           <span class="comment">// línea C</span>
+DatoEstudiante(<span class="string">"Carrera"</span>, <span class="string">"Sistemas"</span>)
+<span class="keyword">val</span> desc = descripcionEdad(<span class="string">"25"</span>)         <span class="comment">// línea D</span>
+Text(desc)
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol2')">Ver solución</button>
+      <div class="solution" id="sol2">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Falta el parámetro <code>valor</code>:</strong> La función recibe solo <code>etiqueta</code> pero usa <code>$valor</code> en el cuerpo. Debe declararse <code>DatoEstudiante(etiqueta: String, valor: String)</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>Variable <code>valor</code> no definida:</strong> consecuencia directa del error A. Al faltar el parámetro, <code>valor</code> no existe en el scope y el código no compila.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>Demasiados argumentos en el llamado:</strong> <code>DatoEstudiante("Nombre", "Ana")</code> pasa 2 argumentos pero la función (con el error A) solo declara 1. Es consistente con el error A: ambos deben corregirse juntos.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">D</div>
+            <div class="error-text"><strong>Tipo incorrecto en argumento:</strong> <code>descripcionEdad("25")</code> pasa un <code>String</code> a un parámetro <code>Int</code>. Debe ser <code>descripcionEdad(25)</code> (sin comillas).</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">DatoEstudiante</span>(etiqueta: <span class="type">String</span>, valor: <span class="type">String</span>) {  <span class="comment">// A+B: agregar parámetro</span>
+    Text(<span class="string">"$etiqueta: $valor"</span>)
+}
+
+DatoEstudiante(<span class="string">"Nombre"</span>, <span class="string">"Ana"</span>)          <span class="comment">// C: ok ahora que la función acepta 2 args</span>
+<span class="keyword">val</span> desc = descripcionEdad(<span class="number">25</span>)          <span class="comment">// D: Int, no String</span>
+Text(desc)
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 3: Column, Row, Modifier (Ej 5) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">3</div>
+      <div>
+        <div class="title">Column, Row y Modifier</div>
+        <div class="topic">Ejercicio 5 — Layouts, padding, fillMaxWidth</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores de layout y Modifier</strong>
+      </div>
+<pre>
+<span class="keyword">import</span> androidx.compose.foundation.layout.*
+<span class="keyword">import</span> androidx.compose.ui.unit.dp
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PerfilEstudiante</span>() {
+    Column(
+        modifier = Modifier
+            .padding(<span class="number">16</span>)                    <span class="comment">// línea A</span>
+            .fillMaxWidth()
+    ) {
+        Text(<span class="string">"Perfil del Estudiante"</span>)
+        Row {
+            Text(<span class="string">"Carrera:"</span>)
+            Text(<span class="string">"Sistemas"</span>)
+        }
+        Button(onClick = {}) {           <span class="comment">// línea B</span>
+            <span class="string">"Guardar"</span>                      <span class="comment">// línea C</span>
+        }
+    }
+    Column(                              <span class="comment">// línea D</span>
+        modifier = Modifier.padding(<span class="number">8</span>.dp)
+    ) {
+        Text(<span class="string">"Sección extra"</span>)
+    }
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol3')">Ver solución</button>
+      <div class="solution" id="sol3">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Falta la unidad <code>.dp</code>:</strong> <code>.padding(16)</code> no compila. Compose no acepta enteros desnudos como dimensión. Debe ser <code>.padding(16.dp)</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>Falta <code>import</code> de <code>Button</code>:</strong> Si no se importa <code>androidx.compose.material3.Button</code>, el símbolo no se resuelve. (En contexto de parcial, el error es que <em>omitieron</em> el import necesario mientras sí importaron otros.)</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>String literal en lugar de <code>Text()</code>:</strong> Dentro del lambda del Button, un String literal <code>"Guardar"</code> no hace nada. Debe ser <code>Text("Guardar")</code> para mostrar la etiqueta.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">D</div>
+            <div class="error-text"><strong>Segunda <code>Column</code> fuera del scope correcto:</strong> La segunda Column está al mismo nivel que la primera (ambas dentro de la función pero no anidadas). Si la intención era todo en un bloque, debería ir dentro de la primera Column. Además tiene el mismo padding desnudo del error A en otras variantes.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="keyword">import</span> androidx.compose.material3.Button   <span class="comment">// B: import necesario</span>
+<span class="keyword">import</span> androidx.compose.material3.Text
+<span class="keyword">import</span> androidx.compose.foundation.layout.*
+<span class="keyword">import</span> androidx.compose.ui.unit.dp
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PerfilEstudiante</span>() {
+    Column(
+        modifier = Modifier
+            .padding(<span class="number">16</span>.dp)               <span class="comment">// A: agregar .dp</span>
+            .fillMaxWidth()
+    ) {
+        Text(<span class="string">"Perfil del Estudiante"</span>)
+        Row {
+            Text(<span class="string">"Carrera:"</span>)
+            Text(<span class="string">"Sistemas"</span>)
+        }
+        Button(onClick = {}) {
+            Text(<span class="string">"Guardar"</span>)               <span class="comment">// C: Text(...) no string literal</span>
+        }
+        Column(                          <span class="comment">// D: anidado dentro de la Column principal</span>
+            modifier = Modifier.padding(<span class="number">8</span>.dp)
+        ) {
+            Text(<span class="string">"Sección extra"</span>)
+        }
+    }
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 4: Estado y recomposición (Ej 6) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">4</div>
+      <div>
+        <div class="title">Contador — Estado y recomposición</div>
+        <div class="topic">Ejercicio 6 — remember, mutableStateOf, onClick</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores en este contador</strong>
+      </div>
+<pre>
+<span class="keyword">import</span> androidx.compose.runtime.*
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">Contador</span>() {
+    <span class="keyword">val</span> contador = <span class="number">0</span>                        <span class="comment">// línea A</span>
+
+    Text(<span class="string">"Valor: $contador"</span>)
+
+    Button(onClick = { contador++ }) {   <span class="comment">// línea B</span>
+        Text(<span class="string">"+1"</span>)
+    }
+    Button(onClick = { contador-- }) {
+        Text(<span class="string">"-1"</span>)
+    }
+    Button(onClick = { contador = <span class="number">0</span> }) { <span class="comment">// línea C</span>
+        Text(<span class="string">"Reiniciar"</span>)
+    }
+
+    <span class="keyword">if</span> (contador &lt; <span class="number">0</span>) {                    <span class="comment">// línea D</span>
+        contador = <span class="number">0</span>
+    }
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol4')">Ver solución</button>
+      <div class="solution" id="sol4">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>No se usa <code>remember</code> ni <code>mutableStateOf</code>:</strong> <code>val contador = 0</code> es un entero normal. Cuando cambia el valor, Compose no sabe que debe redibujar la pantalla. Debe ser <code>var contador by remember { mutableStateOf(0) }</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong><code>val</code> no se puede reasignar:</strong> <code>contador++</code> equivale a <code>contador = contador + 1</code>. Un <code>val</code> no puede reasignarse. Después de corregir al estado observable (<code>var</code> con <code>by remember</code>), esto funciona.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>Mismo problema de <code>val</code>:</strong> <code>contador = 0</code> en el botón Reiniciar también falla por la declaración con <code>val</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">D</div>
+            <div class="error-text"><strong>Lógica de protección fuera del handler:</strong> Verificar <code>if (contador &lt; 0)</code> <em>después</em> de los botones no evita el problema: se ejecuta solo en la primera composición, no cuando el usuario presiona. La condición debe estar <em>dentro</em> del <code>onClick</code> del botón -1: <code>onClick = { if (contador > 0) contador-- }</code>.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">Contador</span>() {
+    <span class="keyword">var</span> contador <span class="keyword">by</span> remember { mutableStateOf(<span class="number">0</span>) }  <span class="comment">// A: estado observable</span>
+
+    Text(<span class="string">"Valor: $contador"</span>)
+
+    Button(onClick = { contador++ }) {            <span class="comment">// B: ok con var + state</span>
+        Text(<span class="string">"+1"</span>)
+    }
+    Button(onClick = { <span class="keyword">if</span> (contador > <span class="number">0</span>) contador-- }) {  <span class="comment">// D: guard aquí</span>
+        Text(<span class="string">"-1"</span>)
+    }
+    Button(onClick = { contador = <span class="number">0</span> }) {         <span class="comment">// C: ok con var</span>
+        Text(<span class="string">"Reiniciar"</span>)
+    }
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 5: TextField y null safety (Ej 7) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">5</div>
+      <div>
+        <div class="title">Clasificador de edad — TextField y null safety</div>
+        <div class="topic">Ejercicio 7 — toIntOrNull, if/when, nullable types</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores relacionados con null safety y conversión de tipos</strong>
+      </div>
+<pre>
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">ClasificadorEdad</span>() {
+    <span class="keyword">var</span> edadTexto <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">var</span> resultado <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+
+    OutlinedTextField(
+        value = edadTexto,
+        onValueChange = { edadTexto = it },
+        label = { Text(<span class="string">"Edad"</span>) }
+    )
+
+    Button(onClick = {
+        <span class="keyword">val</span> edadNumero = edadTexto.toInt()      <span class="comment">// línea A</span>
+
+        resultado = <span class="keyword">if</span> (edadNumero &lt; <span class="number">0</span>) {     <span class="comment">// línea B</span>
+            <span class="string">"Dato inválido"</span>
+        } <span class="keyword">else if</span> (edadNumero &lt; <span class="number">18</span>) {
+            <span class="string">"Menor de edad"</span>
+        } <span class="keyword">else</span> {
+            <span class="string">"Mayor de edad"</span>
+        }
+    }) { Text(<span class="string">"Evaluar"</span>) }
+
+    Text(resultado)
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol5')">Ver solución</button>
+      <div class="solution" id="sol5">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong><code>toInt()</code> en lugar de <code>toIntOrNull()</code>:</strong> Si el usuario escribe texto no numérico o deja el campo vacío, <code>toInt()</code> lanza una <code>NumberFormatException</code> y la app crashea. Debe usarse <code>toIntOrNull()</code> que devuelve <code>null</code> en caso de error.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>No se verifica <code>null</code> antes de usar <code>edadNumero</code>:</strong> Como <code>toIntOrNull()</code> puede devolver <code>null</code>, hay que chequear primero: <code>if (edadNumero == null) { resultado = "Ingresá un número válido" } else { ... }</code>. Si se usa directamente <code>edadNumero &lt; 0</code> sobre un tipo <code>Int?</code>, el compilador rechaza el código.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+Button(onClick = {
+    <span class="keyword">val</span> edadNumero = edadTexto.toIntOrNull()  <span class="comment">// A: safe conversion</span>
+
+    resultado = <span class="keyword">if</span> (edadNumero == <span class="keyword">null</span>) {    <span class="comment">// B: chequeo null primero</span>
+        <span class="string">"Ingresá un número válido"</span>
+    } <span class="keyword">else if</span> (edadNumero &lt; <span class="number">0</span>) {
+        <span class="string">"Dato inválido"</span>
+    } <span class="keyword">else if</span> (edadNumero &lt; <span class="number">18</span>) {
+        <span class="string">"Menor de edad"</span>
+    } <span class="keyword">else</span> {
+        <span class="string">"Mayor de edad"</span>
+    }
+}) { Text(<span class="string">"Evaluar"</span>) }
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 6: Calculadora — función separada y when (Ej 8) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">6</div>
+      <div>
+        <div class="title">Calculadora — función de lógica separada</div>
+        <div class="topic">Ejercicio 8 — when, Double, lógica fuera de la UI</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores en la función de cálculo y su uso</strong>
+      </div>
+<pre>
+<span class="keyword">fun</span> <span class="func">calcular</span>(a: <span class="type">Double</span>, b: <span class="type">Double</span>, operacion: <span class="type">String</span>): <span class="type">Double</span> {
+    <span class="keyword">return</span> <span class="keyword">when</span> (operacion) {
+        <span class="string">"sumar"</span>      -> a + b
+        <span class="string">"restar"</span>     -> a - b
+        <span class="string">"multiplicar"</span> -> a * b
+        <span class="string">"dividir"</span>    -> a / b        <span class="comment">// línea A</span>
+    }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PantallaCalculadora</span>() {
+    <span class="keyword">var</span> numA <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">var</span> numB <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">var</span> resultado <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+
+    Button(onClick = {
+        <span class="keyword">val</span> a = numA.toDouble()              <span class="comment">// línea B</span>
+        <span class="keyword">val</span> b = numB.toDouble()
+        resultado = calcular(a, b, <span class="string">"sumar"</span>).toString()
+    }) { Text(<span class="string">"Sumar"</span>) }
+
+    Button(onClick = {
+        resultado = calcular(numA, numB, <span class="string">"restar"</span>).toString()  <span class="comment">// línea C</span>
+    }) { Text(<span class="string">"Restar"</span>) }
+
+    Text(<span class="string">"Resultado: $resultado"</span>)
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol6')">Ver solución</button>
+      <div class="solution" id="sol6">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Falta rama <code>else</code> en el <code>when</code>:</strong> El compilador de Kotlin exige que un <code>when</code> usado como expresión (con retorno) sea exhaustivo. Como el parámetro es <code>String</code> y no un enum, debe existir <code>else -> 0.0</code> (o similar) para cubrir cualquier otro caso.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong><code>toDouble()</code> en lugar de <code>toDoubleOrNull()</code>:</strong> Igual que con <code>toInt()</code>, si el campo está vacío o tiene letras, lanza excepción y la app crashea. Debería usarse <code>toDoubleOrNull() ?: 0.0</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>Pasar <code>String</code> donde se espera <code>Double</code>:</strong> <code>calcular(numA, numB, ...)</code> pasa las variables de estado (tipo <code>String</code>) directamente. La función espera <code>Double</code>. Hay que convertirlas igual que en el botón Sumar.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="keyword">fun</span> <span class="func">calcular</span>(a: <span class="type">Double</span>, b: <span class="type">Double</span>, operacion: <span class="type">String</span>): <span class="type">Double</span> {
+    <span class="keyword">return</span> <span class="keyword">when</span> (operacion) {
+        <span class="string">"sumar"</span>       -> a + b
+        <span class="string">"restar"</span>      -> a - b
+        <span class="string">"multiplicar"</span> -> a * b
+        <span class="string">"dividir"</span>     -> a / b
+        <span class="keyword">else</span>          -> <span class="number">0.0</span>   <span class="comment">// A: rama else obligatoria</span>
+    }
+}
+
+Button(onClick = {
+    <span class="keyword">val</span> a = numA.toDoubleOrNull() ?: <span class="number">0.0</span>  <span class="comment">// B: safe conversion</span>
+    <span class="keyword">val</span> b = numB.toDoubleOrNull() ?: <span class="number">0.0</span>
+    resultado = calcular(a, b, <span class="string">"sumar"</span>).toString()
+}) { Text(<span class="string">"Sumar"</span>) }
+
+Button(onClick = {
+    <span class="keyword">val</span> a = numA.toDoubleOrNull() ?: <span class="number">0.0</span>  <span class="comment">// C: convertir antes de pasar</span>
+    <span class="keyword">val</span> b = numB.toDoubleOrNull() ?: <span class="number">0.0</span>
+    resultado = calcular(a, b, <span class="string">"restar"</span>).toString()
+}) { Text(<span class="string">"Restar"</span>) }
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 7: data class y LazyColumn (Ej 9) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">7</div>
+      <div>
+        <div class="title">data class y LazyColumn</div>
+        <div class="topic">Ejercicio 9 — data class, listOf, LazyColumn, items()</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores en el modelado de datos y la lista visual</strong>
+      </div>
+<pre>
+<span class="keyword">class</span> <span class="type">Materia</span>(                              <span class="comment">// línea A</span>
+    <span class="keyword">val</span> nombre: <span class="type">String</span>,
+    <span class="keyword">val</span> anio: <span class="type">Int</span>,
+    <span class="keyword">val</span> aprobada: <span class="type">Boolean</span>
+)
+
+<span class="keyword">val</span> materias = listOf(
+    Materia(<span class="string">"Programacion I"</span>, <span class="number">1</span>, <span class="keyword">true</span>),
+    Materia(<span class="string">"Matematica"</span>, <span class="number">1</span>, <span class="keyword">false</span>),
+    Materia(<span class="string">"Fisica"</span>, <span class="number">1</span>, <span class="keyword">true</span>)
+)
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">ListaMaterias</span>() {
+    LazyColumn {
+        materias.forEach { materia ->      <span class="comment">// línea B</span>
+            MateriaItem(materia)
+        }
+    }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">MateriaItem</span>(materia: <span class="type">Materia</span>) {
+    Text(<span class="string">"${materia.nombre} - Año ${materia.anio}"</span>)
+    <span class="keyword">if</span> (materia.aprobada == <span class="keyword">true</span>)          <span class="comment">// línea C</span>
+        Text(<span class="string">"✔ Aprobada"</span>)
+    <span class="keyword">else</span>
+        Text(<span class="string">"✘ Pendiente"</span>)
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol7')">Ver solución</button>
+      <div class="solution" id="sol7">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Clase regular en lugar de <code>data class</code>:</strong> Una <code>class</code> común no genera automáticamente <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code> ni <code>copy()</code>. Para modelos de datos en Kotlin, especialmente en Compose, se usa <code>data class</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong><code>forEach</code> en lugar de <code>items()</code>:</strong> Dentro de un <code>LazyColumn</code>, el DSL no acepta <code>forEach</code> directamente. Hay que usar la función <code>items(materias) { materia -> ... }</code>, que es la forma lazy de renderizar la lista (no crea todos los ítems a la vez).</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>Comparación redundante con <code>== true</code>:</strong> <code>materia.aprobada</code> ya es <code>Boolean</code>, así que <code>if (materia.aprobada)</code> es suficiente. Escribir <code>== true</code> es un antipatrón aunque no falla en compilación.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="keyword">data class</span> <span class="type">Materia</span>(                    <span class="comment">// A: data class</span>
+    <span class="keyword">val</span> nombre: <span class="type">String</span>,
+    <span class="keyword">val</span> anio: <span class="type">Int</span>,
+    <span class="keyword">val</span> aprobada: <span class="type">Boolean</span>
+)
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">ListaMaterias</span>() {
+    LazyColumn {
+        items(materias) { materia ->    <span class="comment">// B: usar items() del DSL</span>
+            MateriaItem(materia)
+        }
+    }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">MateriaItem</span>(materia: <span class="type">Materia</span>) {
+    Text(<span class="string">"${materia.nombre} - Año ${materia.anio}"</span>)
+    <span class="keyword">if</span> (materia.aprobada)               <span class="comment">// C: sin == true</span>
+        Text(<span class="string">"✔ Aprobada"</span>)
+    <span class="keyword">else</span>
+        Text(<span class="string">"✘ Pendiente"</span>)
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 8: Lista editable — mutableStateListOf (Ej 10) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">8</div>
+      <div>
+        <div class="title">Lista editable de tareas</div>
+        <div class="topic">Ejercicio 10 — mutableStateListOf, agregar, eliminar</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores de estado mutable en colecciones</strong>
+      </div>
+<pre>
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">ListaTareas</span>() {
+    <span class="keyword">val</span> tareas = remember { mutableListOf&lt;<span class="type">String</span>&gt;() }   <span class="comment">// línea A</span>
+    <span class="keyword">var</span> nuevaTarea <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+
+    OutlinedTextField(
+        value = nuevaTarea,
+        onValueChange = { nuevaTarea = it },
+        label = { Text(<span class="string">"Nueva tarea"</span>) }
+    )
+
+    Button(onClick = {
+        tareas.add(nuevaTarea)                             <span class="comment">// línea B</span>
+        nuevaTarea = <span class="string">""</span>
+    }) { Text(<span class="string">"Agregar"</span>) }
+
+    LazyColumn {
+        items(tareas) { tarea ->
+            Row {
+                Text(tarea)
+                Button(onClick = { tareas.remove(tarea) }) {
+                    Text(<span class="string">"X"</span>)
+                }
+            }
+        }
+    }
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol8')">Ver solución</button>
+      <div class="solution" id="sol8">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong><code>mutableListOf</code> en lugar de <code>mutableStateListOf</code>:</strong> Un <code>mutableListOf</code> guardado con <code>remember</code> no notifica a Compose cuando se agrega o quita un elemento. La UI no se actualiza. Debe ser <code>remember { mutableStateListOf&lt;String&gt;() }</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>No se valida que la tarea no esté vacía:</strong> Si el usuario presiona Agregar con el campo vacío, se agrega un String vacío a la lista. El enunciado explícitamente dice "no agregar cadenas vacías". Debe agregarse: <code>if (nuevaTarea.isNotBlank()) { tareas.add(nuevaTarea); nuevaTarea = "" }</code>.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="keyword">val</span> tareas = remember { mutableStateListOf&lt;<span class="type">String</span>&gt;() }  <span class="comment">// A: observable</span>
+
+Button(onClick = {
+    <span class="keyword">if</span> (nuevaTarea.isNotBlank()) {              <span class="comment">// B: no agregar vacíos</span>
+        tareas.add(nuevaTarea)
+        nuevaTarea = <span class="string">""</span>
+    }
+}) { Text(<span class="string">"Agregar"</span>) }
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 9: Código combinado — errores mixtos (repaso global) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">9</div>
+      <div>
+        <div class="title">Desafío: código combinado con errores mixtos</div>
+        <div class="topic">Repaso global Ejs 2–10 — sin pistas</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Este bloque no tiene pistas. Encontrá todos los errores por tu cuenta.</strong>
+        Simulación de examen: código más largo con errores distribuidos. Anotá cada uno antes de revelar.
+      </div>
+<pre>
+<span class="keyword">data class</span> <span class="type">Producto</span>(<span class="keyword">val</span> nombre: <span class="type">String</span>, <span class="keyword">val</span> precio: <span class="type">Double</span>)
+
+<span class="keyword">fun</span> <span class="func">aplicarDescuento</span>(precio: <span class="type">Double</span>, pct: <span class="type">Int</span>): <span class="type">Double</span> {
+    <span class="keyword">return</span> precio - (precio * pct / <span class="number">100</span>)
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PantallaProductos</span>() {
+    <span class="keyword">val</span> productos = remember {
+        mutableStateListOf(
+            Producto(<span class="string">"Libro"</span>, <span class="number">1500.0</span>),
+            Producto(<span class="string">"Lapicera"</span>, <span class="number">200.0</span>)
+        )
+    }
+    <span class="keyword">var</span> descuento <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">var</span> mensaje <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+
+    OutlinedTextField(
+        value = descuento,
+        onValueChange = { descuento = it },
+        label = { Text(<span class="string">"Descuento %"</span>) }
+    )
+
+    Button(onClick = {
+        <span class="keyword">val</span> pct = descuento.toInt()              <span class="comment">// error 1</span>
+        <span class="keyword">val</span> primero = productos[<span class="number">0</span>]
+        mensaje = <span class="string">"Precio con dcto: ${aplicarDescuento(primero.precio, pct)}"</span>
+    }) { Text(<span class="string">"Calcular"</span>) }
+
+    Text(mensaje)
+
+    LazyColumn {
+        productos.forEach { p ->              <span class="comment">// error 2</span>
+            ProductoItem(p)
+        }
+    }
+}
+
+<span class="keyword">fun</span> <span class="func">ProductoItem</span>(p: <span class="type">Producto</span>) {             <span class="comment">// error 3</span>
+    Row(modifier = Modifier.padding(<span class="number">8</span>)) {   <span class="comment">// error 4</span>
+        Text(p.nombre)
+        Text(<span class="string">"$${p.precio}"</span>)
+    }
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol9')">Ver solución</button>
+      <div class="solution" id="sol9">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">1</div>
+            <div class="error-text"><strong><code>toInt()</code> sin manejo de null:</strong> Debe ser <code>toIntOrNull() ?: 0</code>. Si el campo está vacío o tiene letras, la app crashea.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">2</div>
+            <div class="error-text"><strong><code>forEach</code> dentro de <code>LazyColumn</code>:</strong> Debe usarse <code>items(productos) { p -> ProductoItem(p) }</code>. Con <code>forEach</code> Compose no puede reciclar ítems eficientemente.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">3</div>
+            <div class="error-text"><strong>Falta <code>@Composable</code> en <code>ProductoItem</code>:</strong> La función llama a <code>Row</code> y <code>Text</code>, que son composables. Sin la anotación, el compilador no lo permite.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">4</div>
+            <div class="error-text"><strong>Falta <code>.dp</code> en el padding:</strong> <code>Modifier.padding(8)</code> debe ser <code>Modifier.padding(8.dp)</code>.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+Button(onClick = {
+    <span class="keyword">val</span> pct = descuento.toIntOrNull() ?: <span class="number">0</span>  <span class="comment">// 1</span>
+    ...
+}) { Text(<span class="string">"Calcular"</span>) }
+
+LazyColumn {
+    items(productos) { p ->               <span class="comment">// 2</span>
+        ProductoItem(p)
+    }
+}
+
+<span class="annotation">@Composable</span>                              <span class="comment">// 3</span>
+<span class="keyword">fun</span> <span class="func">ProductoItem</span>(p: <span class="type">Producto</span>) {
+    Row(modifier = Modifier.padding(<span class="number">8</span>.dp)) {  <span class="comment">// 4</span>
+        Text(p.nombre)
+        Text(<span class="string">"$${p.precio}"</span>)
+    }
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- RESUMEN: Los 10 errores más frecuentes -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header" style="background:#2e7d32;">
+      <div class="num" style="color:#2e7d32;">✓</div>
+      <div>
+        <div class="title">Top 10 errores más frecuentes en el parcial</div>
+        <div class="topic">Resumen rápido para repasar antes del examen</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:0.8rem; margin-top:0.5rem;">
+
+        <div style="background:#f3e5f5; border-radius:8px; padding:0.8rem; border-left:4px solid #8e24aa;">
+          <strong style="color:#6a1b9a;">1. @composable vs @Composable</strong><br>
+          <small>Kotlin es case-sensitive. La anotación siempre con C mayúscula.</small>
+        </div>
+
+        <div style="background:#e8f5e9; border-radius:8px; padding:0.8rem; border-left:4px solid #388e3c;">
+          <strong style="color:#1b5e20;">2. val vs var en estado</strong><br>
+          <small>Estado mutable necesita <code>var</code> con <code>by remember { mutableStateOf(...) }</code>.</small>
+        </div>
+
+        <div style="background:#fff3e0; border-radius:8px; padding:0.8rem; border-left:4px solid #e65100;">
+          <strong style="color:#bf360c;">3. toInt() crasha — usar toIntOrNull()</strong><br>
+          <small>Siempre manejar el caso null cuando se convierte input del usuario.</small>
+        </div>
+
+        <div style="background:#e3f2fd; border-radius:8px; padding:0.8rem; border-left:4px solid #1565c0;">
+          <strong style="color:#0d47a1;">4. Falta .dp en dimensiones</strong><br>
+          <small><code>padding(16)</code> no compila. Siempre <code>padding(16.dp)</code>.</small>
+        </div>
+
+        <div style="background:#fce4ec; border-radius:8px; padding:0.8rem; border-left:4px solid #c62828;">
+          <strong style="color:#b71c1c;">5. mutableListOf vs mutableStateListOf</strong><br>
+          <small>Solo <code>mutableStateListOf</code> notifica cambios a Compose.</small>
+        </div>
+
+        <div style="background:#e8eaf6; border-radius:8px; padding:0.8rem; border-left:4px solid #3949ab;">
+          <strong style="color:#1a237e;">6. forEach en LazyColumn — usar items()</strong><br>
+          <small>El DSL de LazyColumn requiere <code>items(...)</code>, no lambdas Kotlin directas.</small>
+        </div>
+
+        <div style="background:#f9fbe7; border-radius:8px; padding:0.8rem; border-left:4px solid #827717;">
+          <strong style="color:#558b2f;">7. Falta @Composable en funciones que usan UI</strong><br>
+          <small>Cualquier función que llame a Text, Row, Button, etc. debe ser @Composable.</small>
+        </div>
+
+        <div style="background:#e0f7fa; border-radius:8px; padding:0.8rem; border-left:4px solid #00695c;">
+          <strong style="color:#004d40;">8. String literal en lugar de Text("...")</strong><br>
+          <small>Dentro de un Button, escribir <code>"texto"</code> no hace nada. Debe ser <code>Text("texto")</code>.</small>
+        </div>
+
+        <div style="background:#fafafa; border-radius:8px; padding:0.8rem; border-left:4px solid #424242;">
+          <strong style="color:#212121;">9. when sin rama else (como expresión)</strong><br>
+          <small>Si el when devuelve un valor y el argumento no es sealed/enum, necesita <code>else</code>.</small>
+        </div>
+
+        <div style="background:#fff8e1; border-radius:8px; padding:0.8rem; border-left:4px solid #f57f17;">
+          <strong style="color:#e65100;">10. Tipo incompatible (Int vs String)</strong><br>
+          <small><code>val edad: String = 20</code> no compila. Respetar tipos en declaraciones explícitas.</small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Aplicaciones Distribuidas — UADE 2026 · Práctica de errores en Kotlin & Jetpack Compose
+</footer>
+
+<script>
+function toggleSolution(id) {
+  const el = document.getElementById(id);
+  const btn = el.previousElementSibling;
+  if (el.classList.contains('visible')) {
+    el.classList.remove('visible');
+    btn.textContent = 'Ver solución';
+  } else {
+    el.classList.add('visible');
+    btn.textContent = 'Ocultar solución';
+  }
+}
+</script>
+
+</body>
+</html>
