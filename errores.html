@@ -1090,6 +1090,441 @@ LazyColumn {
     </div>
   </div>
 
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 10: Estado en composable anidado (hoisting) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">10</div>
+      <div>
+        <div class="title">Estado en composable hijo — State Hoisting</div>
+        <div class="topic">Ejercicio 6 y 10 — remember mal ubicado, estado compartido</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores de dónde se ubica el estado</strong>
+        Este código intenta compartir el contador entre dos composables. Tiene errores de arquitectura de estado.
+      </div>
+<pre>
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PantallaContador</span>() {
+    BotonesContador()
+    TextoContador()
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">BotonesContador</span>() {
+    <span class="keyword">var</span> contador <span class="keyword">by</span> remember { mutableStateOf(<span class="number">0</span>) }  <span class="comment">// línea A</span>
+    Button(onClick = { contador++ }) { Text(<span class="string">"+1"</span>) }
+    Button(onClick = { contador-- }) { Text(<span class="string">"-1"</span>) }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">TextoContador</span>() {
+    <span class="keyword">var</span> contador <span class="keyword">by</span> remember { mutableStateOf(<span class="number">0</span>) }  <span class="comment">// línea B</span>
+    Text(<span class="string">"Valor: $contador"</span>)
+}
+</pre>
+      <div class="hint-box"><strong>Pista:</strong> ¿Pueden dos funciones diferentes tener su propio <code>remember</code> y compartir el mismo valor?</div>
+      <button class="reveal-btn" onclick="toggleSolution('sol10')">Ver solución</button>
+      <div class="solution" id="sol10">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Estado definido en el hijo en lugar del padre (falta State Hoisting):</strong> Cada llamada a <code>remember { mutableStateOf(0) }</code> crea una variable <em>independiente</em>. Los botones modifican <em>su</em> contador y el texto muestra <em>otro</em> contador. Siempre valen 0 desde el punto de vista del Text. El estado compartido debe vivir en el composable padre común (<code>PantallaContador</code>) y pasarse como parámetros.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>Segundo <code>remember</code> independiente:</strong> Mismo problema. Aunque cambies el contador en los botones, el Text siempre lee su propio estado local que nunca se modifica. La solución es que <code>TextoContador</code> reciba el valor como parámetro.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido — State Hoisting</div>
+<pre class="correct">
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PantallaContador</span>() {
+    <span class="keyword">var</span> contador <span class="keyword">by</span> remember { mutableStateOf(<span class="number">0</span>) }  <span class="comment">// estado en el padre</span>
+    BotonesContador(
+        onIncrementar = { contador++ },
+        onDecrementar = { contador-- }
+    )
+    TextoContador(valor = contador)           <span class="comment">// se pasa como parámetro</span>
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">BotonesContador</span>(onIncrementar: () -> Unit, onDecrementar: () -> Unit) {
+    Button(onClick = onIncrementar) { Text(<span class="string">"+1"</span>) }
+    Button(onClick = onDecrementar) { Text(<span class="string">"-1"</span>) }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">TextoContador</span>(valor: <span class="type">Int</span>) {
+    Text(<span class="string">"Valor: $valor"</span>)
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 11: Modifier y orden de modificadores (Ej 5) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">11</div>
+      <div>
+        <div class="title">Orden de Modifier y clickable</div>
+        <div class="topic">Ejercicio 5 — Modifier encadenado, orden importa</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores de Modifier y eventos</strong>
+      </div>
+<pre>
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">TarjetaClickeable</span>() {
+    Box(
+        modifier = Modifier
+            .clickable { Log.d(<span class="string">"TAG"</span>, <span class="string">"click"</span>) }
+            .padding(<span class="number">16</span>.dp)
+            .background(Color.LightGray)    <span class="comment">// línea A</span>
+            .size(<span class="number">100</span>.dp)
+    ) {
+        Text(<span class="string">"Tocame"</span>)
+    }
+
+    Spacer(modifier = Modifier.height(<span class="number">8</span>)) <span class="comment">// línea B</span>
+
+    Text(
+        text = <span class="string">"Descripción"</span>,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        fontSize = <span class="number">16</span>                       <span class="comment">// línea C</span>
+    )
+}
+</pre>
+      <div class="hint-box"><strong>Pista:</strong> hay 3 errores: uno de unidades, uno de unidades de texto, y uno sutil de orden en el Modifier.</div>
+      <button class="reveal-btn" onclick="toggleSolution('sol11')">Ver solución</button>
+      <div class="solution" id="sol11">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>Orden de <code>background</code> y <code>padding</code> incorrecto:</strong> Con <code>.padding(16.dp).background(...)</code>, el fondo se aplica <em>después</em> del padding, por lo que el área de padding queda sin color. Si querés que el fondo cubra todo el área incluyendo el padding, el orden debe ser <code>.background(...).padding(16.dp)</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>Falta <code>.dp</code> en <code>Spacer</code>:</strong> <code>Modifier.height(8)</code> no compila. Debe ser <code>Modifier.height(8.dp)</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">C</div>
+            <div class="error-text"><strong>Falta unidad en <code>fontSize</code>:</strong> <code>fontSize = 16</code> no compila. El tipo esperado es <code>TextUnit</code>. Debe ser <code>fontSize = 16.sp</code>.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+Box(
+    modifier = Modifier
+        .clickable { Log.d(<span class="string">"TAG"</span>, <span class="string">"click"</span>) }
+        .background(Color.LightGray)    <span class="comment">// A: background antes del padding</span>
+        .padding(<span class="number">16</span>.dp)
+        .size(<span class="number">100</span>.dp)
+) {
+    Text(<span class="string">"Tocame"</span>)
+}
+
+Spacer(modifier = Modifier.height(<span class="number">8</span>.dp))  <span class="comment">// B: .dp</span>
+
+Text(
+    text = <span class="string">"Descripción"</span>,
+    modifier = Modifier.fillMaxWidth(),
+    textAlign = TextAlign.Center,
+    fontSize = <span class="number">16</span>.sp                        <span class="comment">// C: .sp para texto</span>
+)
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 12: when exhaustivo + LazyColumn key (Ejs 8–9) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header">
+      <div class="num">12</div>
+      <div>
+        <div class="title">when exhaustivo y key en LazyColumn</div>
+        <div class="topic">Ejercicio 8 y 9 — when, items con key, recomposición eficiente</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Encontrá los errores de lógica y performance</strong>
+      </div>
+<pre>
+<span class="keyword">enum class</span> <span class="type">Operacion</span> { SUMAR, RESTAR, MULTIPLICAR }
+
+<span class="keyword">fun</span> <span class="func">calcular</span>(a: <span class="type">Double</span>, b: <span class="type">Double</span>, op: <span class="type">Operacion</span>): <span class="type">Double</span> {
+    <span class="keyword">return</span> <span class="keyword">when</span> (op) {
+        Operacion.SUMAR      -> a + b
+        Operacion.RESTAR     -> a - b
+        <span class="comment">// falta MULTIPLICAR     // línea A</span>
+    }
+}
+
+<span class="keyword">data class</span> <span class="type">Tarea</span>(<span class="keyword">val</span> id: <span class="type">Int</span>, <span class="keyword">val</span> texto: <span class="type">String</span>)
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">ListaTareas</span>(tareas: List&lt;<span class="type">Tarea</span>&gt;) {
+    LazyColumn {
+        items(tareas) { tarea ->           <span class="comment">// línea B</span>
+            Text(tarea.texto)
+        }
+    }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PantallaPrincipal</span>() {
+    <span class="keyword">val</span> tareas = remember {
+        mutableStateListOf(
+            Tarea(<span class="number">1</span>, <span class="string">"Estudiar Compose"</span>),
+            Tarea(<span class="number">2</span>, <span class="string">"Hacer ejercicios"</span>)
+        )
+    }
+    ListaTareas(tareas = tareas)
+    Button(onClick = { tareas.removeAt(<span class="number">0</span>) }) {
+        Text(<span class="string">"Eliminar primera"</span>)
+    }
+}
+</pre>
+      <div class="hint-box"><strong>Pista:</strong> El when sobre un enum SÍ necesita cubrir todos los casos (o poner else). El segundo error es de buenas prácticas de performance en LazyColumn.</div>
+      <button class="reveal-btn" onclick="toggleSolution('sol12')">Ver solución</button>
+      <div class="solution" id="sol12">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">A</div>
+            <div class="error-text"><strong>when sobre enum incompleto:</strong> Aunque el when sobre un enum puede ser exhaustivo sin <code>else</code>, <em>solo si cubris todos los casos</em>. Acá falta <code>Operacion.MULTIPLICAR -> a * b</code>. El compilador rechaza el código porque no es exhaustivo.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">B</div>
+            <div class="error-text"><strong>Falta <code>key</code> en <code>items()</code>:</strong> Cuando se eliminan o reordenan ítems, Compose sin <code>key</code> no puede identificar cuál elemento cambió y recompone toda la lista innecesariamente. Con una <code>data class</code> que tiene id, lo correcto es <code>items(tareas, key = { it.id }) { ... }</code>. No es un error de compilación, pero sí un error de performance importante que el profe suele marcar.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido</div>
+<pre class="correct">
+<span class="keyword">fun</span> <span class="func">calcular</span>(a: <span class="type">Double</span>, b: <span class="type">Double</span>, op: <span class="type">Operacion</span>): <span class="type">Double</span> {
+    <span class="keyword">return</span> <span class="keyword">when</span> (op) {
+        Operacion.SUMAR       -> a + b
+        Operacion.RESTAR      -> a - b
+        Operacion.MULTIPLICAR -> a * b    <span class="comment">// A: cubrir todos los casos</span>
+    }
+}
+
+LazyColumn {
+    items(tareas, key = { it.id }) { tarea ->  <span class="comment">// B: key para identificar ítems</span>
+        Text(tarea.texto)
+    }
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- BLOQUE 13: Desafío final — 10 errores en un solo bloque -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="exercise-card">
+    <div class="card-header" style="background:#4a148c;">
+      <div class="num" style="color:#4a148c;">★</div>
+      <div>
+        <div class="title">Desafío Final — Encontrá los 10 errores</div>
+        <div class="topic">Simulación completa de parcial — sin categorías, sin pistas</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="instructions">
+        <strong>🎯 Código completo con exactamente 10 errores. Encontralos todos antes de revelar.</strong>
+        Anotá cada error con: línea, qué está mal y cómo lo corregirías.
+      </div>
+<pre>
+<span class="keyword">import</span> androidx.compose.runtime.*
+<span class="keyword">import</span> androidx.compose.foundation.layout.*
+<span class="keyword">import</span> androidx.compose.ui.unit.dp
+
+<span class="keyword">data class</span> <span class="type">Alumno</span>(<span class="keyword">val</span> legajo: <span class="type">Int</span>, <span class="keyword">val</span> nombre: <span class="type">String</span>, <span class="keyword">val</span> promedio: <span class="type">Double</span>)
+
+<span class="keyword">fun</span> <span class="func">categoria</span>(promedio: <span class="type">Double</span>): <span class="type">String</span> {
+    <span class="keyword">return</span> <span class="keyword">when</span> {
+        promedio >= <span class="number">9.0</span>  -> <span class="string">"Distinguido"</span>
+        promedio >= <span class="number">7.0</span>  -> <span class="string">"Bueno"</span>
+        promedio >= <span class="number">4.0</span>  -> <span class="string">"Aprobado"</span>
+                         <span class="comment">// error 1: falta else</span>
+    }
+}
+
+<span class="annotation">@composable</span>                               <span class="comment">// error 2</span>
+<span class="keyword">fun</span> <span class="func">FilaAlumno</span>(alumno: <span class="type">Alumno</span>) {
+    Row(modifier = Modifier.padding(<span class="number">12</span>)) { <span class="comment">// error 3</span>
+        Text(<span class="string">"${alumno.legajo}"</span>)
+        Text(alumno.nombre)
+        Text(<span class="string">"${alumno.promedio}"</span>)
+    }
+}
+
+<span class="annotation">@Composable</span>
+<span class="keyword">fun</span> <span class="func">PantallaAlumnos</span>() {
+    <span class="keyword">val</span> alumnos = remember {
+        mutableListOf(                     <span class="comment">// error 4</span>
+            Alumno(<span class="number">101</span>, <span class="string">"Ana"</span>, <span class="number">9.5</span>),
+            Alumno(<span class="number">102</span>, <span class="string">"Luis"</span>, <span class="number">7.2</span>),
+            Alumno(<span class="number">103</span>, <span class="string">"Carla"</span>, <span class="number">5.8</span>)
+        )
+    }
+    <span class="keyword">var</span> busqueda <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">var</span> nuevaNota = <span class="string">""</span>                       <span class="comment">// error 5</span>
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(<span class="number">16</span>.dp)
+    ) {
+        OutlinedTextField(
+            value = busqueda,
+            onValueChange = { busqueda = it },
+            label = { <span class="string">"Buscar alumno"</span> }      <span class="comment">// error 6</span>
+        )
+
+        OutlinedTextField(
+            value = nuevaNota,
+            onValueChange = { nuevaNota = it },  <span class="comment">// error 7</span>
+            label = { Text(<span class="string">"Nueva nota"</span>) }
+        )
+
+        Button(onClick = {
+            <span class="keyword">val</span> nota = nuevaNota.toDouble()   <span class="comment">// error 8</span>
+            alumnos.add(Alumno(<span class="number">104</span>, <span class="string">"Nuevo"</span>, nota))
+        }) { Text(<span class="string">"Agregar"</span>) }
+
+        LazyColumn {
+            alumnos.forEach { a ->           <span class="comment">// error 9</span>
+                FilaAlumno(a)
+            }
+        }
+
+        <span class="keyword">val</span> filtrados = alumnos.filter {
+            it.nombre.contains(busqueda)     <span class="comment">// error 10</span>
+        }
+        Text(<span class="string">"Encontrados: ${filtrados.size}"</span>)
+    }
+}
+</pre>
+      <button class="reveal-btn" onclick="toggleSolution('sol13')">Ver los 10 errores</button>
+      <div class="solution" id="sol13">
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-num">1</div>
+            <div class="error-text"><strong>Falta rama <code>else</code> en <code>when</code> usado como expresión:</strong> El <code>when</code> no cubre el caso <code>promedio &lt; 4.0</code>. Como devuelve un valor, el compilador exige ser exhaustivo. Agregar <code>else -> "Desaprobado"</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">2</div>
+            <div class="error-text"><strong><code>@composable</code> en minúscula:</strong> Debe ser <code>@Composable</code>. Kotlin es case-sensitive.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">3</div>
+            <div class="error-text"><strong>Falta <code>.dp</code> en <code>padding(12)</code>:</strong> Debe ser <code>padding(12.dp)</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">4</div>
+            <div class="error-text"><strong><code>mutableListOf</code> en lugar de <code>mutableStateListOf</code>:</strong> Agregar alumnos no dispara recomposición. Debe ser <code>mutableStateListOf(...)</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">5</div>
+            <div class="error-text"><strong><code>var nuevaNota = ""</code> sin <code>remember</code> ni <code>mutableStateOf</code>:</strong> Es una variable local que se reinicia en cada recomposición. Debe ser <code>var nuevaNota by remember { mutableStateOf("") }</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">6</div>
+            <div class="error-text"><strong>String literal en lugar de <code>Text()</code> en el <code>label</code>:</strong> <code>label = { "Buscar alumno" }</code> no renderiza nada visible. Debe ser <code>label = { Text("Buscar alumno") }</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">7</div>
+            <div class="error-text"><strong><code>nuevaNota = it</code> falla porque es una variable local:</strong> Consecuencia del error 5. Una vez declarado correctamente con <code>by remember { mutableStateOf(...) }</code>, el <code>onValueChange = { nuevaNota = it }</code> funcionará bien.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">8</div>
+            <div class="error-text"><strong><code>toDouble()</code> sin manejo de null:</strong> Si el campo está vacío o contiene texto, lanza excepción. Debe ser <code>toDoubleOrNull() ?: 0.0</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">9</div>
+            <div class="error-text"><strong><code>forEach</code> dentro de <code>LazyColumn</code>:</strong> Debe usarse <code>items(alumnos, key = { it.legajo }) { a -> FilaAlumno(a) }</code>.</div>
+          </div>
+          <div class="error-item">
+            <div class="error-num">10</div>
+            <div class="error-text"><strong>Búsqueda case-sensitive:</strong> <code>contains(busqueda)</code> distingue mayúsculas y minúsculas. Buscar "ana" no encuentra "Ana". Debe ser <code>contains(busqueda, ignoreCase = true)</code>.</div>
+          </div>
+        </div>
+        <div class="correct-code">
+          <div class="correct-label">✔ Código corregido — resumen de cambios</div>
+<pre class="correct">
+<span class="keyword">fun</span> <span class="func">categoria</span>(promedio: <span class="type">Double</span>): <span class="type">String</span> {
+    <span class="keyword">return</span> <span class="keyword">when</span> {
+        promedio >= <span class="number">9.0</span> -> <span class="string">"Distinguido"</span>
+        promedio >= <span class="number">7.0</span> -> <span class="string">"Bueno"</span>
+        promedio >= <span class="number">4.0</span> -> <span class="string">"Aprobado"</span>
+        <span class="keyword">else</span>            -> <span class="string">"Desaprobado"</span>   <span class="comment">// 1</span>
+    }
+}
+
+<span class="annotation">@Composable</span>                                  <span class="comment">// 2</span>
+<span class="keyword">fun</span> <span class="func">FilaAlumno</span>(alumno: <span class="type">Alumno</span>) {
+    Row(modifier = Modifier.padding(<span class="number">12</span>.dp)) { <span class="comment">// 3</span>
+        ...
+    }
+}
+
+<span class="keyword">val</span> alumnos = remember {
+    mutableStateListOf(...)                  <span class="comment">// 4</span>
+}
+<span class="keyword">var</span> nuevaNota <span class="keyword">by</span> remember { mutableStateOf(<span class="string">""</span>) }  <span class="comment">// 5</span>
+
+OutlinedTextField(
+    ...
+    label = { Text(<span class="string">"Buscar alumno"</span>) }         <span class="comment">// 6</span>
+)
+
+OutlinedTextField(
+    value = nuevaNota,
+    onValueChange = { nuevaNota = it },      <span class="comment">// 7: ok tras fix 5</span>
+    ...
+)
+
+<span class="keyword">val</span> nota = nuevaNota.toDoubleOrNull() ?: <span class="number">0.0</span>  <span class="comment">// 8</span>
+
+LazyColumn {
+    items(alumnos, key = { it.legajo }) { a ->  <span class="comment">// 9</span>
+        FilaAlumno(a)
+    }
+}
+
+<span class="keyword">val</span> filtrados = alumnos.filter {
+    it.nombre.contains(busqueda, ignoreCase = <span class="keyword">true</span>)  <span class="comment">// 10</span>
+}
+</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </div><!-- /container -->
 
 <footer>
