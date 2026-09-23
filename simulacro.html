@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro de Parcial — AppDist UADE</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+header {
+  background: linear-gradient(135deg, #1a237e, #283593);
+  color: white; padding: 2rem 1.5rem 1.5rem; text-align: center;
+}
+header h1 { font-size: 1.6rem; margin-bottom: 0.3rem; }
+header p { opacity: 0.85; font-size: 0.9rem; }
+.badges { margin-top: 0.6rem; display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+.badge {
+  display: inline-block; border-radius: 20px; padding: 2px 12px;
+  font-size: 0.78rem; font-weight: 600;
+}
+.b-mc  { background: #1565c0; color: white; }
+.b-teo { background: #2e7d32; color: white; }
+.b-cod { background: #b71c1c; color: white; }
+
+.nav-bar { background: #283593; padding: 0.6rem 1rem; text-align: center; font-size: 0.85rem; }
+.nav-bar a { color: #90caf9; text-decoration: none; margin: 0 0.5rem; }
+.nav-bar a:hover { color: white; }
+
+/* Score header */
+.score-panel {
+  background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  padding: 1rem 1.4rem; margin: 1.5rem auto; max-width: 960px;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  flex-wrap: wrap;
+}
+.score-panel h3 { font-size: 0.95rem; color: #1a237e; }
+.score-panel p { font-size: 0.82rem; color: #666; margin-top: 2px; }
+.reset-btn {
+  background: #ef5350; color: white; border: none; padding: 0.45rem 1.1rem;
+  border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+  white-space: nowrap;
+}
+.reset-btn:hover { background: #c62828; }
+
+.progress-bar-wrap { width: 100%; background: #e0e0e0; border-radius: 10px; height: 8px; margin-top: 6px; }
+.progress-bar { height: 8px; border-radius: 10px; background: #1a237e; transition: width 0.4s; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 0 1rem 3rem; }
+
+/* Section headers */
+.section-title-bar {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 1rem 1.4rem; border-radius: 12px 12px 0 0; color: white; margin-top: 2rem;
+}
+.section-title-bar h2 { font-size: 1.05rem; }
+.section-title-bar p  { font-size: 0.8rem; opacity: 0.85; }
+
+/* Multiple choice */
+.mc-card {
+  background: white; border-radius: 0 0 12px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 0.5rem; overflow: hidden;
+}
+.mc-card + .mc-card { border-radius: 12px; margin-top: 0.5rem; }
+
+.question-block { padding: 1.2rem 1.4rem; }
+.question-text { font-size: 0.92rem; font-weight: 600; color: #1a1a2e; margin-bottom: 1rem; line-height: 1.5; }
+.question-num { color: #1a237e; margin-right: 4px; }
+
+.options { display: flex; flex-direction: column; gap: 0.5rem; }
+.option {
+  display: flex; align-items: flex-start; gap: 0.7rem;
+  padding: 0.6rem 0.9rem; border-radius: 8px; border: 2px solid #e0e0e0;
+  cursor: pointer; transition: all 0.15s; font-size: 0.88rem; line-height: 1.5;
+  background: #fafafa; user-select: none;
+}
+.option:hover:not(.locked) { border-color: #7986cb; background: #f3f4ff; }
+.option .opt-letter {
+  font-weight: bold; color: #1a237e; min-width: 20px; font-size: 0.85rem; flex-shrink: 0;
+}
+.option.selected { border-color: #1a237e; background: #e8eaf6; }
+.option.correct  { border-color: #2e7d32; background: #e8f5e9; }
+.option.wrong    { border-color: #c62828; background: #ffebee; }
+.option.reveal-correct { border-color: #2e7d32; background: #e8f5e9; }
+
+.feedback {
+  display: none; margin-top: 0.8rem; padding: 0.65rem 0.9rem;
+  border-radius: 8px; font-size: 0.86rem; line-height: 1.5;
+}
+.feedback.show { display: block; }
+.feedback.ok  { background: #e8f5e9; color: #1b5e20; border-left: 3px solid #2e7d32; }
+.feedback.bad { background: #ffebee; color: #b71c1c; border-left: 3px solid #c62828; }
+
+/* Teoricas abiertas */
+.open-card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-top: 0.5rem; overflow: hidden;
+}
+.open-card + .open-card { margin-top: 0.8rem; }
+.open-q { padding: 1.1rem 1.4rem; border-bottom: 2px solid #f0f0f0; }
+.open-q .q-text { font-size: 0.92rem; font-weight: 600; line-height: 1.5; }
+.open-q .q-points { font-size: 0.78rem; color: #888; margin-top: 3px; }
+.reveal-answer-btn {
+  background: #1a237e; color: white; border: none; padding: 0.45rem 1.1rem;
+  border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+  margin: 0.9rem 1.4rem 0; transition: background 0.2s;
+}
+.reveal-answer-btn:hover { background: #283593; }
+.answer-body {
+  display: none; padding: 1rem 1.4rem 1.2rem;
+  border-top: 2px solid #e8eaf6; background: #f8f9ff;
+}
+.answer-body.show { display: block; }
+.answer-body p { font-size: 0.88rem; line-height: 1.7; color: #333; margin-bottom: 0.6rem; }
+.answer-body p:last-child { margin: 0; }
+.answer-body strong { color: #1a237e; }
+.answer-body code {
+  background: #e8eaf6; padding: 1px 5px; border-radius: 3px;
+  font-family: monospace; font-size: 0.83rem;
+}
+
+/* Código con errores */
+.code-card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-top: 0.5rem; overflow: hidden;
+}
+.code-card + .code-card { margin-top: 0.8rem; }
+.code-header {
+  background: #1a237e; color: white; padding: 0.9rem 1.2rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap;
+}
+.code-header .title { font-size: 0.95rem; font-weight: 600; }
+.code-header .subtitle { font-size: 0.78rem; opacity: 0.8; }
+.errors-badge {
+  background: #ef5350; color: white; border-radius: 12px;
+  padding: 2px 10px; font-size: 0.75rem; font-weight: bold; white-space: nowrap;
+}
+.code-body { padding: 1.1rem 1.2rem; }
+
+pre {
+  background: #1e1e2e; color: #cdd6f4; border-radius: 8px;
+  padding: 1rem 1.2rem; overflow-x: auto;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.82rem; line-height: 1.65; margin: 0.6rem 0;
+}
+.kw  { color: #cba6f7; }
+.str { color: #a6e3a1; }
+.ann { color: #fab387; }
+.cm  { color: #6c7086; font-style: italic; }
+.num { color: #fab387; }
+.tp  { color: #89dceb; }
+.fn  { color: #89b4fa; }
+.err { color: #f38ba8; background: rgba(243,139,168,.1); display: block; }
+.fix { color: #a6e3a1; background: rgba(166,227,161,.08); display: block; }
+
+.reveal-errors-btn {
+  background: #b71c1c; color: white; border: none; padding: 0.5rem 1.2rem;
+  border-radius: 8px; cursor: pointer; font-size: 0.83rem; font-weight: 600;
+  margin-top: 0.5rem; transition: background 0.2s;
+}
+.reveal-errors-btn:hover { background: #7f0000; }
+
+.errors-list { display: none; margin-top: 1rem; }
+.errors-list.show { display: block; }
+.error-item {
+  display: flex; gap: 0.7rem; padding: 0.7rem 0;
+  border-bottom: 1px solid #f0f0f0; font-size: 0.87rem; line-height: 1.5;
+}
+.error-item:last-child { border: none; }
+.error-num {
+  background: #ef5350; color: white; font-weight: bold; font-size: 0.75rem;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+}
+.error-item .etxt strong { color: #b71c1c; }
+.error-item .etxt code {
+  background: #f5e6d3; padding: 1px 5px; border-radius: 3px;
+  font-family: monospace; font-size: 0.8rem;
+}
+.fix-label { font-size: 0.74rem; font-weight: bold; color: #2e7d32; text-transform: uppercase; letter-spacing: 0.4px; margin: 0.6rem 0 0.2rem; }
+pre.fix-pre { background: #1b2820; border: 1px solid #2e7d32; }
+
+footer { text-align: center; padding: 1.5rem; font-size: 0.82rem; color: #666; border-top: 1px solid #ddd; margin-top: 2rem; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.2rem; }
+  pre { font-size: 0.77rem; }
+  .score-panel { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📝 Simulacro de Parcial</h1>
+  <p>Aplicaciones Distribuidas · Android · Kotlin · Jetpack Compose · UADE 2026</p>
+  <div class="badges">
+    <span class="badge b-mc">Parte 1 · Multiple Choice</span>
+    <span class="badge b-teo">Parte 2 · Preguntas Teóricas</span>
+    <span class="badge b-cod">Parte 3 · Errores de Código</span>
+  </div>
+</header>
+<div class="nav-bar">
+  <a href="index.html">← Portal</a>
+  <a href="teoria.html">Teoría</a>
+  <a href="parcial.html">Parcial 1</a>
+  <a href="parcial2.html">Parcial Práctico</a>
+  <a href="errores.html">Práctica de errores</a>
+</div>
+
+<div class="score-panel" id="scorePanel">
+  <div>
+    <h3>Progreso — Parte 1 (Multiple Choice)</h3>
+    <p id="scoreText">Respondé las preguntas para ver tu puntaje</p>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">↺ Reiniciar</button>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════
+     PARTE 1 — MULTIPLE CHOICE
+═══════════════════════════════════════════════════════════ -->
+<div class="section-title-bar" style="background: linear-gradient(90deg,#1565c0,#1a237e);">
+  <div>
+    <h2>Parte 1 — Multiple Choice</h2>
+    <p>Seleccioná la opción correcta. Inmediatamente verás si acertaste.</p>
+  </div>
+</div>
+
+<div class="mc-card">
+
+  <!-- P1 -->
+  <div class="question-block" id="q1">
+    <div class="question-text"><span class="question-num">1.</span> ¿Cuál es la diferencia principal entre un AVD y el emulador de Android?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q1','a')"><span class="opt-letter">A</span> Son exactamente lo mismo; AVD es solo la abreviatura de "emulador".</div>
+      <div class="option" onclick="answer(this,'q1','b')"><span class="opt-letter">B</span> El AVD es la <em>configuración</em> del dispositivo virtual (modelo, API level, RAM), mientras que el emulador es el <em>programa</em> que ejecuta esa configuración.</div>
+      <div class="option" onclick="answer(this,'q1','c')"><span class="opt-letter">C</span> El AVD es un dispositivo físico conectado por USB, el emulador es virtual.</div>
+      <div class="option" onclick="answer(this,'q1','d')"><span class="opt-letter">D</span> El emulador solo funciona en macOS; en Windows se usa el AVD directamente.</div>
+    </div>
+    <div class="feedback" id="f1"></div>
+  </div>
+
+  <!-- P2 -->
+  <div class="question-block" id="q2" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">2.</span> ¿Qué hace el compilador de Kotlin cuando encuentra la anotación <code>@Composable</code> en una función?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q2','a')"><span class="opt-letter">A</span> La convierte en una clase que extiende <code>View</code>, igual que en el sistema de Views.</div>
+      <div class="option" onclick="answer(this,'q2','b')"><span class="opt-letter">B</span> La marca como obsoleta para que el IDE la resalte en amarillo.</div>
+      <div class="option" onclick="answer(this,'q2','c')"><span class="opt-letter">C</span> Inyecta un parámetro especial <code>Composer</code> (invisible en el código) que permite rastrear el árbol de composición y detectar cambios de estado para recomposición eficiente.</div>
+      <div class="option" onclick="answer(this,'q2','d')"><span class="opt-letter">D</span> Le agrega un return type <code>View</code> automáticamente.</div>
+    </div>
+    <div class="feedback" id="f2"></div>
+  </div>
+
+  <!-- P3 -->
+  <div class="question-block" id="q3" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">3.</span> En el modelo declarativo de Jetpack Compose, ¿cómo se actualiza la interfaz cuando cambia el estado?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q3','a')"><span class="opt-letter">A</span> El desarrollador llama manualmente a <code>invalidate()</code> para forzar el redibujado.</div>
+      <div class="option" onclick="answer(this,'q3','b')"><span class="opt-letter">B</span> Compose re-ejecuta automáticamente las funciones <code>@Composable</code> que leen el estado que cambió (<strong>recomposición</strong>), sin intervención manual del programador.</div>
+      <div class="option" onclick="answer(this,'q3','c')"><span class="opt-letter">C</span> La Activity se destruye y se vuelve a crear desde cero.</div>
+      <div class="option" onclick="answer(this,'q3','d')"><span class="opt-letter">D</span> El desarrollador actualiza el XML del layout y llama a <code>setContentView()</code> nuevamente.</div>
+    </div>
+    <div class="feedback" id="f3"></div>
+  </div>
+
+  <!-- P4 -->
+  <div class="question-block" id="q4" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">4.</span> ¿Qué resultado produce este código en Kotlin?
+<br><code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:0.88rem;">val a: Int = 3; val b: Int = 10; val r = (a / b) * 100</code></div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q4','a')"><span class="opt-letter">A</span> <code>30</code></div>
+      <div class="option" onclick="answer(this,'q4','b')"><span class="opt-letter">B</span> <code>0</code> — porque la división entera de 3/10 es 0, y 0×100 = 0.</div>
+      <div class="option" onclick="answer(this,'q4','c')"><span class="opt-letter">C</span> <code>0.3</code></div>
+      <div class="option" onclick="answer(this,'q4','d')"><span class="opt-letter">D</span> Error de compilación porque no se puede dividir dos <code>Int</code>.</div>
+    </div>
+    <div class="feedback" id="f4"></div>
+  </div>
+
+  <!-- P5 -->
+  <div class="question-block" id="q5" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">5.</span> ¿Qué diferencia hay entre <code>mutableListOf()</code> y <code>mutableStateListOf()</code> en Jetpack Compose?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q5','a')"><span class="opt-letter">A</span> <code>mutableListOf</code> es más rápido; <code>mutableStateListOf</code> es solo para listas grandes.</div>
+      <div class="option" onclick="answer(this,'q5','b')"><span class="opt-letter">B</span> Son idénticos; la elección es solo de estilo.</div>
+      <div class="option" onclick="answer(this,'q5','c')"><span class="opt-letter">C</span> <code>mutableStateListOf</code> notifica a Compose cuando se agrega o elimina un elemento, disparando recomposición. <code>mutableListOf</code> no lo hace y la UI no se actualiza.</div>
+      <div class="option" onclick="answer(this,'q5','d')"><span class="opt-letter">D</span> <code>mutableStateListOf</code> solo puede contener objetos <code>data class</code>.</div>
+    </div>
+    <div class="feedback" id="f5"></div>
+  </div>
+
+  <!-- P6 -->
+  <div class="question-block" id="q6" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">6.</span> El Android SDK es:</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q6','a')"><span class="opt-letter">A</span> Solo el compilador de Kotlin para Android.</div>
+      <div class="option" onclick="answer(this,'q6','b')"><span class="opt-letter">B</span> El IDE de desarrollo (lo que descargás de developer.android.com).</div>
+      <div class="option" onclick="answer(this,'q6','c')"><span class="opt-letter">C</span> El conjunto completo de herramientas, librerías, APIs del sistema, compiladores e imágenes de sistema que permiten construir apps Android.</div>
+      <div class="option" onclick="answer(this,'q6','d')"><span class="opt-letter">D</span> El emulador de Android incluido en Android Studio.</div>
+    </div>
+    <div class="feedback" id="f6"></div>
+  </div>
+
+  <!-- P7 -->
+  <div class="question-block" id="q7" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">7.</span> ¿Por qué se recomienda que las funciones <code>@Composable</code> sean pequeñas y con responsabilidad única?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q7','a')"><span class="opt-letter">A</span> Porque Compose tiene un límite de 50 líneas por función.</div>
+      <div class="option" onclick="answer(this,'q7','b')"><span class="opt-letter">B</span> Para evitar recomposiciones innecesarias (solo se re-ejecutan las funciones afectadas), mejorar legibilidad, facilitar reutilización y poder hacer Preview de partes aisladas.</div>
+      <div class="option" onclick="answer(this,'q7','c')"><span class="opt-letter">C</span> Porque las funciones grandes no compilan en Kotlin.</div>
+      <div class="option" onclick="answer(this,'q7','d')"><span class="opt-letter">D</span> Solo por convención de estilo; no hay beneficio técnico real.</div>
+    </div>
+    <div class="feedback" id="f7"></div>
+  </div>
+
+  <!-- P8 -->
+  <div class="question-block" id="q8" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">8.</span> En un <code>when</code> de Kotlin usado como expresión, ¿cuándo es obligatoria la rama <code>else</code>?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q8','a')"><span class="opt-letter">A</span> Siempre, independientemente del tipo del argumento.</div>
+      <div class="option" onclick="answer(this,'q8','b')"><span class="opt-letter">B</span> Cuando el argumento es de un tipo que no puede cubrir todos los casos estáticamente (como <code>Int</code>, <code>String</code>). Si el argumento es un <code>enum</code> o <code>sealed class</code> y se cubren todos los casos, no es obligatoria.</div>
+      <div class="option" onclick="answer(this,'q8','c')"><span class="opt-letter">C</span> Nunca; Kotlin infiere un valor por defecto automáticamente.</div>
+      <div class="option" onclick="answer(this,'q8','d')"><span class="opt-letter">D</span> Solo cuando el <code>when</code> está dentro de un <code>@Composable</code>.</div>
+    </div>
+    <div class="feedback" id="f8"></div>
+  </div>
+
+  <!-- P9 -->
+  <div class="question-block" id="q9" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">9.</span> ¿Qué ocurre si usás <code>var busqueda = ""</code> (sin <code>remember</code>) como estado de un <code>OutlinedTextField</code> en Compose?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q9','a')"><span class="opt-letter">A</span> Funciona normalmente; <code>remember</code> es solo una optimización opcional.</div>
+      <div class="option" onclick="answer(this,'q9','b')"><span class="opt-letter">B</span> La variable se reinicia a <code>""</code> en cada recomposición y Compose no sabe que debe redibujar el TextField, por lo que el texto del usuario nunca aparece en pantalla.</div>
+      <div class="option" onclick="answer(this,'q9','c')"><span class="opt-letter">C</span> La app no compila porque los <code>TextField</code> requieren estado <code>remember</code> obligatoriamente.</div>
+      <div class="option" onclick="answer(this,'q9','d')"><span class="opt-letter">D</span> Solo falla en modo Release, no en Debug.</div>
+    </div>
+    <div class="feedback" id="f9"></div>
+  </div>
+
+  <!-- P10 -->
+  <div class="question-block" id="q10" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">10.</span> En la arquitectura recomendada para apps Android con Compose, ¿qué responsabilidad tiene la <strong>capa de datos</strong>?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q10','a')"><span class="opt-letter">A</span> Mostrar los datos en la UI y capturar eventos del usuario.</div>
+      <div class="option" onclick="answer(this,'q10','b')"><span class="opt-letter">B</span> Calcular porcentajes, filtrar listas y aplicar reglas de negocio.</div>
+      <div class="option" onclick="answer(this,'q10','c')"><span class="opt-letter">C</span> Proveer los datos (desde BD, API, archivos, etc.) sin saber nada de la UI ni de la lógica.</div>
+      <div class="option" onclick="answer(this,'q10','d')"><span class="opt-letter">D</span> Gestionar la navegación entre pantallas.</div>
+    </div>
+    <div class="feedback" id="f10"></div>
+  </div>
+
+  <!-- P11 -->
+  <div class="question-block" id="q11" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">11.</span> En Jetpack Compose, ¿en qué se diferencia el modelo declarativo del imperativo respecto a cómo se actualiza la UI?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q11','a')"><span class="opt-letter">A</span> En el declarativo, el programador llama <code>textView.setText()</code> cada vez que cambia el dato.</div>
+      <div class="option" onclick="answer(this,'q11','b')"><span class="opt-letter">B</span> En el declarativo, la UI es función del estado: <code>UI = f(estado)</code>. El programador describe <em>qué</em> mostrar, no <em>cómo</em> actualizar. Compose redibuja automáticamente cuando el estado cambia.</div>
+      <div class="option" onclick="answer(this,'q11','c')"><span class="opt-letter">C</span> No hay diferencia real; son dos sintaxis para lo mismo.</div>
+      <div class="option" onclick="answer(this,'q11','d')"><span class="opt-letter">D</span> En el declarativo se usa XML; en el imperativo se usa Kotlin.</div>
+    </div>
+    <div class="feedback" id="f11"></div>
+  </div>
+
+  <!-- P12 -->
+  <div class="question-block" id="q12" style="border-top:1px solid #f0f0f0">
+    <div class="question-text"><span class="question-num">12.</span> ¿Qué hace <code>toIntOrNull()</code> cuando la cadena no es un número entero válido?</div>
+    <div class="options">
+      <div class="option" onclick="answer(this,'q12','a')"><span class="opt-letter">A</span> Lanza una <code>NumberFormatException</code> igual que <code>toInt()</code>.</div>
+      <div class="option" onclick="answer(this,'q12','b')"><span class="opt-letter">B</span> Devuelve <code>0</code> como valor por defecto.</div>
+      <div class="option" onclick="answer(this,'q12','c')"><span class="opt-letter">C</span> Devuelve <code>null</code>, permitiendo al desarrollador manejar el caso inválido sin un crash.</div>
+      <div class="option" onclick="answer(this,'q12','d')"><span class="opt-letter">D</span> Convierte el texto a <code>Double</code> como alternativa.</div>
+    </div>
+    <div class="feedback" id="f12"></div>
+  </div>
+
+</div><!-- /mc-card -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PARTE 2 — PREGUNTAS TEÓRICAS ABIERTAS
+═══════════════════════════════════════════════════════════ -->
+<div class="section-title-bar" style="background: linear-gradient(90deg,#1b5e20,#2e7d32); margin-top:2.5rem;">
+  <div>
+    <h2>Parte 2 — Preguntas Teóricas</h2>
+    <p>Leé la pregunta, pensá tu respuesta y luego revelá para comparar.</p>
+  </div>
+</div>
+
+<div class="open-card">
+  <div class="open-q">
+    <div class="q-text">1. Explicá con tus palabras qué es el Android SDK, qué es un AVD y qué es el emulador. ¿Cuál es la relación entre los tres?</div>
+    <div class="q-points">Conceptos clave: SDK = caja de herramientas · AVD = configuración del dispositivo · Emulador = programa que ejecuta el AVD</div>
+  </div>
+  <button class="reveal-answer-btn" onclick="toggleAnswer('oa1')">Ver respuesta</button>
+  <div class="answer-body" id="oa1">
+    <p>El <strong>Android SDK</strong> (Software Development Kit) es el conjunto completo de herramientas que permite crear apps Android: incluye el compilador d8, las APIs del sistema (cámara, GPS, WiFi…), herramientas de línea de comandos como <code>adb</code> y <code>aapt2</code>, y las imágenes de sistema para el emulador.</p>
+    <p>Un <strong>AVD</strong> (Android Virtual Device) es un <em>archivo de configuración</em> que describe las características de un dispositivo virtual: qué modelo de teléfono simular, qué versión de Android (API Level), cuánta RAM y almacenamiento. No es un programa en sí mismo.</p>
+    <p>El <strong>emulador</strong> es el programa (basado en QEMU) que lee esa configuración y la ejecuta, creando un dispositivo Android virtualizado en tu PC. La relación es: el SDK provee las imágenes y APIs → el AVD define la configuración → el emulador ejecuta esa configuración.</p>
+    <p><strong>Analogía:</strong> el SDK es la caja de herramientas del mecánico, el AVD es la ficha técnica del auto (color, motor, llantas), y el emulador es el auto en sí arrancando.</p>
+  </div>
+</div>
+
+<div class="open-card">
+  <div class="open-q">
+    <div class="q-text">2. ¿Qué significa que Jetpack Compose sea "declarativo"? ¿En qué se diferencia del sistema de Views imperativo que usaba Android antes?</div>
+    <div class="q-points">Conceptos clave: UI = f(estado) · recomposición automática · sin manipulación directa del árbol de Views</div>
+  </div>
+  <button class="reveal-answer-btn" onclick="toggleAnswer('oa2')">Ver respuesta</button>
+  <div class="answer-body" id="oa2">
+    <p>En el modelo <strong>imperativo</strong> (sistema de Views), el programador manipula la UI paso a paso: <code>textView.text = "Hola"</code>, <code>button.isEnabled = false</code>. Hay que describir <em>cómo</em> cambiar cada elemento cuando algo varía.</p>
+    <p>En el modelo <strong>declarativo</strong> de Compose, la UI se describe como una <em>función del estado</em>: <code>UI = f(estado)</code>. El programador escribe funciones <code>@Composable</code> que describen <em>qué</em> mostrar dado un estado. Cuando el estado cambia, Compose re-ejecuta automáticamente las funciones afectadas (<strong>recomposición</strong>) y actualiza solo las partes de la pantalla que cambiaron.</p>
+    <p>La ventaja principal es que se eliminan las inconsistencias entre el estado interno y lo que muestra la UI. No hace falta sincronizar manualmente.</p>
+  </div>
+</div>
+
+<div class="open-card">
+  <div class="open-q">
+    <div class="q-text">3. Te dan el siguiente caso: "Una app de biblioteca universitaria permite buscar libros por título, marcar libros como prestados y ver cuántos libros prestados tiene el estudiante". ¿Cómo organizarías arquitectónicamente esta app en capas? Mencioná al menos un archivo/clase por capa.</div>
+    <div class="q-points">Conceptos clave: capa UI · capa lógica · capa de datos · responsabilidad única</div>
+  </div>
+  <button class="reveal-answer-btn" onclick="toggleAnswer('oa3')">Ver respuesta</button>
+  <div class="answer-body" id="oa3">
+    <p><strong>Capa de Datos:</strong></p>
+    <p><code>data class Libro(val id: Int, val titulo: String, val autor: String, val prestado: Boolean)</code> — modela el dato. <code>LibroRepository</code> — provee la lista de libros (desde BD local, archivo JSON o API). No sabe nada de la UI.</p>
+    <p><strong>Capa de Lógica:</strong></p>
+    <p><code>LibroLogic</code> — funciones como <code>filtrarPorTitulo(libros, query)</code>, <code>contarPrestados(libros)</code>, <code>calcularDisponibles(libros)</code>. Transforma y calcula sobre los datos. No conoce cómo se ve la pantalla.</p>
+    <p><strong>Capa de UI:</strong></p>
+    <p><code>BibliotecaScreen</code> — composable principal. <code>LibroItem(libro)</code> — fila de la lista. <code>BuscadorBar(query, onChange)</code> — campo de búsqueda. <code>ResumenCard(prestados, total)</code> — card con el conteo. Solo muestra datos y captura eventos.</p>
+  </div>
+</div>
+
+<div class="open-card">
+  <div class="open-q">
+    <div class="q-text">4. ¿Por qué no se recomienda que una función <code>@Composable</code> sea grande? Mencioná al menos tres razones técnicas o de diseño.</div>
+    <div class="q-points">Conceptos clave: recomposición ineficiente · responsabilidad única · reutilización · Preview</div>
+  </div>
+  <button class="reveal-answer-btn" onclick="toggleAnswer('oa4')">Ver respuesta</button>
+  <div class="answer-body" id="oa4">
+    <p><strong>1. Recomposición ineficiente:</strong> Compose re-ejecuta la función completa cuando cualquier variable de estado que lee cambia. Una función de 200 líneas que mezcla el header, la lista y los filtros se redibuja completamente si el usuario escribe una sola letra. Con funciones pequeñas, solo se re-ejecuta la función específica afectada.</p>
+    <p><strong>2. Violación de responsabilidad única:</strong> Una función grande mezcla responsabilidades (mostrar datos, manejar input, calcular). Esto dificulta encontrar bugs y entender el código.</p>
+    <p><strong>3. Imposibilidad de reutilizar:</strong> Un <code>ItemCard</code> extraído como función propia puede usarse en 3 pantallas distintas. Una función monolítica no puede reutilizarse en ningún lado.</p>
+    <p><strong>4. Preview difícil:</strong> Una función con 15 parámetros de estado es imposible de previsualizar con <code>@Preview</code>. Una función pequeña con 2 parámetros se puede testear visualmente en segundos.</p>
+  </div>
+</div>
+
+<div class="open-card">
+  <div class="open-q">
+    <div class="q-text">5. Mencioná 4 componentes de Material Design 3 que uses habitualmente en Compose y describí brevemente para qué sirve cada uno.</div>
+    <div class="q-points">Ejemplos posibles: Scaffold, TopAppBar, Card, Button, OutlinedTextField, LazyColumn, Text…</div>
+  </div>
+  <button class="reveal-answer-btn" onclick="toggleAnswer('oa5')">Ver respuesta</button>
+  <div class="answer-body" id="oa5">
+    <p><strong>Scaffold:</strong> Estructura base de una pantalla. Provee slots para <code>topBar</code>, <code>bottomBar</code>, <code>floatingActionButton</code> y garantiza el padding correcto para el contenido según los elementos que uses.</p>
+    <p><strong>TopAppBar:</strong> Barra superior con título e íconos. Da contexto sobre qué pantalla estás viendo y puede incluir acciones de navegación (back) y acciones secundarias (búsqueda, menú).</p>
+    <p><strong>Card:</strong> Contenedor con elevación y bordes redondeados para agrupar información relacionada. Puede hacerse clickeable con <code>onClick</code>. Usa colores del ColorScheme (<code>surfaceVariant</code>).</p>
+    <p><strong>OutlinedTextField:</strong> Campo de entrada de texto con borde visible. Acepta <code>label</code>, <code>placeholder</code>, <code>isError</code> para mostrar errores de validación. Requiere un estado <code>remember { mutableStateOf("") }</code> para funcionar.</p>
+    <p><strong>LazyColumn:</strong> Lista de scroll eficiente. Solo renderiza los ítems visibles en pantalla (equivalente a RecyclerView). Usa <code>items(lista)</code> con un <code>key</code> para optimizar recomposición al agregar/eliminar.</p>
+  </div>
+</div>
+
+<div class="open-card">
+  <div class="open-q">
+    <div class="q-text">6. ¿Qué es el "State Hoisting" (elevación de estado) en Compose? ¿Por qué es importante?</div>
+    <div class="q-points">Conceptos clave: estado en el padre · pasar valor y lambda hacia abajo · composables sin estado (stateless)</div>
+  </div>
+  <button class="reveal-answer-btn" onclick="toggleAnswer('oa6')">Ver respuesta</button>
+  <div class="answer-body" id="oa6">
+    <p><strong>State Hoisting</strong> es el patrón de mover el estado hacia el <em>ancestro común más bajo</em> que necesita leer o modificar ese estado. En lugar de que cada composable hijo tenga su propio <code>remember</code>, el padre tiene el estado y lo pasa hacia abajo como parámetros.</p>
+    <p>El patrón es: el padre pasa el <em>valor</em> (<code>val</code>) y una <em>función lambda</em> para modificarlo (<code>onValueChange</code>). El hijo es "stateless" — no sabe de dónde viene el valor ni dónde se guarda.</p>
+    <p><strong>¿Por qué importa?</strong> Si dos composables hijos necesitan compartir el mismo estado, si cada uno tiene su <code>remember</code> propio, son variables independientes que nunca se sincronizan. Elevando el estado al padre, ambos hijos leen la misma variable. Además, los composables sin estado son más fáciles de reutilizar y de testear.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PARTE 3 — ERRORES DE CÓDIGO
+═══════════════════════════════════════════════════════════ -->
+<div class="section-title-bar" style="background: linear-gradient(90deg,#7f0000,#b71c1c); margin-top:2.5rem;">
+  <div>
+    <h2>Parte 3 — Encontrá los errores</h2>
+    <p>Analizá el código, identificá los errores antes de revelar la solución.</p>
+  </div>
+</div>
+
+<!-- COD 1 -->
+<div class="code-card">
+  <div class="code-header">
+    <div>
+      <div class="title">App de notas universitarias</div>
+      <div class="subtitle">Gestión de materias con promedio y estado</div>
+    </div>
+    <span class="errors-badge">4 errores</span>
+  </div>
+  <div class="code-body">
+<pre>
+<span class="kw">data class</span> <span class="tp">Materia</span>(<span class="kw">val</span> nombre: <span class="tp">String</span>, <span class="kw">val</span> nota: <span class="tp">Double</span>, <span class="kw">val</span> aprobada: <span class="tp">Boolean</span>)
+
+<span class="kw">fun</span> <span class="fn">calcularPromedio</span>(materias: List&lt;<span class="tp">Materia</span>&gt;): <span class="tp">Double</span> {
+    <span class="kw">val</span> total = materias.size
+    <span class="kw">if</span> (total == <span class="num">0</span>) <span class="kw">return</span> <span class="num">0.0</span>
+    <span class="kw">val</span> suma = materias.sumOf { it.nota }
+<span class="err">    return (suma / total)           // error A</span>
+}
+
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaMaterias</span>() {
+<span class="err">    val materias = mutableListOf(   // error B</span>
+        Materia(<span class="str">"Análisis"</span>, <span class="num">7.5</span>, <span class="kw">true</span>),
+        Materia(<span class="str">"Álgebra"</span>,  <span class="num">4.0</span>, <span class="kw">true</span>),
+        Materia(<span class="str">"Física"</span>,   <span class="num">3.5</span>, <span class="kw">false</span>)
+    )
+<span class="err">    var filtro = "todas"            // error C</span>
+    <span class="kw">val</span> promedio = calcularPromedio(materias)
+
+    Column(modifier = Modifier.fillMaxWidth().padding(<span class="num">16</span>.dp)) {
+        Text(<span class="str">"Promedio: $promedio"</span>)
+        LazyColumn {
+<span class="err">            materias.forEach { m -> MateriaItem(m) }  // error D</span>
+        }
+    }
+}
+
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MateriaItem</span>(m: <span class="tp">Materia</span>) {
+    Text(<span class="str">"${m.nombre}: ${m.nota}"</span>)
+}
+</pre>
+    <button class="reveal-errors-btn" onclick="toggleErrors('ce1')">Ver los 4 errores</button>
+    <div class="errors-list" id="ce1">
+      <div class="error-item">
+        <div class="error-num">A</div>
+        <div class="etxt"><strong>División entera:</strong> <code>suma</code> es <code>Double</code> pero <code>total</code> es <code>Int</code>. En Kotlin la división <code>Double / Int</code> sí da <code>Double</code> correctamente, <em>pero</em> si la función fuera <code>suma.toInt() / total</code> o ambas fueran <code>Int</code>, daría resultado truncado. El bug real aquí es que <code>suma / total</code> podría entenderse ambiguo — lo correcto y explícito es <code>suma / total.toDouble()</code> para dejar claro la intención de división decimal.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">B</div>
+        <div class="etxt"><strong><code>mutableListOf</code> no observable:</strong> Agregar o quitar materias no dispara recomposición. Debe ser <code>remember { mutableStateListOf(...) }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">C</div>
+        <div class="etxt"><strong><code>var filtro = "todas"</code> sin <code>remember</code>:</strong> Variable local que se reinicia en cada recomposición. No puede usarse para guardar el estado del filtro entre interacciones. Debe ser <code>var filtro by remember { mutableStateOf("todas") }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">D</div>
+        <div class="etxt"><strong><code>forEach</code> dentro de <code>LazyColumn</code>:</strong> Debe usarse <code>items(materias) { m -> MateriaItem(m) }</code>. Con <code>forEach</code>, Compose no puede reciclar los ítems ni usar <code>key</code> para optimizar recomposición.</div>
+      </div>
+      <div class="fix-label">✔ Correcciones clave</div>
+<pre class="fix-pre">
+<span class="kw">val</span> materias = remember { mutableStateListOf(   <span class="cm">// B</span>
+    Materia(<span class="str">"Análisis"</span>, <span class="num">7.5</span>, <span class="kw">true</span>), ...
+) }
+<span class="kw">var</span> filtro <span class="kw">by</span> remember { mutableStateOf(<span class="str">"todas"</span>) }  <span class="cm">// C</span>
+LazyColumn {
+    items(materias) { m -> MateriaItem(m) }        <span class="cm">// D</span>
+}
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- COD 2 -->
+<div class="code-card">
+  <div class="code-header">
+    <div>
+      <div class="title">Conversor de temperatura</div>
+      <div class="subtitle">Lógica de cálculo, TextField y when</div>
+    </div>
+    <span class="errors-badge">4 errores</span>
+  </div>
+  <div class="code-body">
+<pre>
+<span class="kw">fun</span> <span class="fn">convertir</span>(valor: <span class="tp">Double</span>, desde: <span class="tp">String</span>, hacia: <span class="tp">String</span>): <span class="tp">Double</span> {
+    <span class="kw">return</span> <span class="kw">when</span> {
+        desde == <span class="str">"C"</span> &amp;&amp; hacia == <span class="str">"F"</span> -> valor * <span class="num">9</span> / <span class="num">5</span> + <span class="num">32</span>
+        desde == <span class="str">"F"</span> &amp;&amp; hacia == <span class="str">"C"</span> -> (valor - <span class="num">32</span>) * <span class="num">5</span> / <span class="num">9</span>
+        desde == <span class="str">"C"</span> &amp;&amp; hacia == <span class="str">"K"</span> -> valor + <span class="num">273.15</span>
+<span class="err">        // falta else                // error A</span>
+    }
+}
+
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">Conversor</span>() {
+<span class="err">    var entrada = ""                 // error B</span>
+    <span class="kw">var</span> resultado <span class="kw">by</span> remember { mutableStateOf(<span class="str">""</span>) }
+
+    OutlinedTextField(
+        value = entrada,
+        onValueChange = { entrada = it },
+        label = { Text(<span class="str">"Temperatura en °C"</span>) }
+    )
+
+    Button(onClick = {
+<span class="err">        val num = entrada.toDouble()  // error C</span>
+        resultado = convertir(num, <span class="str">"C"</span>, <span class="str">"F"</span>).toString()
+    }) { Text(<span class="str">"Convertir"</span>) }
+
+    Text(<span class="str">"Resultado: $resultado"</span>)
+}
+
+<span class="ann">@Preview</span>
+<span class="err">fun ConversorPreview() {            // error D</span>
+    Conversor()
+}
+</pre>
+    <button class="reveal-errors-btn" onclick="toggleErrors('ce2')">Ver los 4 errores</button>
+    <div class="errors-list" id="ce2">
+      <div class="error-item">
+        <div class="error-num">A</div>
+        <div class="etxt"><strong>Falta rama <code>else</code> en <code>when</code> usado como expresión:</strong> El <code>when</code> devuelve un valor (<code>Double</code>), por lo que debe ser exhaustivo. Si ninguna condición coincide (ej: <code>"K"</code> a <code>"F"</code>), el compilador no acepta el código. Debe agregarse <code>else -> valor</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">B</div>
+        <div class="etxt"><strong><code>var entrada = ""</code> sin <code>remember</code>:</strong> Variable local sin estado observable. El TextField no puede mostrar lo que el usuario tipea porque se reinicia en cada recomposición. Debe ser <code>var entrada by remember { mutableStateOf("") }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">C</div>
+        <div class="etxt"><strong><code>toDouble()</code> sin manejo de null:</strong> Si el campo está vacío o contiene letras, lanza <code>NumberFormatException</code> y la app crashea. Debe ser <code>toDoubleOrNull() ?: 0.0</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">D</div>
+        <div class="etxt"><strong>Falta <code>@Composable</code> en la función Preview:</strong> <code>ConversorPreview()</code> llama a <code>Conversor()</code> que es <code>@Composable</code>. Sin la anotación, el compilador rechaza la llamada.</div>
+      </div>
+      <div class="fix-label">✔ Correcciones clave</div>
+<pre class="fix-pre">
+<span class="kw">return</span> <span class="kw">when</span> { ...; <span class="kw">else</span> -> valor }           <span class="cm">// A</span>
+<span class="kw">var</span> entrada <span class="kw">by</span> remember { mutableStateOf(<span class="str">""</span>) } <span class="cm">// B</span>
+<span class="kw">val</span> num = entrada.toDoubleOrNull() ?: <span class="num">0.0</span>      <span class="cm">// C</span>
+<span class="ann">@Preview</span> <span class="ann">@Composable</span>                           <span class="cm">// D</span>
+<span class="kw">fun</span> <span class="fn">ConversorPreview</span>() { Conversor() }
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- COD 3 — Simulacro final, 10 errores -->
+<div class="code-card">
+  <div class="code-header" style="background:#4a148c;">
+    <div>
+      <div class="title">★ Simulacro final — App de préstamos de libros</div>
+      <div class="subtitle">Sin pistas de categoría. Encontrá todos los errores como en el parcial real.</div>
+    </div>
+    <span class="errors-badge">10 errores</span>
+  </div>
+  <div class="code-body">
+<pre>
+<span class="kw">data class</span> <span class="tp">Libro</span>(<span class="kw">val</span> id: <span class="tp">Int</span>, <span class="kw">val</span> titulo: <span class="tp">String</span>, <span class="kw">val</span> prestado: <span class="tp">Boolean</span>)
+
+<span class="kw">fun</span> <span class="fn">buscarLibro</span>(libros: List&lt;<span class="tp">Libro</span>&gt;, query: <span class="tp">String</span>): List&lt;<span class="tp">Libro</span>&gt; {
+<span class="err">    return libros.filter { it.titulo.contains(query) }  // error 1</span>
+}
+
+<span class="kw">fun</span> <span class="fn">porcentajePrestados</span>(libros: List&lt;<span class="tp">Libro</span>&gt;): <span class="tp">Double</span> {
+    <span class="kw">if</span> (libros.isEmpty()) <span class="kw">return</span> <span class="num">0.0</span>
+<span class="err">    return (libros.count { it.prestado } / libros.size) * 100.0  // error 2</span>
+}
+
+<span class="kw">fun</span> <span class="fn">estadoTexto</span>(prestado: <span class="tp">Boolean</span>): <span class="tp">String</span> {
+    <span class="kw">return</span> <span class="kw">when</span> (prestado) {
+        <span class="kw">true</span>  -> <span class="str">"Prestado"</span>
+        <span class="kw">false</span> -> <span class="str">"Disponible"</span>
+    }
+}
+
+<span class="ann">@composable</span>                              <span class="cm">// error 3</span>
+<span class="kw">fun</span> <span class="fn">LibroItem</span>(libro: <span class="tp">Libro</span>, onPrestar: () -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+<span class="err">        .padding(8)                      // error 4</span>
+    ) {
+        Column(modifier = Modifier.weight(<span class="num">1f</span>)) {
+            Text(libro.titulo, fontWeight = FontWeight.Bold)
+            Text(estadoTexto(libro.prestado))
+        }
+        Button(onClick = onPrestar) {
+            Text(<span class="kw">if</span> (libro.prestado) <span class="str">"Devolver"</span> <span class="kw">else</span> <span class="str">"Prestar"</span>)
+        }
+    }
+}
+
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">BibliotecaScreen</span>() {
+<span class="err">    val libros = remember { mutableListOf(          // error 5</span>
+        Libro(<span class="num">1</span>, <span class="str">"Clean Code"</span>, <span class="kw">false</span>),
+        Libro(<span class="num">2</span>, <span class="str">"Kotlin in Action"</span>, <span class="kw">false</span>),
+        Libro(<span class="num">3</span>, <span class="str">"Design Patterns"</span>, <span class="kw">true</span>)
+    ) }
+<span class="err">    var busqueda = ""                               // error 6</span>
+
+    <span class="kw">val</span> listaFiltrada = buscarLibro(libros, busqueda)
+    <span class="kw">val</span> pct = porcentajePrestados(libros)
+
+    Column(modifier = Modifier.fillMaxSize().padding(<span class="num">16</span>.dp)) {
+        Text(<span class="str">"Prestados: $pct%"</span>, style = MaterialTheme.typography.titleMedium)
+
+        OutlinedTextField(
+            value = busqueda,
+            onValueChange = { busqueda = it },
+<span class="err">            label = { <span class="str">"Buscar libro"</span> }              // error 7</span>
+        )
+
+        LazyColumn {
+<span class="err">            listaFiltrada.forEach { libro ->        // error 8</span>
+                LibroItem(
+                    libro = libro,
+                    onPrestar = {
+<span class="err">                        libros.removeAt(0)          // error 9</span>
+                    }
+                )
+            }
+        }
+    }
+}
+
+<span class="ann">@Preview</span>(showBackground = <span class="kw">true</span>)
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">BibliotecaPreview</span>() {
+    BibliotecaScreen()
+}
+
+<span class="cm">// En strings.xml: falta la entrada para el label del TextField</span>
+<span class="err">// &lt;string name="buscar"&gt;&lt;/string&gt;   // error 10: string resource vacío</span>
+</pre>
+    <button class="reveal-errors-btn" onclick="toggleErrors('ce3')">Ver los 10 errores</button>
+    <div class="errors-list" id="ce3">
+      <div class="error-item">
+        <div class="error-num">1</div>
+        <div class="etxt"><strong>Búsqueda case-sensitive:</strong> <code>contains(query)</code> distingue mayúsculas. Buscar "clean" no encuentra "Clean Code". Debe ser <code>contains(query, ignoreCase = true)</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">2</div>
+        <div class="etxt"><strong>División entera da siempre 0:</strong> <code>count()</code> y <code>size</code> son <code>Int</code>. La división <code>Int/Int</code> trunca el resultado: 1/3 = 0, no 0.33. Debe ser <code>libros.count { it.prestado }.toDouble() / libros.size * 100.0</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">3</div>
+        <div class="etxt"><strong><code>@composable</code> en minúscula:</strong> La anotación debe ser <code>@Composable</code> (C mayúscula). Kotlin es case-sensitive.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">4</div>
+        <div class="etxt"><strong>Falta <code>.dp</code>:</strong> <code>.padding(8)</code> no compila. Debe ser <code>.padding(8.dp)</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">5</div>
+        <div class="etxt"><strong><code>mutableListOf</code> no observable:</strong> Prestar o devolver libros no dispara recomposición. Debe ser <code>remember { mutableStateListOf(...) }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">6</div>
+        <div class="etxt"><strong><code>busqueda</code> sin estado observable:</strong> Variable local que se reinicia en cada recomposición. El TextField no funciona. Debe ser <code>var busqueda by remember { mutableStateOf("") }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">7</div>
+        <div class="etxt"><strong>String literal en lugar de <code>Text()</code>:</strong> <code>label = { "Buscar libro" }</code> no renderiza nada visible. Debe ser <code>label = { Text("Buscar libro") }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">8</div>
+        <div class="etxt"><strong><code>forEach</code> dentro de <code>LazyColumn</code>:</strong> Debe usarse <code>items(listaFiltrada, key = { it.id }) { libro -> ... }</code>.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">9</div>
+        <div class="etxt"><strong><code>removeAt(0)</code> borra el primero, no el libro clickeado:</strong> Debe usarse <code>val idx = libros.indexOfFirst { it.id == libro.id }; if (idx >= 0) libros[idx] = libro.copy(prestado = !libro.prestado)</code>. En una lista de <code>data class</code> inmutables, no se "quita" el libro sino que se reemplaza con el estado cambiado.</div>
+      </div>
+      <div class="error-item">
+        <div class="error-num">10</div>
+        <div class="etxt"><strong>String resource vacío en strings.xml:</strong> <code>&lt;string name="buscar"&gt;&lt;/string&gt;</code> define un recurso sin valor. Si se usa con <code>stringResource(R.string.buscar)</code>, devuelve un String vacío y el label no se ve. Debe tener contenido: <code>&lt;string name="buscar"&gt;Buscar libro&lt;/string&gt;</code>.</div>
+      </div>
+      <div class="fix-label">✔ Correcciones clave</div>
+<pre class="fix-pre">
+<span class="cm">// 1</span> it.titulo.contains(query, ignoreCase = <span class="kw">true</span>)
+<span class="cm">// 2</span> libros.count { it.prestado }.toDouble() / libros.size * <span class="num">100.0</span>
+<span class="cm">// 3</span> <span class="ann">@Composable</span>
+<span class="cm">// 4</span> .padding(<span class="num">8</span>.dp)
+<span class="cm">// 5</span> remember { mutableStateListOf(...) }
+<span class="cm">// 6</span> <span class="kw">var</span> busqueda <span class="kw">by</span> remember { mutableStateOf(<span class="str">""</span>) }
+<span class="cm">// 7</span> label = { Text(<span class="str">"Buscar libro"</span>) }
+<span class="cm">// 8</span> items(listaFiltrada, key = { it.id }) { libro -> ... }
+<span class="cm">// 9</span> <span class="kw">val</span> idx = libros.indexOfFirst { it.id == libro.id }
+       <span class="kw">if</span> (idx >= <span class="num">0</span>) libros[idx] = libro.copy(prestado = !libro.prestado)
+<span class="cm">// 10</span> &lt;string name=<span class="str">"buscar"</span>&gt;Buscar libro&lt;/string&gt;
+</pre>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>Aplicaciones Distribuidas — UADE 2026 · Simulacro de parcial interactivo</footer>
+
+<script>
+// ── Multiple Choice engine ──────────────────────────────────
+const correct = {
+  q1:'b', q2:'c', q3:'b', q4:'b', q5:'c',
+  q6:'c', q7:'b', q8:'b', q9:'b', q10:'c',
+  q11:'b', q12:'c'
+};
+const explanations = {
+  q1:  "Correcto. El AVD define las características (es un archivo de config), el emulador es el programa que lo ejecuta.",
+  q2:  "Correcto. El compilador de Compose (plugin de Kotlin) inyecta un parámetro Composer para rastrear el árbol de composición.",
+  q3:  "Correcto. La recomposición es automática cuando el estado observable cambia. No hay que llamar a nada manualmente.",
+  q4:  "Correcto. En Kotlin, 3/10 es división entera = 0. Luego 0×100 = 0. Para obtener 30, habría que hacer 3.0/10.",
+  q5:  "Correcto. mutableStateListOf notifica a Compose en cada modificación. mutableListOf es una lista normal, Compose nunca se entera de los cambios.",
+  q6:  "Correcto. El SDK es la caja de herramientas completa: compilador, APIs, imágenes de sistema, herramientas de línea de comandos.",
+  q7:  "Correcto. Las funciones pequeñas permiten recomposición granular, son reutilizables, tienen responsabilidad única y son fáciles de previsualizar.",
+  q8:  "Correcto. Con String o Int como argumento, el compilador no puede verificar exhaustividad, así que requiere else. Con sealed class o enum cubierto al 100%, no es necesario.",
+  q9:  "Correcto. Sin remember, la variable se reinicia en cada recomposición. Sin mutableStateOf, Compose no sabe que debe redibujar. El TextField siempre muestra vacío.",
+  q10: "Correcto. La capa de datos solo provee los datos. No sabe cómo se ve la pantalla ni cómo se calculan los resultados. Esa es su única responsabilidad.",
+  q11: "Correcto. Declarativo = describís QUÉ mostrar (función del estado). Imperativo = describís CÓMO cambiar la UI paso a paso.",
+  q12: "Correcto. toIntOrNull() devuelve null si la conversión falla, permitiendo manejarlo sin excepción con ?: o un if null check."
+};
+const wrongExpl = {
+  q1:  "Incorrecto. El AVD y el emulador NO son lo mismo. El AVD es una configuración; el emulador es el programa que la ejecuta.",
+  q2:  "Incorrecto. @Composable no convierte la función en una View. Actúa a nivel de compilador inyectando un parámetro Composer.",
+  q3:  "Incorrecto. En Compose no se llama invalidate() ni se reinicia la Activity. La recomposición es automática.",
+  q4:  "Incorrecto. La división de dos Int en Kotlin es entera y trunca el resultado. 3/10 = 0.",
+  q5:  "Incorrecto. La diferencia es crítica: mutableListOf no notifica a Compose. Solo mutableStateListOf lo hace.",
+  q6:  "Incorrecto. El SDK no es el IDE ni solo el compilador. Es el conjunto completo de herramientas, APIs, imágenes y utilidades.",
+  q7:  "Incorrecto. No hay un límite de 50 líneas. El motivo real es técnico: recomposición eficiente, responsabilidad única y reutilización.",
+  q8:  "Incorrecto. El else no siempre es obligatorio. Con sealed class/enum totalmente cubierto, Kotlin puede verificar exhaustividad.",
+  q9:  "Incorrecto. remember es indispensable para que el estado persista entre recomposiciones. Sin él, el valor se reinicia siempre.",
+  q10: "Incorrecto. Mostrar datos y capturar eventos es la capa UI. Filtrar y calcular es la capa lógica. La capa de datos solo provee.",
+  q11: "Incorrecto. En declarativo no se usa setText ni invalidate. La UI es función del estado y Compose se encarga de actualizarla.",
+  q12: "Incorrecto. A diferencia de toInt(), toIntOrNull() NO lanza excepción. Devuelve null de forma segura."
+};
+
+let answered = 0;
+let correct_count = 0;
+const total_q = Object.keys(correct).length;
+
+function answer(el, qid, choice) {
+  const block = document.getElementById(qid);
+  if (block.classList.contains('done')) return;
+  block.classList.add('done');
+
+  const options = block.querySelectorAll('.option');
+  options.forEach(o => o.classList.add('locked'));
+
+  const correctChoice = correct[qid];
+  const isCorrect = choice === correctChoice;
+
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  // highlight correct answer
+  options.forEach(o => {
+    const oChoice = o.getAttribute('onclick').match(/'([a-d])'\)$/)[1];
+    if (oChoice === correctChoice) o.classList.add('reveal-correct');
+  });
+
+  const fb = document.getElementById('f' + qid.slice(1));
+  fb.classList.add('show');
+  if (isCorrect) {
+    fb.classList.add('ok');
+    fb.textContent = '✓ ' + explanations[qid];
+    correct_count++;
+  } else {
+    fb.classList.add('bad');
+    fb.textContent = '✗ ' + wrongExpl[qid];
+  }
+
+  answered++;
+  updateScore();
+}
+
+function updateScore() {
+  const pct = Math.round((answered / total_q) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('scoreText').textContent =
+    `Respondidas: ${answered}/${total_q} · Correctas: ${correct_count} · Incorrectas: ${answered - correct_count}`;
+}
+
+function resetAll() {
+  answered = 0; correct_count = 0;
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('scoreText').textContent = 'Respondé las preguntas para ver tu puntaje';
+
+  document.querySelectorAll('.question-block').forEach(b => b.classList.remove('done'));
+  document.querySelectorAll('.option').forEach(o => {
+    o.classList.remove('locked','selected','correct','wrong','reveal-correct');
+  });
+  document.querySelectorAll('.feedback').forEach(f => {
+    f.classList.remove('show','ok','bad'); f.textContent = '';
+  });
+}
+
+// ── Open answers ────────────────────────────────────────────
+function toggleAnswer(id) {
+  const el = document.getElementById(id);
+  const btn = el.previousElementSibling;
+  const showing = el.classList.toggle('show');
+  btn.textContent = showing ? 'Ocultar respuesta' : 'Ver respuesta';
+}
+
+// ── Code errors ─────────────────────────────────────────────
+function toggleErrors(id) {
+  const el = document.getElementById(id);
+  const btn = el.previousElementSibling;
+  const showing = el.classList.toggle('show');
+  btn.textContent = showing ? 'Ocultar errores' : btn.textContent.replace('Ocultar', 'Ver');
+  if (showing) btn.textContent = 'Ocultar errores';
+}
+</script>
+
+</body>
+</html>
