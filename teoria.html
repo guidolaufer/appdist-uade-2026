@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teoría del Parcial — AppDist UADE</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+  header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 2rem 1.5rem 1.5rem; text-align: center;
+  }
+  header h1 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+  header p { opacity: 0.85; font-size: 0.9rem; }
+  .badge { display: inline-block; background: rgba(255,255,255,.15); border-radius: 20px; padding: 2px 12px; font-size: 0.78rem; color: #e8eaf6; margin-top: 0.5rem; }
+
+  .nav-bar { background: #283593; padding: 0.6rem 1rem; text-align: center; font-size: 0.85rem; }
+  .nav-bar a { color: #90caf9; text-decoration: none; margin: 0 0.5rem; }
+  .nav-bar a:hover { color: white; }
+
+  .toc {
+    background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    padding: 1.2rem 1.4rem; margin: 1.5rem auto; max-width: 960px;
+    border-left: 5px solid #1a237e;
+  }
+  .toc h3 { color: #1a237e; font-size: 0.95rem; margin-bottom: 0.6rem; }
+  .toc-links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .toc-links a {
+    background: #e8eaf6; color: #1a237e; text-decoration: none;
+    padding: 4px 12px; border-radius: 12px; font-size: 0.82rem; font-weight: 600;
+    transition: background 0.2s;
+  }
+  .toc-links a:hover { background: #1a237e; color: white; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 1rem 3rem; }
+
+  /* Sección */
+  .section {
+    background: white; border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 2rem; overflow: hidden;
+  }
+  .section-header {
+    padding: 1.1rem 1.4rem; display: flex; align-items: center; gap: 0.8rem;
+    border-bottom: 2px solid #e8eaf6;
+  }
+  .section-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .section-title h2 { font-size: 1.05rem; color: #1a237e; }
+  .section-title p { font-size: 0.8rem; color: #777; margin-top: 2px; }
+  .section-body { padding: 1.3rem 1.4rem; }
+
+  /* Texto */
+  .section-body p { font-size: 0.9rem; line-height: 1.7; color: #333; margin-bottom: 0.8rem; }
+  .section-body p:last-child { margin-bottom: 0; }
+  strong { color: #1a237e; }
+
+  /* Tabla comparativa */
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.8rem 0; }
+  .cmp-table th { background: #1a237e; color: white; padding: 0.55rem 0.9rem; text-align: left; }
+  .cmp-table td { padding: 0.5rem 0.9rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  .cmp-table tr:nth-child(even) td { background: #f8f9ff; }
+  .cmp-table .tag {
+    display: inline-block; border-radius: 8px; padding: 1px 8px; font-size: 0.75rem; font-weight: bold;
+  }
+  .tag-sdk { background: #e8eaf6; color: #1a237e; }
+  .tag-avd { background: #e8f5e9; color: #2e7d32; }
+  .tag-emu { background: #fff3e0; color: #e65100; }
+  .tag-as  { background: #fce4ec; color: #880e4f; }
+
+  /* Bloques de definición */
+  .def-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.9rem; margin: 0.8rem 0; }
+  .def-card {
+    border-radius: 10px; padding: 0.9rem 1rem; border-left: 4px solid;
+  }
+  .def-card h4 { font-size: 0.9rem; margin-bottom: 0.35rem; }
+  .def-card p { font-size: 0.83rem; line-height: 1.5; color: #444; margin: 0; }
+
+  /* Diagrama arquitectura */
+  .arch-diagram { margin: 0.8rem 0; }
+  .arch-layer {
+    border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 0.7rem; font-size: 0.87rem;
+  }
+  .arch-layer .layer-num {
+    width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.8rem; flex-shrink: 0; color: white;
+  }
+  .arch-arrow { text-align: center; color: #999; font-size: 1.1rem; margin: -4px 0; }
+
+  /* Code snippets */
+  pre {
+    background: #1e1e2e; color: #cdd6f4; border-radius: 8px;
+    padding: 1rem 1.2rem; overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.83rem; line-height: 1.6; margin: 0.7rem 0;
+  }
+  .kw { color: #cba6f7; }
+  .ann { color: #fab387; }
+  .str { color: #a6e3a1; }
+  .cm { color: #6c7086; font-style: italic; }
+  .fn { color: #89b4fa; }
+  .tp { color: #89dceb; }
+
+  /* Pregunta frecuente box */
+  .qa-box {
+    background: #e8f5e9; border-radius: 8px; padding: 0.9rem 1rem;
+    border-left: 4px solid #2e7d32; margin: 0.7rem 0;
+  }
+  .qa-box .q { font-weight: bold; color: #1b5e20; font-size: 0.88rem; margin-bottom: 0.4rem; }
+  .qa-box .a { font-size: 0.87rem; color: #333; line-height: 1.6; }
+
+  /* Highlight box */
+  .highlight {
+    background: #fff8e1; border-left: 4px solid #ffa000;
+    border-radius: 0 8px 8px 0; padding: 0.7rem 1rem;
+    font-size: 0.88rem; line-height: 1.6; color: #333; margin: 0.7rem 0;
+  }
+  .highlight strong { color: #e65100; }
+
+  /* Material 3 grid */
+  .m3-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.7rem; margin: 0.8rem 0; }
+  .m3-card {
+    border-radius: 10px; padding: 0.8rem; background: #f5f5f5;
+    border-top: 3px solid;
+  }
+  .m3-card h4 { font-size: 0.85rem; margin-bottom: 0.3rem; }
+  .m3-card p { font-size: 0.8rem; color: #555; line-height: 1.5; margin: 0; }
+
+  footer { text-align: center; padding: 1.5rem; font-size: 0.82rem; color: #666; border-top: 1px solid #ddd; margin-top: 1rem; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.2rem; }
+    .def-grid { grid-template-columns: 1fr; }
+    .m3-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 Teoría para el Parcial</h1>
+  <p>Temas conceptuales — Aplicaciones Distribuidas · UADE 2026</p>
+  <span class="badge">SDK · AVD · Composable · Arquitectura · Material 3</span>
+</header>
+<div class="nav-bar">
+  <a href="index.html">← Portal</a>
+  <a href="parcial.html">Parcial 1</a>
+  <a href="parcial2.html">Parcial Práctico</a>
+  <a href="errores.html">Práctica de errores</a>
+</div>
+
+<div class="toc">
+  <h3>📌 Temas en esta página</h3>
+  <div class="toc-links">
+    <a href="#sdk">SDK vs AVD vs Emulador</a>
+    <a href="#composable">¿Qué es @Composable?</a>
+    <a href="#declarativa">Modelo declarativo</a>
+    <a href="#arquitectura">Arquitectura de una app</a>
+    <a href="#material3">Elementos Material 3</a>
+    <a href="#funciones-pequeñas">Por qué funciones pequeñas</a>
+    <a href="#script">Kotlin Scripts</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 1. SDK, AVD, Emulador, Android Studio -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="sdk">
+    <div class="section-header">
+      <div class="section-icon">🔧</div>
+      <div class="section-title">
+        <h2>Android SDK, AVD, Emulador y Android Studio</h2>
+        <p>Diferencias y relación entre las herramientas de desarrollo</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <table class="cmp-table">
+        <thead>
+          <tr><th>Concepto</th><th>Qué es</th><th>Analogía</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-sdk">Android SDK</span></td>
+            <td><strong>Software Development Kit</strong>. Conjunto de herramientas, librerías, APIs y compiladores que permiten construir apps Android. Incluye el compilador d8, las APIs del sistema (WiFi, cámara, GPS…), herramientas de línea de comandos (adb, aapt2) y las imágenes del sistema para el emulador.</td>
+            <td>La caja de herramientas completa del carpintero: serruchos, clavos, barniz…</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-avd">AVD</span></td>
+            <td><strong>Android Virtual Device</strong>. Una <em>configuración</em> que define las características del dispositivo virtual: modelo de teléfono o tablet, tamaño de pantalla, API level (versión de Android), RAM, almacenamiento. Es básicamente un archivo de configuración.</td>
+            <td>La ficha técnica que describe cómo es el dispositivo (como las especificaciones de un celular).</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-emu">Emulador</span></td>
+            <td><strong>El programa que ejecuta</strong> un AVD. Crea una máquina virtual Android basada en la configuración del AVD y la ejecuta en tu computadora. Usa QEMU internamente para virtualizar el procesador ARM. El AVD define el "qué", el emulador es el "cómo".</td>
+            <td>El motor que arranca el dispositivo descrito en la ficha técnica.</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-as">Android Studio</span></td>
+            <td><strong>IDE</strong> (Entorno de Desarrollo Integrado) basado en IntelliJ IDEA. Integra el SDK, gestiona los AVDs, provee editor de código con autocompletado Kotlin, Layout Inspector, Logcat, Profiler, el Preview de Compose y el Device Manager. Es la interfaz gráfica que une todo.</td>
+            <td>El taller del carpintero donde están todas las herramientas organizadas y al alcance.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="qa-box">
+        <div class="q">❓ Pregunta típica de parcial: "¿Es lo mismo el AVD y el emulador?"</div>
+        <div class="a">No. El <strong>AVD</strong> es la <em>definición</em> del dispositivo virtual (sus características). El <strong>emulador</strong> es el <em>programa</em> que ejecuta esa definición. Podés tener múltiples AVDs (Pixel 6 con API 34, Pixel 4 con API 30) y el emulador los ejecuta de a uno a la vez.</div>
+      </div>
+
+      <div class="qa-box">
+        <div class="q">❓ "¿Qué diferencia hay entre ejecutar en el emulador y en un dispositivo físico?"</div>
+        <div class="a">El emulador virtualiza el hardware en tu PC, lo que es más lento pero conveniente. Un dispositivo físico ejecuta en hardware real, con sensores reales, mejor performance y casos edge que el emulador no replica perfectamente (GPS, notificaciones push, NFC, etc.).</div>
+      </div>
+
+      <div class="qa-box">
+        <div class="q">❓ "¿Qué es el API Level?"</div>
+        <div class="a">Un número que identifica la versión del Android SDK. Cada versión de Android tiene un API Level: Android 14 = API 34, Android 13 = API 33, etc. Las apps declaran un <code>minSdk</code> (mínimo para instalar) y <code>targetSdk</code> (optimizado para). Cuanto mayor el API Level, más funcionalidades disponibles pero menos dispositivos compatibles.</div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 2. @Composable y modelo declarativo -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="composable">
+    <div class="section-header">
+      <div class="section-icon">🧩</div>
+      <div class="section-title">
+        <h2>¿Qué es @Composable?</h2>
+        <p>La unidad básica de UI en Jetpack Compose</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <p>Una función marcada con <strong><code>@Composable</code></strong> es una función especial que Compose sabe cómo <em>invocar para emitir elementos de UI</em>. No devuelve una vista (como hacía el sistema de Views), sino que <strong>describe</strong> cómo debería verse la interfaz dado el estado actual.</p>
+
+<pre>
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">Saludo</span>(nombre: <span class="tp">String</span>) {
+    Text(<span class="str">"Hola, $nombre!"</span>)  <span class="cm">// describe qué mostrar</span>
+}
+</pre>
+
+      <p>Características clave de una función <code>@Composable</code>:</p>
+
+      <div class="def-grid">
+        <div class="def-card" style="border-color:#1a237e; background:#f3f4ff;">
+          <h4 style="color:#1a237e;">Solo puede llamarse desde otra @Composable</h4>
+          <p>No se puede invocar desde una función Kotlin ordinaria. Es un contrato del compilador.</p>
+        </div>
+        <div class="def-card" style="border-color:#2e7d32; background:#f1f8f2;">
+          <h4 style="color:#2e7d32;">No retorna nada útil</h4>
+          <p>Retorna <code>Unit</code> (o implícitamente nada). Su efecto es <em>emitir</em> nodos de UI al árbol de composición.</p>
+        </div>
+        <div class="def-card" style="border-color:#e65100; background:#fff8f3;">
+          <h4 style="color:#e65100;">Puede reejecutarse en cualquier momento</h4>
+          <p>Compose puede llamarla de nuevo cuando el estado cambie (<strong>recomposición</strong>). Debe ser <em>idempotente</em>: el mismo estado siempre produce la misma UI.</p>
+        </div>
+        <div class="def-card" style="border-color:#880e4f; background:#fdf3f8;">
+          <h4 style="color:#880e4f;">Puede tener efectos secundarios controlados</h4>
+          <p>Solo a través de APIs específicas: <code>remember</code>, <code>LaunchedEffect</code>, <code>SideEffect</code>, etc.</p>
+        </div>
+      </div>
+
+      <div class="qa-box">
+        <div class="q">❓ "¿Por qué @Composable es una anotación y no una interfaz o clase?"</div>
+        <div class="a">Porque modifica el comportamiento del <strong>compilador</strong>. El compilador de Compose (un plugin del compilador de Kotlin) transforma las funciones <code>@Composable</code> para inyectarles un parámetro especial (<code>Composer</code>) de forma transparente. Esto permite rastrear el estado del árbol de composición, identificar qué partes cambiaron y hacer recomposición eficiente.</div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 3. Modelo declarativo -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="declarativa">
+    <div class="section-header">
+      <div class="section-icon">📐</div>
+      <div class="section-title">
+        <h2>Modelo declarativo vs. imperativo</h2>
+        <p>Por qué Compose es "declarativo" y qué significa eso</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <table class="cmp-table">
+        <thead>
+          <tr><th></th><th>Imperativo (View system)</th><th>Declarativo (Jetpack Compose)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Concepto</strong></td>
+            <td>Describís <em>cómo</em> cambiar la UI paso a paso.</td>
+            <td>Describís <em>qué</em> debe mostrar la UI dado un estado.</td>
+          </tr>
+          <tr>
+            <td><strong>Ejemplo</strong></td>
+            <td><code>textView.text = "Hola"</code><br><code>textView.visibility = VISIBLE</code><br><code>button.setOnClickListener { ... }</code></td>
+            <td><code>Text("Hola")</code> dentro de una función que se re-llama cuando el estado cambia.</td>
+          </tr>
+          <tr>
+            <td><strong>Actualización</strong></td>
+            <td>Vos manipulás el árbol de Views manualmente (findViewById, etc.).</td>
+            <td>Compose re-ejecuta las funciones afectadas automáticamente cuando el estado cambia (<strong>recomposición</strong>).</td>
+          </tr>
+          <tr>
+            <td><strong>Estado</strong></td>
+            <td>Disperso en el código: variables, listeners, callbacks.</td>
+            <td>Centralizado con <code>remember</code> y <code>mutableStateOf</code>. La UI es función del estado: <code>UI = f(estado)</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Problemas típicos</strong></td>
+            <td>Inconsistencias entre estado interno y lo que muestra la UI, bugs de sincronización.</td>
+            <td>Recomposición excesiva si no se maneja bien el estado.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Frase clave para el parcial:</strong> En el modelo declarativo, la UI es una <em>función pura del estado</em>. Cuando el estado cambia, Compose invoca automáticamente las funciones @Composable afectadas para reconstruir la interfaz. El desarrollador nunca manipula la UI directamente.
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 4. Arquitectura de una app -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="arquitectura">
+    <div class="section-header">
+      <div class="section-icon">🏗️</div>
+      <div class="section-title">
+        <h2>Cómo organizar arquitectónicamente una app</h2>
+        <p>Separación de capas y principio de responsabilidad única</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <p>Android recomienda la arquitectura en <strong>capas</strong>, siguiendo el principio de que cada parte del código tenga una sola responsabilidad. El patrón más usado en apps Compose es <strong>MVVM</strong> (Model-View-ViewModel) o una variante simplificada con capas UI / Lógica / Datos.</p>
+
+      <div class="arch-diagram">
+        <div class="arch-layer" style="background:#e3f2fd; border-left: 4px solid #1565c0;">
+          <div class="layer-num" style="background:#1565c0;">UI</div>
+          <div>
+            <strong>Capa de UI</strong> — <code>@Composable</code> functions, pantallas, componentes visuales.<br>
+            <small style="color:#555;">Solo muestra datos y captura eventos del usuario. No tiene lógica de negocio.</small>
+          </div>
+        </div>
+        <div class="arch-arrow">↕</div>
+        <div class="arch-layer" style="background:#e8f5e9; border-left: 4px solid #2e7d32;">
+          <div class="layer-num" style="background:#2e7d32;">L</div>
+          <div>
+            <strong>Capa de Lógica / ViewModel</strong> — Funciones de cálculo, filtrado, transformación.<br>
+            <small style="color:#555;">Procesa los datos, expone el estado a la UI. No conoce cómo se ve la UI.</small>
+          </div>
+        </div>
+        <div class="arch-arrow">↕</div>
+        <div class="arch-layer" style="background:#fff3e0; border-left: 4px solid #e65100;">
+          <div class="layer-num" style="background:#e65100;">D</div>
+          <div>
+            <strong>Capa de Datos</strong> — Repository, data classes, fuentes de datos (API, BD, archivos).<br>
+            <small style="color:#555;">Provee los datos. No sabe nada de la UI ni de la lógica.</small>
+          </div>
+        </div>
+      </div>
+
+      <p>En el proyecto <strong>PokeCompose</strong> del parcial, la separación ya está esbozada:</p>
+
+      <table class="cmp-table">
+        <thead><tr><th>Archivo</th><th>Capa</th><th>Responsabilidad</th></tr></thead>
+        <tbody>
+          <tr><td><code>Pokemon.kt</code></td><td>Datos</td><td>Data class que modela un Pokémon</td></tr>
+          <tr><td><code>PokemonRepository.kt</code></td><td>Datos</td><td>Provee la lista de 251 Pokémon</td></tr>
+          <tr><td><code>PokemonLogic.kt</code></td><td>Lógica</td><td>Cálculos: porcentaje, restantes, clasificación, búsqueda</td></tr>
+          <tr><td><code>PokemonScreen.kt</code></td><td>UI</td><td>@Composable que muestra la Pokédex y captura interacciones</td></tr>
+          <tr><td><code>MainActivity.kt</code></td><td>UI (entrada)</td><td>Entry point de la Activity, inicializa el tema y llama PokemonScreen</td></tr>
+        </tbody>
+      </table>
+
+      <div class="qa-box">
+        <div class="q">❓ Caso típico de examen: "Dada esta app de turnos médicos, ¿cómo la organizarías en capas?"</div>
+        <div class="a">
+          <strong>Datos:</strong> <code>data class Turno(id, fecha, paciente, medico)</code> + <code>TurnoRepository</code> (lista en memoria o llamada a API).<br>
+          <strong>Lógica:</strong> <code>TurnoLogic</code> con funciones como <code>filtrarPorFecha()</code>, <code>calcularDemora()</code>, <code>ordenarPorHora()</code>.<br>
+          <strong>UI:</strong> <code>TurnosScreen</code> (lista de turnos), <code>TurnoItem</code> (fila individual), <code>FiltrosBar</code> (barra de búsqueda), cada una @Composable.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 5. Material Design 3 -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="material3">
+    <div class="section-header">
+      <div class="section-icon">🎨</div>
+      <div class="section-title">
+        <h2>Elementos de Material Design 3 en Compose</h2>
+        <p>Componentes, colores y tipografía del sistema de diseño de Google</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <p><strong>Material Design 3 (Material You)</strong> es el sistema de diseño de Google. En Jetpack Compose se accede a sus componentes importando <code>androidx.compose.material3.*</code>. Organiza la UI en componentes reutilizables con semántica definida.</p>
+
+      <div class="m3-grid">
+        <div class="m3-card" style="border-color:#1565c0;">
+          <h4 style="color:#1565c0;">Scaffold</h4>
+          <p>Estructura base de pantalla. Provee slots para <code>topBar</code>, <code>bottomBar</code>, <code>floatingActionButton</code> y el contenido principal con padding correcto.</p>
+        </div>
+        <div class="m3-card" style="border-color:#1b5e20;">
+          <h4 style="color:#1b5e20;">TopAppBar</h4>
+          <p>Barra superior con título, íconos de navegación y acciones. Variantes: <code>CenterAlignedTopAppBar</code>, <code>MediumTopAppBar</code>.</p>
+        </div>
+        <div class="m3-card" style="border-color:#4a148c;">
+          <h4 style="color:#4a148c;">Card</h4>
+          <p>Contenedor con elevación y bordes redondeados. Agrupa información relacionada. Soporta <code>onClick</code> para hacerla clickeable.</p>
+        </div>
+        <div class="m3-card" style="border-color:#e65100;">
+          <h4 style="color:#e65100;">Button / OutlinedButton / TextButton</h4>
+          <p><code>Button</code> = acción primaria (fondo sólido). <code>OutlinedButton</code> = acción secundaria. <code>TextButton</code> = acción terciaria o menor énfasis.</p>
+        </div>
+        <div class="m3-card" style="border-color:#880e4f;">
+          <h4 style="color:#880e4f;">OutlinedTextField / TextField</h4>
+          <p>Campos de entrada de texto. <code>OutlinedTextField</code> tiene borde visible. Soportan <code>label</code>, <code>placeholder</code>, <code>isError</code>, <code>supportingText</code>.</p>
+        </div>
+        <div class="m3-card" style="border-color:#00695c;">
+          <h4 style="color:#00695c;">LazyColumn / LazyRow</h4>
+          <p>Listas de scroll eficientes (equivalente a RecyclerView). Solo renderizan los ítems visibles. Usan <code>items()</code> y opcionalmente <code>key</code>.</p>
+        </div>
+        <div class="m3-card" style="border-color:#37474f;">
+          <h4 style="color:#37474f;">MaterialTheme</h4>
+          <p>Punto de acceso al tema: <code>MaterialTheme.colorScheme</code>, <code>MaterialTheme.typography</code>, <code>MaterialTheme.shapes</code>. Permite temas claro/oscuro dinámicos.</p>
+        </div>
+        <div class="m3-card" style="border-color:#1a237e;">
+          <h4 style="color:#1a237e;">Text</h4>
+          <p>Muestra texto. Acepta <code>style = MaterialTheme.typography.bodyMedium</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>color</code>, <code>maxLines</code>, <code>overflow</code>.</p>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>ColorScheme en Material 3:</strong> Los colores tienen nombres semánticos: <code>primary</code> (color principal), <code>onPrimary</code> (texto sobre primary), <code>surface</code> (fondo de cards), <code>onSurface</code> (texto sobre surface), <code>error</code>, <code>background</code>. Nunca hardcodees colores en los componentes si podés usar el ColorScheme — así la app respeta el modo oscuro automáticamente.
+      </div>
+
+      <div class="qa-box">
+        <div class="q">❓ "¿Qué es un Modifier y para qué sirve?"</div>
+        <div class="a">
+          <code>Modifier</code> es una cadena inmutable de instrucciones que modifican cómo se mide, dibuja o se comporta un Composable. Se encadena con <code>.</code>: <code>Modifier.fillMaxWidth().padding(16.dp).clickable { ... }</code>. <strong>El orden importa</strong>: <code>padding().background()</code> dibuja el fondo solo en el área interior, mientras que <code>background().padding()</code> cubre todo el área incluyendo el padding.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 6. Por qué funciones Composable pequeñas -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="funciones-pequeñas">
+    <div class="section-header">
+      <div class="section-icon">✂️</div>
+      <div class="section-title">
+        <h2>¿Por qué no se recomienda que las funciones Composable sean grandes?</h2>
+        <p>Recomposición, legibilidad y responsabilidad única</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <p>Esta es una de las preguntas más frecuentes en el parcial teórico. Hay tres razones principales:</p>
+
+      <div class="def-grid">
+        <div class="def-card" style="border-color:#c62828; background:#ffebee;">
+          <h4 style="color:#c62828;">1. Recomposición ineficiente</h4>
+          <p>Cuando una variable de estado cambia, Compose re-ejecuta <em>la función completa</em> que la contiene. Si toda la app está en una sola función gigante, cualquier cambio (el usuario escribe una letra) recalcula y redibuja <em>toda</em> la pantalla. Con funciones pequeñas, solo se re-ejecutan las que leen el estado que cambió.</p>
+        </div>
+        <div class="def-card" style="border-color:#e65100; background:#fff3e0;">
+          <h4 style="color:#e65100;">2. Violación de responsabilidad única</h4>
+          <p>Una función grande mezcla la lógica del header, la lista, los filtros y los botones. Si hay un bug en la lista, tenés que buscar entre 200 líneas. Funciones pequeñas y con nombre descriptivo (<code>PokemonItem</code>, <code>BuscadorBar</code>, <code>ProgresoCard</code>) hacen el código legible y navegable.</p>
+        </div>
+        <div class="def-card" style="border-color:#1b5e20; background:#e8f5e9;">
+          <h4 style="color:#1b5e20;">3. Reutilización imposible</h4>
+          <p>Una función enorme no puede reutilizarse en otra pantalla. Si extraés <code>PokemonItem(pokemon)</code> como función separada, podés usarla en la lista principal, en una pantalla de favoritos, en una búsqueda, etc.</p>
+        </div>
+        <div class="def-card" style="border-color:#1565c0; background:#e3f2fd;">
+          <h4 style="color:#1565c0;">4. Dificultad para hacer Preview</h4>
+          <p>Una función con 20 parámetros de estado es difícil de previsualizar. Una función pequeña con pocos parámetros se puede testear con <code>@Preview</code> en segundos.</p>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>Regla práctica:</strong> Si una función @Composable hace más de una cosa (mostrar datos + manejar estado + calcular algo), probablemente deba dividirse. Una función bien diseñada cabe en ~20–30 líneas.
+      </div>
+
+<pre>
+<span class="cm">// ❌ MAL: todo en una sola función gigante</span>
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaCompleta</span>() {
+    <span class="cm">// 200 líneas de layouts, estados, cálculos...</span>
+}
+
+<span class="cm">// ✔ BIEN: responsabilidades separadas</span>
+<span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaPokedex</span>() {
+    ProgresoCard(capturados, total)   <span class="cm">// solo muestra el progreso</span>
+    BuscadorBar(busqueda, onChange)   <span class="cm">// solo maneja la búsqueda</span>
+    ListaPokemon(lista, onCapturar)   <span class="cm">// solo renderiza la lista</span>
+}
+<span class="ann">@Composable</span> <span class="kw">fun</span> <span class="fn">ProgresoCard</span>(...) { <span class="cm">/* ≈20 líneas */</span> }
+<span class="ann">@Composable</span> <span class="kw">fun</span> <span class="fn">BuscadorBar</span>(...) { <span class="cm">/* ≈15 líneas */</span> }
+<span class="ann">@Composable</span> <span class="kw">fun</span> <span class="fn">ListaPokemon</span>(...) { <span class="cm">/* ≈25 líneas */</span> }
+</pre>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 7. Kotlin Scripts -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="script">
+    <div class="section-header">
+      <div class="section-icon">📜</div>
+      <div class="section-title">
+        <h2>Kotlin: scripts y archivos .kts</h2>
+        <p>Diferencia entre código Kotlin de app y Kotlin Script</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <p>En un proyecto Android aparecen dos tipos de archivos Kotlin:</p>
+
+      <table class="cmp-table">
+        <thead><tr><th></th><th>Kotlin (.kt)</th><th>Kotlin Script (.kts)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Uso</strong></td>
+            <td>Código de la app: Activities, ViewModels, data classes, composables.</td>
+            <td>Scripts de configuración y automatización: <code>build.gradle.kts</code>, <code>settings.gradle.kts</code>, <code>libs.versions.toml</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Se ejecuta cuando</strong></td>
+            <td>Al correr la app en el dispositivo o emulador.</td>
+            <td>Al hacer <em>build/sync</em> del proyecto en Android Studio.</td>
+          </tr>
+          <tr>
+            <td><strong>Ejemplos</strong></td>
+            <td><code>MainActivity.kt</code>, <code>PokemonScreen.kt</code></td>
+            <td><code>app/build.gradle.kts</code>, <code>gradle/libs.versions.toml</code></td>
+          </tr>
+          <tr>
+            <td><strong>Diferencia principal</strong></td>
+            <td>Necesita compilarse a .dex para correr en Android.</td>
+            <td>Es interpretado por Gradle al momento de configurar el proyecto.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>El archivo <strong><code>build.gradle.kts</code></strong> es el más relevante en el parcial. Declara:</p>
+
+<pre>
+<span class="cm">// app/build.gradle.kts</span>
+android {
+    compileSdk = <span class="ann">34</span>
+    defaultConfig {
+        minSdk = <span class="ann">24</span>          <span class="cm">// versión mínima de Android para instalar</span>
+        targetSdk = <span class="ann">34</span>       <span class="cm">// versión para la que está optimizada</span>
+        versionCode = <span class="ann">1</span>
+        versionName = <span class="str">"1.0"</span>
+    }
+}
+dependencies {
+    implementation(<span class="str">"androidx.compose.material3:material3"</span>)
+    implementation(<span class="str">"io.coil-kt:coil-compose:2.6.0"</span>)
+}
+</pre>
+
+      <div class="qa-box">
+        <div class="q">❓ "¿Para qué sirve el archivo AndroidManifest.xml?"</div>
+        <div class="a">Declara la estructura de la app ante el sistema Android: qué Activities existen, cuál es el punto de entrada principal (<code>android.intent.action.MAIN</code>), qué permisos requiere la app (internet, cámara, etc.), qué servicios y receivers tiene. Android lee el Manifest al instalar y al lanzar la app.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>Aplicaciones Distribuidas — UADE 2026 · Teoría para el parcial</footer>
+</body>
+</html>

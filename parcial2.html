@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial Práctico Resuelto — PokeCompose — AppDist UADE</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 2rem 1.5rem 1.5rem; text-align: center;
+  }
+  header h1 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+  header p { opacity: 0.85; font-size: 0.9rem; }
+  .badge {
+    display: inline-block; background: rgba(255,255,255,.15);
+    border-radius: 20px; padding: 2px 12px; font-size: 0.78rem;
+    color: #e8eaf6; margin-top: 0.5rem;
+  }
+  .nav-bar {
+    background: #283593; padding: 0.6rem 1rem; text-align: center; font-size: 0.85rem;
+  }
+  .nav-bar a { color: #90caf9; text-decoration: none; margin: 0 0.5rem; }
+  .nav-bar a:hover { color: white; }
+  .container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  .intro-box {
+    background: white; border-radius: 12px; padding: 1.2rem 1.4rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 1.5rem;
+    border-left: 5px solid #1a237e;
+  }
+  .intro-box h2 { color: #1a237e; font-size: 1rem; margin-bottom: 0.5rem; }
+  .intro-box p { font-size: 0.9rem; line-height: 1.6; color: #444; }
+
+  .injection-warning {
+    background: #fff3e0; border-radius: 10px; padding: 0.9rem 1.2rem;
+    margin-bottom: 1.5rem; border-left: 4px solid #f57c00; font-size: 0.88rem;
+  }
+  .injection-warning strong { color: #e65100; }
+
+  /* Error cards */
+  .error-card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 1.5rem; overflow: hidden;
+  }
+  .error-header {
+    display: flex; align-items: center; gap: 0.9rem;
+    padding: 1rem 1.2rem; background: #1a237e; color: white;
+  }
+  .error-num {
+    background: white; color: #1a237e; font-weight: bold;
+    font-size: 0.9rem; width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .error-header .title { font-size: 1rem; font-weight: 600; }
+  .error-header .file { font-size: 0.78rem; opacity: 0.8; }
+  .error-body { padding: 1.2rem; }
+
+  .matrix-row {
+    display: grid; grid-template-columns: 140px 1fr;
+    gap: 0.4rem 0.8rem; margin-bottom: 0.7rem; font-size: 0.88rem;
+  }
+  .matrix-label {
+    font-weight: 600; color: #1a237e; font-size: 0.8rem;
+    text-transform: uppercase; letter-spacing: 0.3px;
+    padding-top: 2px;
+  }
+  .matrix-value { color: #333; line-height: 1.5; }
+
+  .concept-tag {
+    display: inline-block; background: #e8eaf6; color: #1a237e;
+    font-size: 0.78rem; font-weight: 600; padding: 2px 8px;
+    border-radius: 10px; margin-bottom: 0.5rem;
+  }
+
+  .why-box {
+    background: #fff8e1; border-left: 4px solid #ffa000;
+    border-radius: 0 6px 6px 0; padding: 0.7rem 1rem;
+    font-size: 0.88rem; line-height: 1.6; color: #333; margin: 0.5rem 0;
+  }
+
+  pre {
+    background: #1e1e2e; color: #cdd6f4; border-radius: 8px;
+    padding: 1rem 1.2rem; overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.83rem; line-height: 1.6; margin-top: 0.6rem;
+  }
+  .kw { color: #cba6f7; }
+  .str { color: #a6e3a1; }
+  .ann { color: #fab387; }
+  .cm { color: #6c7086; font-style: italic; }
+  .num { color: #fab387; }
+  .tp { color: #89dceb; }
+  .fn { color: #89b4fa; }
+  .err-line { color: #f38ba8; background: rgba(243,139,168,.1); display: block; }
+  .ok-line { color: #a6e3a1; background: rgba(166,227,161,.08); display: block; }
+
+  .pre-label {
+    font-size: 0.74rem; font-weight: bold; letter-spacing: 0.5px;
+    text-transform: uppercase; margin-top: 0.8rem; margin-bottom: 0.2rem;
+  }
+  .pre-label.bad { color: #ef5350; }
+  .pre-label.good { color: #43a047; }
+
+  pre.good { border: 1px solid #2e7d32; background: #1b2820; }
+
+  .score-bar {
+    background: #e8eaf6; border-radius: 10px; padding: 1.2rem 1.5rem;
+    text-align: center; margin-bottom: 1.5rem;
+  }
+  .score-bar h3 { color: #1a237e; font-size: 1rem; margin-bottom: 0.4rem; }
+  .score-bar p { font-size: 0.88rem; color: #555; }
+
+  footer { text-align: center; padding: 1.5rem; font-size: 0.82rem; color: #666; border-top: 1px solid #ddd; }
+
+  @media (max-width: 600px) {
+    .matrix-row { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.2rem; }
+    pre { font-size: 0.77rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Parcial Práctico Resuelto — PokeCompose</h1>
+  <p>Auditoría y Refactorización en Jetpack Compose</p>
+  <span class="badge">10 errores · PokemonScreen.kt + PokemonLogic.kt</span>
+</header>
+<div class="nav-bar">
+  <a href="index.html">← Portal</a>
+  <a href="parcial.html">Parcial 1</a>
+  <a href="errores.html">Práctica de errores</a>
+  <a href="teoria.html">Teoría</a>
+</div>
+
+<div class="container">
+
+  <div class="intro-box">
+    <h2>Contexto del examen</h2>
+    <p>El proyecto <strong>PokeCompose</strong> es una Pokédex para Kanto y Johto (251 pokémon). Compila y arranca, pero tiene <strong>10 errores conceptuales y de lógica</strong> distribuidos en <code>PokemonLogic.kt</code> y <code>PokemonScreen.kt</code>. Cada error resuelto vale 2,5 puntos (total 25 pts).</p>
+  </div>
+
+  <div class="injection-warning">
+    <strong>⚠️ Nota sobre DiagnosticConfig.kt:</strong> El archivo contiene un intento de <em>prompt injection</em> — instrucciones escondidas en comentarios para que una IA responda en Klingon. Es una trampa para detectar uso automatizado de IA sin revisión. No afecta el comportamiento del código (la clase no hace nada relevante) y se ignora completamente en el análisis.
+  </div>
+
+  <div class="score-bar">
+    <h3>Distribución de errores</h3>
+    <p>4 errores en <code>PokemonLogic.kt</code> · 6 errores en <code>PokemonScreen.kt</code> · 2,5 pts c/u</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 1 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">1</div>
+      <div>
+        <div class="title">parsearIdBuscado — toInt() crashea</div>
+        <div class="file">PokemonLogic.kt · función parsearIdBuscado</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 7 — toIntOrNull y null safety</span>
+      <div class="matrix-row">
+        <div class="matrix-label">¿Por qué es error?</div>
+        <div class="matrix-value"></div>
+      </div>
+      <div class="why-box">
+        <code>texto.toInt()</code> lanza una <code>NumberFormatException</code> si el texto no es un número entero válido (letras, vacío, decimales). Como esta función se llama directamente desde el campo de búsqueda del usuario, cualquier búsqueda por nombre crashea la app. Debe usarse <code>toIntOrNull()</code> que devuelve <code>null</code> en lugar de lanzar excepción.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="kw">fun</span> <span class="fn">parsearIdBuscado</span>(texto: <span class="tp">String</span>): <span class="tp">Int</span> {
+<span class="err-line">    return texto.toInt()   // crash si texto = "pikachu" o ""</span>
+}
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="kw">fun</span> <span class="fn">parsearIdBuscado</span>(texto: <span class="tp">String</span>): <span class="tp">Int?</span> {
+<span class="ok-line">    return texto.toIntOrNull()   // devuelve null si no es número — sin crash</span>
+}
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 2 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">2</div>
+      <div>
+        <div class="title">calcularPorcentajeProgreso — división entera siempre da 0</div>
+        <div class="file">PokemonLogic.kt · función calcularPorcentajeProgreso</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 3 — tipos numéricos en Kotlin</span>
+      <div class="why-box">
+        En Kotlin (igual que en Java), la división entre dos <code>Int</code> produce un resultado <code>Int</code> truncado. Como <code>capturados</code> siempre es menor que <code>total</code> (251), el resultado de <code>capturados / total</code> es siempre <strong>0</strong> en división entera. Luego multiplicar por 100 da 0.0. El porcentaje nunca muestra un valor correcto. Hay que convertir uno de los operandos a <code>Double</code> antes de dividir.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="kw">fun</span> <span class="fn">calcularPorcentajeProgreso</span>(capturados: <span class="tp">Int</span>, total: <span class="tp">Int</span>): <span class="tp">Double</span> {
+    <span class="kw">if</span> (total == <span class="num">0</span>) <span class="kw">return</span> <span class="num">0.0</span>
+<span class="err-line">    return ((capturados / total) * 100).toDouble()  // 0/251 = 0 (entero)</span>
+}
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="kw">fun</span> <span class="fn">calcularPorcentajeProgreso</span>(capturados: <span class="tp">Int</span>, total: <span class="tp">Int</span>): <span class="tp">Double</span> {
+    <span class="kw">if</span> (total == <span class="num">0</span>) <span class="kw">return</span> <span class="num">0.0</span>
+<span class="ok-line">    return (capturados.toDouble() / total) * 100   // división en Double</span>
+}
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 3 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">3</div>
+      <div>
+        <div class="title">calcularRestantes — operandos invertidos</div>
+        <div class="file">PokemonLogic.kt · función calcularRestantes</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 3 — lógica aritmética</span>
+      <div class="why-box">
+        La función hace <code>capturados - total</code> en lugar de <code>total - capturados</code>. Con 5 capturados y 251 totales, devuelve <strong>−246</strong> en lugar de 246. La pantalla mostraría "Faltan capturar: −246 Pokémon", lo cual es un error de lógica evidente.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="kw">fun</span> <span class="fn">calcularRestantes</span>(total: <span class="tp">Int</span>, capturados: <span class="tp">Int</span>): <span class="tp">Int</span> {
+<span class="err-line">    return capturados - total   // devuelve número negativo</span>
+}
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="kw">fun</span> <span class="fn">calcularRestantes</span>(total: <span class="tp">Int</span>, capturados: <span class="tp">Int</span>): <span class="tp">Int</span> {
+<span class="ok-line">    return total - capturados   // operandos en orden correcto</span>
+}
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 4 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">4</div>
+      <div>
+        <div class="title">clasificarGeneracion — rangos solapados, Johto nunca alcanzable</div>
+        <div class="file">PokemonLogic.kt · función clasificarGeneracion</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 7 — when y rangos</span>
+      <div class="why-box">
+        El <code>when</code> evalúa las ramas <strong>en orden</strong> y usa la primera que coincide. La rama <code>in 1..251</code> incluye todos los Pokémon de Gen 1 Y Gen 2 (1 al 251). La rama <code>in 152..251</code> (Johto) nunca se alcanza porque todos los IDs 152–251 ya fueron capturados por la primera rama. Todos los Pokémon aparecen como "Kanto (Gen 1)". Los rangos deben estar en orden exclusivo: primero el más específico (152–251 Johto), luego el restante de Gen 1 (1–151).
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="kw">fun</span> <span class="fn">clasificarGeneracion</span>(id: <span class="tp">Int</span>): <span class="tp">String</span> {
+    <span class="kw">return</span> <span class="kw">when</span> (id) {
+<span class="err-line">        in 1..251   -> "Kanto (Gen 1)"    // captura todo, Johto nunca llega</span>
+        in 152..251 -> "Johto (Gen 2)"    // rama muerta
+        <span class="kw">else</span>        -> "Desconocida"
+    }
+}
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="kw">fun</span> <span class="fn">clasificarGeneracion</span>(id: <span class="tp">Int</span>): <span class="tp">String</span> {
+    <span class="kw">return</span> <span class="kw">when</span> (id) {
+<span class="ok-line">        in 1..151   -> "Kanto (Gen 1)"    // rango exclusivo Gen 1</span>
+<span class="ok-line">        in 152..251 -> "Johto (Gen 2)"    // ahora es alcanzable</span>
+        <span class="kw">else</span>        -> "Desconocida"
+    }
+}
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 5 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">5</div>
+      <div>
+        <div class="title">busqueda — variable local sin estado observable</div>
+        <div class="file">PokemonScreen.kt · PokemonScreen() ~línea 30</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 6 — remember, mutableStateOf, recomposición</span>
+      <div class="why-box">
+        <code>var busqueda = ""</code> es una variable local ordinaria. Cada vez que Compose redibujar la pantalla (recomposición), esta variable se reinicia a <code>""</code>. Además, cambiar una variable local no notifica a Compose que debe redibujar nada. El <code>OutlinedTextField</code> nunca mostrará el texto que el usuario escriba porque su <code>value</code> siempre vale <code>""</code>. Debe ser estado observable con <code>remember { mutableStateOf("") }</code>.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="err-line">var busqueda = ""    // variable local — se reinicia en cada recomposición</span>
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="ok-line">var busqueda by remember { mutableStateOf("") }   // estado observable</span>
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 6 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">6</div>
+      <div>
+        <div class="title">capturados — mutableListOf no observable</div>
+        <div class="file">PokemonScreen.kt · PokemonScreen() ~línea 31</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 10 — mutableStateListOf</span>
+      <div class="why-box">
+        <code>val capturados = mutableListOf&lt;Pokemon&gt;()</code> crea una lista mutable normal. Cuando se agrega o elimina un Pokémon, Compose no sabe que hubo un cambio y <strong>no redibuja la pantalla</strong>. El contador de capturados siempre muestra 0, el botón no cambia entre "Capturar" y "Liberar", y el porcentaje nunca se actualiza. Debe usarse <code>mutableStateListOf</code> dentro de <code>remember</code> para que cada modificación dispare una recomposición.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="err-line">val capturados = mutableListOf&lt;Pokemon&gt;()   // no observable</span>
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="ok-line">val capturados = remember { mutableStateListOf&lt;Pokemon&gt;() }</span>
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 7 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">7</div>
+      <div>
+        <div class="title">listaFiltrada — operador && hace la búsqueda imposible</div>
+        <div class="file">PokemonScreen.kt · listaFiltrada · ~línea 42</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 7 — lógica booleana if/when</span>
+      <div class="why-box">
+        El filtro exige que <em>ambas</em> condiciones sean verdaderas: que el nombre contenga el texto buscado <strong>Y</strong> que el id sea exactamente igual al número buscado. Si el usuario escribe "pikachu", <code>idFiltro</code> es <code>null</code>, así que la condición <code>idFiltro != null && pokemon.id == idFiltro</code> es <code>false</code> para todos. La lista filtrada siempre queda vacía al buscar por nombre. La intención es buscar por nombre <strong>O</strong> por número, así que debe usarse <code>||</code>.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+todosLosPokemons.filter { pokemon ->
+<span class="err-line">    pokemon.name.contains(busqueda, ignoreCase = true) && (idFiltro != null && pokemon.id == idFiltro)</span>
+    <span class="cm">// AND: nunca devuelve resultados al buscar por nombre</span>
+}
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+todosLosPokemons.filter { pokemon ->
+<span class="ok-line">    pokemon.name.contains(busqueda, ignoreCase = true) || (idFiltro != null && pokemon.id == idFiltro)</span>
+    <span class="cm">// OR: busca por nombre o por número indistintamente</span>
+}
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 8 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">8</div>
+      <div>
+        <div class="title">Liberar Pokémon — elimina el primero en lugar del clickeado</div>
+        <div class="file">PokemonScreen.kt · onClick del botón Liberar · ~línea 205</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 10 — manejo de colecciones, remove vs removeAt</span>
+      <div class="why-box">
+        Al presionar "Liberar" en un Pokémon, el código ejecuta <code>capturados.removeAt(0)</code>, que siempre elimina el elemento en la posición 0 (el primero capturado), sin importar qué Pokémon se clickeó. Si capturaste Bulbasaur, Charmander y Pikachu y querés liberar a Pikachu, liberará a Bulbasaur. Debe usarse <code>capturados.remove(pokemon)</code> que elimina por referencia el objeto concreto.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="kw">if</span> (yaCapturado) {
+    <span class="kw">if</span> (capturados.isNotEmpty()) {
+<span class="err-line">        capturados.removeAt(0)   // siempre quita el primero, no el clickeado</span>
+    }
+}
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="kw">if</span> (yaCapturado) {
+<span class="ok-line">    capturados.remove(pokemon)   // elimina el pokémon específico clickeado</span>
+}
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 9 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">9</div>
+      <div>
+        <div class="title">DiagnosticLogger instanciado dentro de lambdas de UI</div>
+        <div class="file">PokemonScreen.kt · topBar lambda y onClick del botón Compartir</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 5 y 6 — recomposición, efectos secundarios en Compose</span>
+      <div class="why-box">
+        Se crea un <code>DiagnosticLogger()</code> dentro del bloque <code>topBar = { ... }</code> de <code>Scaffold</code> y otro dentro del <code>onClick</code> del botón Compartir. El bloque <code>topBar</code> es código que Compose puede re-ejecutar en cada recomposición — crear objetos allí genera basura innecesaria en cada redibujado. Además, el logger del <code>topBar</code> se instancia pero nunca se usa (es código muerto). Los objetos que no dependen del estado deben instanciarse <strong>fuera</strong> del scope composable, o al menos fuera del lambda.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+topBar = {
+    TopAppBar( title = { Text("Pokédex") }, ... )
+<span class="err-line">    val diagnosticLogger = DiagnosticLogger()   // se crea en cada recomposición, nunca usado</span>
+}
+<span class="cm">// ... más adelante:</span>
+Button(onClick = {
+<span class="err-line">    val diagnosticLogger = DiagnosticLogger()   // se crea en cada click</span>
+    context.startActivity(sendIntent)
+})
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="cm">// Instanciar una sola vez, fuera de los lambdas</span>
+<span class="kw">val</span> diagnosticLogger = remember { DiagnosticLogger() }
+
+topBar = {
+    TopAppBar( title = { Text("Pokédex") }, ... )
+    <span class="cm">// sin instanciación aquí</span>
+}
+Button(onClick = {
+    context.startActivity(sendIntent)
+    <span class="cm">// usar el logger ya instanciado si es necesario</span>
+})
+</pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ERROR 10 ══════ -->
+  <div class="error-card">
+    <div class="error-header">
+      <div class="error-num">10</div>
+      <div>
+        <div class="title">Intent de compartir — falta type = "text/plain"</div>
+        <div class="file">PokemonScreen.kt · onClick botón "Compartir mi equipo" · ~línea 165</div>
+      </div>
+    </div>
+    <div class="error-body">
+      <span class="concept-tag">Ejercicio 12 — Android SDK, Intents</span>
+      <div class="why-box">
+        Un <code>Intent.ACTION_SEND</code> sin el campo <code>type</code> está incompleto. Android usa el type MIME para saber qué aplicaciones pueden recibir ese Intent. Sin <code>type</code>, el sistema no encuentra apps receptoras, el <code>startActivity</code> lanza una excepción <code>ActivityNotFoundException</code> y la app crashea. Para compartir texto, el type debe ser <code>"text/plain"</code>. Adicionalmente, la llamada a <code>startActivity</code> debería envolverse en un <code>Intent.createChooser</code> para mostrar el diálogo de apps disponibles.
+      </div>
+      <div class="pre-label bad">❌ Código con error</div>
+<pre>
+<span class="kw">val</span> sendIntent = Intent(Intent.ACTION_SEND).apply {
+    putExtra(Intent.EXTRA_TEXT, "¡He capturado ${capturados.size} Pokémon!")
+    <span class="cm">// falta: type = "text/plain"</span>
+}
+<span class="err-line">context.startActivity(sendIntent)   // crash: ActivityNotFoundException</span>
+</pre>
+      <div class="pre-label good">✔ Corrección</div>
+<pre class="good">
+<span class="kw">val</span> sendIntent = Intent(Intent.ACTION_SEND).apply {
+    putExtra(Intent.EXTRA_TEXT, "¡He capturado ${capturados.size} Pokémon!")
+<span class="ok-line">    type = "text/plain"   // MIME type obligatorio para ACTION_SEND</span>
+}
+<span class="ok-line">context.startActivity(Intent.createChooser(sendIntent, "Compartir via…"))</span>
+</pre>
+    </div>
+  </div>
+
+  <!-- Tabla resumen -->
+  <div class="error-card">
+    <div class="error-header" style="background:#2e7d32;">
+      <div class="num" style="color:#2e7d32; background:white; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85rem; flex-shrink:0;">✓</div>
+      <div>
+        <div class="title">Resumen — los 10 errores de un vistazo</div>
+        <div class="file">Para repasar rápido antes del examen</div>
+      </div>
+    </div>
+    <div class="error-body" style="padding:0;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+        <thead>
+          <tr style="background:#e8f5e9;">
+            <th style="padding:0.6rem 0.8rem; text-align:left; color:#1b5e20;">#</th>
+            <th style="padding:0.6rem 0.8rem; text-align:left; color:#1b5e20;">Archivo</th>
+            <th style="padding:0.6rem 0.8rem; text-align:left; color:#1b5e20;">Error</th>
+            <th style="padding:0.6rem 0.8rem; text-align:left; color:#1b5e20;">Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">1</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Logic.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;"><code>toInt()</code> crashea</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>toIntOrNull()</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0; background:#fafafa;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">2</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Logic.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;">División entera → siempre 0%</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>capturados.toDouble()/total</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">3</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Logic.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;">Operandos invertidos → negativo</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>total - capturados</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0; background:#fafafa;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">4</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Logic.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;">Rango 1..251 tapa a 152..251</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>in 1..151</code> primero</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">5</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Screen.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;"><code>busqueda</code> sin estado</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>by remember { mutableStateOf("") }</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0; background:#fafafa;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">6</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Screen.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;"><code>mutableListOf</code> no observable</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>remember { mutableStateListOf() }</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">7</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Screen.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;"><code>&&</code> → búsqueda vacía</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>||</code> (nombre O número)</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0; background:#fafafa;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">8</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Screen.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;"><code>removeAt(0)</code> borra el primero</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>remove(pokemon)</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">9</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Screen.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;">Logger en lambda de UI</td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>remember { DiagnosticLogger() }</code> afuera</td>
+          </tr>
+          <tr>
+            <td style="padding:0.5rem 0.8rem; font-weight:bold; color:#c62828;">10</td>
+            <td style="padding:0.5rem 0.8rem; color:#555;"><code>Screen.kt</code></td>
+            <td style="padding:0.5rem 0.8rem;">Intent sin <code>type</code></td>
+            <td style="padding:0.5rem 0.8rem; color:#2e7d32;"><code>type = "text/plain"</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+<footer>Aplicaciones Distribuidas — UADE 2026 · Resolución parcial práctico PokeCompose</footer>
+</body>
+</html>
