@@ -386,6 +386,9 @@
   <a href="#principios">Principios</a>
   <a href="#elementos">Elementos UI</a>
   <a href="#etapas-diseño">Etapas de Diseño</a>
+  <a href="#nielsen">Nielsen</a>
+  <a href="#wireframe">Wireframe</a>
+  <a href="#quiz">Quiz</a>
   <a href="index.html">← Portal</a>
 </nav>
 
@@ -944,11 +947,202 @@
     </div>
   </section>
 
+  <!-- SECCIÓN 10: HEURÍSTICAS DE NIELSEN -->
+  <section id="nielsen">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">🔟</div>
+      <div>
+        <div class="section-num">SECCIÓN 10</div>
+        <h2>Heurísticas de Nielsen para Mobile</h2>
+      </div>
+    </div>
+
+    <p>Jakob Nielsen definió 10 principios generales de diseño de interfaces. Son la base para evaluar la usabilidad de cualquier sistema interactivo.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>1. Visibilidad del estado del sistema</h3>
+        <p style="font-size:0.88rem">La app siempre debe informar al usuario qué está pasando, con feedback apropiado y en tiempo razonable.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: barra de progreso al cargar, spinner al conectar a la red, badge en el ícono con notificaciones pendientes.</p>
+      </div>
+      <div class="card">
+        <h3>2. Coincidencia con el mundo real</h3>
+        <p style="font-size:0.88rem">Usar palabras, frases y conceptos familiares. Seguir convenciones del mundo real, no jerga interna del sistema.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: ícono de "lupa" para buscar, "corazón" para favoritos, "basura" para eliminar. Evitar "Error 503".</p>
+      </div>
+      <div class="card">
+        <h3>3. Control y libertad del usuario</h3>
+        <p style="font-size:0.88rem">Los usuarios cometen errores. Ofrecer siempre una salida clara: deshacer, rehacer, cancelar.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: "Deshacer" al eliminar un elemento, confirmación antes de borrar, poder salir con el botón atrás.</p>
+      </div>
+      <div class="card">
+        <h3>4. Consistencia y estándares</h3>
+        <p style="font-size:0.88rem">Los usuarios no deberían preguntarse si diferentes palabras o acciones significan lo mismo. Seguir las convenciones de la plataforma.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: usar patrones de Material Design, botón de acción principal siempre en el mismo lugar.</p>
+      </div>
+      <div class="card">
+        <h3>5. Prevención de errores</h3>
+        <p style="font-size:0.88rem">Mejor que un buen mensaje de error es un diseño que previene que el problema ocurra.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: deshabilitar "Enviar" si el formulario está incompleto, teclado numérico para teléfonos, autocompletar.</p>
+      </div>
+      <div class="card">
+        <h3>6. Reconocimiento en lugar de recuerdo</h3>
+        <p style="font-size:0.88rem">Minimizar la carga cognitiva. El usuario no debería recordar información de una pantalla a la siguiente.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: mostrar el resumen del pedido en la pantalla de pago, mantener el término buscado visible.</p>
+      </div>
+      <div class="card">
+        <h3>7. Flexibilidad y eficiencia de uso</h3>
+        <p style="font-size:0.88rem">Atajos para usuarios avanzados, sin perjudicar a los nuevos usuarios.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: gestos swipe para acciones frecuentes, long press para opciones rápidas, notificaciones accionables.</p>
+      </div>
+      <div class="card">
+        <h3>8. Diseño estético y minimalista</h3>
+        <p style="font-size:0.88rem">Las interfaces no deben contener información irrelevante. Cada elemento compite por la atención del usuario.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: pantallas con pocos elementos, jerarquía visual clara, espaciado generoso. Crítico en pantallas chicas.</p>
+      </div>
+      <div class="card">
+        <h3>9. Ayuda a reconocer y recuperarse de errores</h3>
+        <p style="font-size:0.88rem">Los mensajes de error deben ser en lenguaje claro, indicar el problema y sugerir una solución.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: "Sin conexión a Internet. Verificá tu WiFi y volvé a intentar" en vez de "Error 503".</p>
+      </div>
+      <div class="card">
+        <h3>10. Ayuda y documentación</h3>
+        <p style="font-size:0.88rem">Aunque es mejor que un sistema no necesite documentación, puede ser necesario proveer ayuda contextual.</p>
+        <p style="font-size:0.82rem; color:var(--muted)">📱 Mobile: tooltips en el primer uso (onboarding), tutorial interactivo inicial, sección de ayuda en el menú.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 11: WIREFRAME + QUIZ -->
+  <section id="wireframe">
+    <div class="section-header">
+      <div class="section-icon icon-pink">📱</div>
+      <div>
+        <div class="section-num">SECCIÓN 11</div>
+        <h2>Wireframe de una Activity Android</h2>
+      </div>
+    </div>
+
+    <p>Un wireframe es un esquema de baja fidelidad que muestra la estructura y layout de una pantalla sin colores ni detalles visuales. Aplicando las heurísticas de Nielsen:</p>
+
+    <div style="border:2px solid var(--accent2); border-radius:12px; background:rgba(6,182,212,0.05); padding:1.5rem; margin:1rem 0; max-width:360px;">
+      <div style="background:var(--accent2); color:#fff; border-radius:8px 8px 0 0; margin:-1.5rem -1.5rem 1rem; padding:0.5rem 1rem; font-size:0.85rem; font-weight:700;">📱 Login Screen — [App Name]</div>
+      <div style="text-align:center; padding:0.5rem 0">
+        <div style="width:72px; height:72px; border:2px dashed var(--muted); border-radius:8px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:0.75rem;">LOGO</div>
+        <div style="font-size:0.9rem; font-weight:700; margin:0.5rem 0; color:#fff;">Bienvenido</div>
+      </div>
+      <div style="padding:0 0.5rem">
+        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.2rem">Email</div>
+        <div style="border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.6rem; font-size:0.78rem; color:var(--muted); background:rgba(255,255,255,0.05); margin-bottom:0.5rem">usuario@email.com</div>
+        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.2rem">Contraseña</div>
+        <div style="border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.6rem; font-size:0.78rem; color:var(--muted); background:rgba(255,255,255,0.05); margin-bottom:0.3rem">••••••••</div>
+        <div style="text-align:right; font-size:0.73rem; color:var(--accent2); margin-bottom:0.5rem">¿Olvidaste tu contraseña?</div>
+        <div style="background:var(--accent2); color:#fff; border-radius:8px; text-align:center; padding:0.5rem; font-size:0.82rem; font-weight:700; margin-bottom:0.5rem">INGRESAR</div>
+        <div style="text-align:center; font-size:0.73rem; color:var(--muted); margin-bottom:0.4rem">— o ingresá con —</div>
+        <div style="display:flex; gap:0.5rem; justify-content:center; margin-bottom:0.4rem">
+          <span style="border:1px solid var(--border); border-radius:6px; padding:0.3rem 0.8rem; font-size:0.75rem; color:var(--muted)">G Google</span>
+          <span style="border:1px solid var(--border); border-radius:6px; padding:0.3rem 0.8rem; font-size:0.75rem; color:var(--muted)">f Facebook</span>
+        </div>
+        <div style="text-align:center; font-size:0.73rem; color:var(--muted)">¿No tenés cuenta? <span style="color:var(--accent2); font-weight:700">Registrate</span></div>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Heurística</th><th>Cómo se aplica</th></tr>
+      <tr><td>1. Visibilidad del estado</td><td>Spinner al presionar "Ingresar" (feedback de carga)</td></tr>
+      <tr><td>2. Mundo real</td><td>Etiquetas "Email" y "Contraseña" en vez de "username" o "pwd"</td></tr>
+      <tr><td>3. Control y libertad</td><td>Enlace "¿Olvidaste tu contraseña?" siempre visible</td></tr>
+      <tr><td>5. Prevención de errores</td><td>Placeholder con formato esperado, teclado correcto por campo</td></tr>
+      <tr><td>7. Eficiencia</td><td>Opciones de login social (Google, Facebook) para usuarios frecuentes</td></tr>
+      <tr><td>8. Minimalismo</td><td>Solo los elementos necesarios: logo, dos campos, botón, recuperar contraseña</td></tr>
+    </table>
+  </section>
+
+  <!-- SECCIÓN 12: QUIZ -->
+  <section id="quiz">
+    <div class="section-header">
+      <div class="section-icon icon-amber">🧠</div>
+      <div>
+        <div class="section-num">SECCIÓN 12</div>
+        <h2>Quiz — HCI & UX</h2>
+      </div>
+    </div>
+
+    <p>Hacé clic en cada pregunta para ver la respuesta.</p>
+
+    <div class="qa-box" style="cursor:pointer" onclick="toggleQ(this)">
+      <div class="qa-q">❓ ¿Cuál es la diferencia principal entre UX y UI? <span style="float:right; font-size:0.75rem; color:var(--muted)">(clic para ver)</span></div>
+      <div class="qa-a" style="display:none; margin-top:0.75rem">
+        <strong>UI</strong> (User Interface) es el diseño visual de la interfaz: colores, tipografía, botones, iconos. Es lo que el usuario <em>ve</em>.<br><br>
+        <strong>UX</strong> (User Experience) es la experiencia completa del usuario al usar el producto: qué tan fácil es lograr sus objetivos, si los flujos son intuitivos. Es lo que el usuario <em>siente</em>.<br><br>
+        Una app puede tener UI hermosa pero UX pésima (hermosa pero confusa). Y puede tener UI simple pero excelente UX (fea pero intuitiva). <strong>UI ⊂ UX ⊂ CX</strong>.
+      </div>
+    </div>
+
+    <div class="qa-box" style="cursor:pointer" onclick="toggleQ(this)">
+      <div class="qa-q">❓ ¿Para qué sirve un wireframe y por qué se hace antes del diseño visual? <span style="float:right; font-size:0.75rem; color:var(--muted)">(clic para ver)</span></div>
+      <div class="qa-a" style="display:none; margin-top:0.75rem">
+        Un wireframe es un esquema de baja fidelidad que define la <strong>estructura y el layout</strong> de una pantalla sin entrar en detalles visuales. Se hace antes del diseño visual porque:<br>
+        1. Es más rápido y barato de crear y modificar.<br>
+        2. Permite validar el flujo con el cliente antes de invertir en diseño.<br>
+        3. Fuerza a pensar en la funcionalidad antes que en la estética.<br>
+        4. Facilita la comunicación entre diseñadores y desarrolladores.
+      </div>
+    </div>
+
+    <div class="qa-box" style="cursor:pointer" onclick="toggleQ(this)">
+      <div class="qa-q">❓ ¿Por qué el minimalismo (heurística 8) es especialmente importante en mobile? <span style="float:right; font-size:0.75rem; color:var(--muted)">(clic para ver)</span></div>
+      <div class="qa-a" style="display:none; margin-top:0.75rem">
+        En mobile el espacio de pantalla es muy limitado (4–6 pulgadas vs 13–27 en desktop). Cada elemento visual compite por la atención del usuario en ese espacio reducido. Además, los usuarios móviles suelen estar en movimiento, distraídos. Un diseño minimalista:<br>
+        1. Reduce la carga cognitiva.<br>
+        2. Hace que los elementos importantes sean más fáciles de encontrar.<br>
+        3. Mejora el rendimiento (menos elementos = menos tiempo de renderizado).<br>
+        4. Es más fácil de usar con un solo pulgar.
+      </div>
+    </div>
+
+    <div class="qa-box" style="cursor:pointer" onclick="toggleQ(this)">
+      <div class="qa-q">❓ ¿Qué es la Ley de Fitts y cómo se aplica en el diseño de botones? <span style="float:right; font-size:0.75rem; color:var(--muted)">(clic para ver)</span></div>
+      <div class="qa-a" style="display:none; margin-top:0.75rem">
+        La Ley de Fitts dice que el tiempo para alcanzar un objetivo depende de su tamaño y distancia: <strong>T = a + b·log₂(D/W + 1)</strong>.<br><br>
+        Implicaciones: los botones importantes deben ser <strong>grandes</strong> (reducen el tiempo de alcanzar), deben estar <strong>cerca del foco de atención</strong> (esquinas y bordes de la pantalla son los más rápidos de alcanzar). Por eso el FAB va en la esquina inferior derecha y la barra de navegación en el borde inferior.
+      </div>
+    </div>
+
+    <div class="qa-box" style="cursor:pointer" onclick="toggleQ(this)">
+      <div class="qa-q">❓ ¿Cuáles son las 5 etapas de Design Thinking? <span style="float:right; font-size:0.75rem; color:var(--muted)">(clic para ver)</span></div>
+      <div class="qa-a" style="display:none; margin-top:0.75rem">
+        1. <strong>Empatizar</strong>: Entender profundamente al usuario (entrevistas, observación contextual).<br>
+        2. <strong>Definir</strong>: Formular el problema real con Personas y User Journey.<br>
+        3. <strong>Idear</strong>: Brainstorming sin juzgar viabilidad — más ideas, más locas mejor.<br>
+        4. <strong>Prototipar</strong>: Construir representaciones de bajo costo para validar rápido.<br>
+        5. <strong>Testear</strong>: Probar con usuarios reales y volver a cualquier etapa anterior si es necesario.<br><br>
+        Es un proceso <strong>iterativo, no lineal</strong>.
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer style="background:var(--surface); border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--muted); font-size:0.85rem; margin-top:3rem;">
   <p>Aplicaciones Distribuidas · UADE · <a href="index.html" style="color:var(--accent); text-decoration:none;">Portal principal →</a></p>
 </footer>
+
+<script>
+function toggleQ(el) {
+  const ans = el.querySelector('.qa-a');
+  const hint = el.querySelector('span');
+  if (ans.style.display === 'none') {
+    ans.style.display = 'block';
+    el.querySelector('.qa-q').childNodes[0].textContent = el.querySelector('.qa-q').childNodes[0].textContent.replace('❓', '✅');
+    if (hint) hint.textContent = '(clic para ocultar)';
+  } else {
+    ans.style.display = 'none';
+    el.querySelector('.qa-q').childNodes[0].textContent = el.querySelector('.qa-q').childNodes[0].textContent.replace('✅', '❓');
+    if (hint) hint.textContent = '(clic para ver)';
+  }
+}
+</script>
 
 </body>
 </html>
