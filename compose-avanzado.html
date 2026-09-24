@@ -200,7 +200,8 @@
   .hl-amber .label { color: var(--accent4); }
   .hl-red .label { color: var(--accent5); }
 
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
   th { background: rgba(255,255,255,0.06); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #fff; border-bottom: 2px solid var(--border); }
   td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); color: #cbd5e1; vertical-align: top; }
   tr:last-child td { border-bottom: none; }
@@ -282,6 +283,12 @@
 
   @media (max-width: 600px) {
     .layer { flex-wrap: wrap; }
+    nav { overflow-x: auto; flex-wrap: nowrap; padding: 0.5rem; justify-content: flex-start; }
+    nav a { flex-shrink: 0; font-size: 0.75rem; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    pre { font-size: 0.75rem; }
+    main { padding: 1rem; }
+    header { padding: 2rem 1rem 1.5rem; }
   }
 </style>
 </head>
@@ -347,7 +354,7 @@
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Imperativo (XML tradicional)</th>
         <th>Declarativo (Compose)</th>
@@ -372,7 +379,7 @@
         <td><code>UI = código_imperativo()</code></td>
         <td><code>UI = f(estado)</code></td>
       </tr>
-    </table>
+    </table></div>
   </section>
 
   <!-- SECCIÓN 2: ESTADO -->
@@ -403,7 +410,7 @@
 <span class="kw">val</span> lista = <span class="fn">remember</span> { <span class="fn">mutableStateListOf</span>&lt;<span class="cls">String</span>&gt;() }
 <span class="cmt">// Uso: lista.add("item")  lista.remove(item)  lista.removeAt(i)</span></code></pre>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Patrón</th>
         <th>Sintaxis</th>
@@ -429,7 +436,7 @@
         <td><code>val lista = remember { mutableListOf&lt;T&gt;() }</code></td>
         <td>Nunca — Compose no detecta cambios en la lista</td>
       </tr>
-    </table>
+    </table></div>
 
     <div class="grid-2">
       <div>
@@ -661,18 +668,18 @@
       <div class="card">
         <h3 style="color:var(--accent2)">ColorScheme</h3>
         <p style="font-size:0.88rem">La paleta de colores semánticos. Los más usados:</p>
-        <table style="margin-top:0.5rem">
+        <div class="tw"><table style="margin-top:0.5rem">
           <tr><td><code>primary</code></td><td>Color principal de la app</td></tr>
           <tr><td><code>primaryContainer</code></td><td>Fondo de elementos primarios</td></tr>
           <tr><td><code>secondary</code></td><td>Color secundario</td></tr>
           <tr><td><code>surface</code></td><td>Fondo de Cards y diálogos</td></tr>
           <tr><td><code>background</code></td><td>Fondo general de la pantalla</td></tr>
           <tr><td><code>error</code></td><td>Errores y validaciones</td></tr>
-        </table>
+        </table></div>
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Componente</th>
         <th>Uso</th>
@@ -723,7 +730,7 @@
         <td>Lista vertical con lazy rendering</td>
         <td><code>modifier</code>, dentro: <code>items()</code></td>
       </tr>
-    </table>
+    </table></div>
 
     <div class="code-label">Jerarquía tipográfica Material 3</div>
     <pre><code><span class="cmt">// De mayor a menor tamaño:</span>
@@ -779,7 +786,7 @@
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Modifier</th>
         <th>Descripción</th>
@@ -820,7 +827,7 @@
         <td>Tamaño de texto (escala con preferencias del sistema)</td>
         <td><code>.sp</code> para texto</td>
       </tr>
-    </table>
+    </table></div>
 
     <div class="highlight hl-amber">
       <div class="label">dp vs sp</div>

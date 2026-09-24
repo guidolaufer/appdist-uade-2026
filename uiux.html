@@ -164,7 +164,8 @@
   .hl-amber .label { color: var(--accent4); }
   .hl-red .label { color: var(--accent5); }
 
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
   th {
     background: rgba(255,255,255,0.06);
     padding: 0.75rem 1rem;
@@ -365,6 +366,11 @@
     .step-item + .step-item::before { content: '↓'; left: 50%; top: -12px; transform: translateX(-50%); }
     .step-item:first-child, .step-item:last-child { border-radius: 10px; }
     .step-item { border-radius: 10px !important; }
+    .grid-2, .grid-3, .proto-cards { grid-template-columns: 1fr; }
+    nav { overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; padding: 0.5rem 1rem; }
+    nav a { flex-shrink: 0; font-size: 0.75rem; }
+    main { padding: 1rem; }
+    header { padding: 2rem 1rem 1.5rem; }
   }
 </style>
 </head>
@@ -428,7 +434,7 @@
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Aspecto</th>
         <th>UI</th>
@@ -453,7 +459,7 @@
         <td>Qué tan fácil es hacer una compra</td>
         <td>Compra + envío + soporte post-venta</td>
       </tr>
-    </table>
+    </table></div>
 
     <div class="highlight hl-amber">
       <div class="label">Evolución histórica</div>
@@ -560,7 +566,7 @@
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Tipo</th>
         <th>Fidelidad</th>
@@ -591,7 +597,7 @@
         <td>Test con usuarios, validar UX</td>
         <td>Figma (interactive), InVision, Framer</td>
       </tr>
-    </table>
+    </table></div>
 
     <div class="compare-box">
       <div class="compare-col">
@@ -913,7 +919,7 @@
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr>
         <th>Prioridad</th>
         <th>Etapa</th>
@@ -934,7 +940,7 @@
         <td><strong>Desarrollo técnico</strong></td>
         <td>El diseño y el desarrollo van ligados. La comunicación fluida entre diseñador y desarrollador evita fricciones en la implementación.</td>
       </tr>
-    </table>
+    </table></div>
 
     <div class="highlight hl-green">
       <div class="label">Regla de oro del diseño de apps</div>
@@ -1047,7 +1053,7 @@
       </div>
     </div>
 
-    <table>
+    <div class="tw"><table>
       <tr><th>Heurística</th><th>Cómo se aplica</th></tr>
       <tr><td>1. Visibilidad del estado</td><td>Spinner al presionar "Ingresar" (feedback de carga)</td></tr>
       <tr><td>2. Mundo real</td><td>Etiquetas "Email" y "Contraseña" en vez de "username" o "pwd"</td></tr>
@@ -1055,7 +1061,7 @@
       <tr><td>5. Prevención de errores</td><td>Placeholder con formato esperado, teclado correcto por campo</td></tr>
       <tr><td>7. Eficiencia</td><td>Opciones de login social (Google, Facebook) para usuarios frecuentes</td></tr>
       <tr><td>8. Minimalismo</td><td>Solo los elementos necesarios: logo, dos campos, botón, recuperar contraseña</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <!-- SECCIÓN 12: QUIZ -->

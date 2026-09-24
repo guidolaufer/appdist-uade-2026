@@ -177,12 +177,9 @@
   }
   .hint-box strong { margin-right: 4px; }
 
-  .nav-bar {
-    background: #283593;
-    padding: 0.7rem 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-  }
+  .nav-bar { background: #283593; padding: 0.5rem 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem; font-size: 0.85rem; }
+  .nav-bar a { white-space: nowrap; }
+  @media (max-width: 480px) { .nav-bar { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; } .nav-bar a { flex-shrink: 0; font-size: 0.78rem; } }
   .nav-bar a {
     color: #90caf9;
     text-decoration: none;
