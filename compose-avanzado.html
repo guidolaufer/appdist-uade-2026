@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compose Avanzado & Material 3 — Aplicaciones Distribuidas</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #263249;
+    --accent: #7c3aed;
+    --accent-light: #a78bfa;
+    --accent2: #06b6d4;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #334155;
+    --code-bg: #0d1117;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #1a1033 100%);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(124,58,237,0.2);
+    border: 1px solid var(--accent);
+    color: var(--accent-light);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  header p { color: #94a3b8; max-width: 600px; margin: 0 auto; }
+
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  nav a:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(124,58,237,0.1); }
+
+  main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+  section { margin-bottom: 3rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .icon-purple { background: rgba(124,58,237,0.2); }
+  .icon-cyan { background: rgba(6,182,212,0.2); }
+  .icon-green { background: rgba(16,185,129,0.2); }
+  .icon-amber { background: rgba(245,158,11,0.2); }
+  .icon-red { background: rgba(239,68,68,0.2); }
+
+  .section-header h2 { font-size: 1.5rem; font-weight: 700; color: #fff; }
+  .section-header .section-num { font-size: 0.75rem; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; }
+
+  p { color: #cbd5e1; margin-bottom: 1rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card h3 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    position: relative;
+  }
+  pre code {
+    background: none;
+    color: #c9d1d9;
+    padding: 0;
+    border-radius: 0;
+    font-size: 1em;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+  }
+  .kw { color: #ff7b72; }   /* keywords */
+  .fn { color: #d2a8ff; }   /* functions */
+  .an { color: #ffa657; }   /* annotations */
+  .str { color: #a5d6ff; }  /* strings */
+  .cmt { color: #8b949e; font-style: italic; } /* comments */
+  .num { color: #79c0ff; }  /* numbers */
+  .cls { color: #ffa657; }  /* classes */
+  .ok { color: #3fb950; }   /* green */
+  .err { color: #ff7b72; }  /* red */
+
+  .code-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: -0.5rem;
+    padding: 0.4rem 1rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px 8px 0 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid #30363d;
+    border-bottom: none;
+  }
+  .code-label.ok-label { border-color: #238636; color: #3fb950; background: rgba(35,134,54,0.1); }
+  .code-label.err-label { border-color: #da3633; color: #f85149; background: rgba(218,54,51,0.1); }
+
+  code {
+    background: rgba(124,58,237,0.15);
+    color: var(--accent-light);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+  }
+
+  .highlight {
+    border-left: 3px solid;
+    background: rgba(255,255,255,0.03);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+  }
+  .hl-purple { border-color: var(--accent); }
+  .hl-cyan { border-color: var(--accent2); }
+  .hl-green { border-color: var(--accent3); }
+  .hl-amber { border-color: var(--accent4); }
+  .hl-red { border-color: var(--accent5); }
+
+  .highlight .label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+  .hl-purple .label { color: var(--accent-light); }
+  .hl-cyan .label { color: var(--accent2); }
+  .hl-green .label { color: var(--accent3); }
+  .hl-amber .label { color: var(--accent4); }
+  .hl-red .label { color: var(--accent5); }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th { background: rgba(255,255,255,0.06); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #fff; border-bottom: 2px solid var(--border); }
+  td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); color: #cbd5e1; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .tag { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin: 0.1rem; }
+  .tag-purple { background: rgba(124,58,237,0.2); color: var(--accent-light); border: 1px solid rgba(124,58,237,0.4); }
+  .tag-cyan { background: rgba(6,182,212,0.2); color: var(--accent2); border: 1px solid rgba(6,182,212,0.4); }
+  .tag-green { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+  .tag-amber { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.4); }
+  .tag-red { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+
+  .error-card {
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .error-card .error-title { color: #f87171; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .error-card .fix { color: #34d399; font-size: 0.85rem; margin-top: 0.5rem; }
+  .error-card p { font-size: 0.88rem; margin-bottom: 0; }
+
+  .diagram-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    font-family: 'Cascadia Code', monospace;
+    font-size: 0.85rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .back-link:hover { background: rgba(124,58,237,0.1); }
+
+  .qa-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+  .qa-q { font-weight: 700; color: var(--accent-light); margin-bottom: 0.5rem; font-size: 0.9rem; }
+  .qa-a { color: #cbd5e1; font-size: 0.88rem; }
+
+  .layer-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 1rem 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .layer {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .layer:last-child { border-bottom: none; }
+  .layer-icon { font-size: 1.4rem; width: 36px; text-align: center; }
+  .layer-name { font-weight: 700; color: #fff; font-size: 0.9rem; min-width: 120px; }
+  .layer-desc { color: var(--muted); font-size: 0.85rem; }
+
+  @media (max-width: 600px) {
+    .layer { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Aplicaciones Distribuidas · UADE</div>
+  <h1>Jetpack Compose Avanzado & Material 3</h1>
+  <p>Anatomía de Composables, Estado, Recomposición, State Hoisting, Scaffold, ViewModel y componentes Material 3</p>
+</header>
+
+<nav>
+  <a href="#anatomia">Anatomía</a>
+  <a href="#estado">Estado</a>
+  <a href="#recomposicion">Recomposición</a>
+  <a href="#state-hoisting">State Hoisting</a>
+  <a href="#scaffold">Scaffold</a>
+  <a href="#material3">Material 3</a>
+  <a href="#viewmodel">ViewModel</a>
+  <a href="#errores">Errores comunes</a>
+  <a href="index.html">← Portal</a>
+</nav>
+
+<main>
+  <a href="index.html" class="back-link">← Volver al portal</a>
+
+  <!-- SECCIÓN 1: ANATOMÍA -->
+  <section id="anatomia">
+    <div class="section-header">
+      <div class="section-icon icon-purple">🔬</div>
+      <div>
+        <div class="section-num">SECCIÓN 1</div>
+        <h2>Anatomía de un Composable</h2>
+      </div>
+    </div>
+
+    <p>Jetpack Compose es un toolkit <strong>declarativo</strong> para construir UI nativa en Android, escrito completamente en Kotlin (sin XML). El cambio de paradigma es: en lugar de describir <em>cómo</em> construir la UI paso a paso, describís <em>qué</em> debe mostrar la UI según el estado actual.</p>
+
+    <div class="code-label">Estructura básica de una función @Composable</div>
+    <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MiComponente</span>(
+    <span class="cmt">// Parámetros: datos que recibe de afuera</span>
+    nombre: <span class="cls">String</span>,
+    onClick: () -> <span class="cls">Unit</span>
+) {
+    <span class="cmt">// Cuerpo: describe la UI</span>
+    <span class="fn">Column</span>(modifier = <span class="cls">Modifier</span>.padding(<span class="num">16</span>.dp)) {
+        <span class="fn">Text</span>(text = nombre, style = <span class="cls">MaterialTheme</span>.typography.headlineMedium)
+        <span class="fn">Button</span>(onClick = onClick) {
+            <span class="fn">Text</span>(<span class="str">"Acción"</span>)
+        }
+    }
+}</code></pre>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>📋 Reglas de un Composable</h3>
+        <p style="font-size:0.88rem">Debe tener la anotación <code>@Composable</code>. El nombre <em>debe</em> empezar con mayúscula (PascalCase). Solo puede ser llamado desde otro <code>@Composable</code>. Puede recibir parámetros para configurar su apariencia y comportamiento.</p>
+      </div>
+      <div class="card">
+        <h3>⚡ Ventajas del paradigma declarativo</h3>
+        <p style="font-size:0.88rem">Menos código boilerplate (sin <code>findViewById</code>, <code>setText</code>, <code>setOnClickListener</code>). Más intuitivo y reactivo: la UI se actualiza automáticamente cuando el estado cambia. Mejor performance y mantenibilidad.</p>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Imperativo (XML tradicional)</th>
+        <th>Declarativo (Compose)</th>
+      </tr>
+      <tr>
+        <td>Describís <em>cómo</em> construir la UI paso a paso</td>
+        <td>Describís <em>qué</em> debe mostrar la UI según el estado</td>
+      </tr>
+      <tr>
+        <td><code>findViewById()</code>, <code>setText()</code>, listeners manuales</td>
+        <td>Funciones <code>@Composable</code> que retornan UI</td>
+      </tr>
+      <tr>
+        <td>El programador actualiza la UI manualmente</td>
+        <td>La UI se actualiza automáticamente con el estado</td>
+      </tr>
+      <tr>
+        <td>Mucho código repetitivo (boilerplate)</td>
+        <td>Código conciso y expresivo</td>
+      </tr>
+      <tr>
+        <td><code>UI = código_imperativo()</code></td>
+        <td><code>UI = f(estado)</code></td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- SECCIÓN 2: ESTADO -->
+  <section id="estado">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">💾</div>
+      <div>
+        <div class="section-num">SECCIÓN 2</div>
+        <h2>Estado en Compose</h2>
+      </div>
+    </div>
+
+    <div class="highlight hl-purple">
+      <div class="label">Principio fundamental</div>
+      <p style="margin:0">En Compose, <code>UI = f(estado)</code>. Cuando el estado cambia, Compose re-ejecuta las funciones <code>@Composable</code> afectadas (recomposición) y actualiza la UI. El estado debe estar en una variable observable con <code>remember { mutableStateOf() }</code>.</p>
+    </div>
+
+    <div class="code-label">Las tres formas de declarar estado observable</div>
+    <pre><code><span class="cmt">// Forma 1: valor simple — por delegación (más concisa)</span>
+<span class="kw">var</span> contador <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="num">0</span>) }
+<span class="cmt">// Uso: contador++  (se lee y escribe directamente)</span>
+
+<span class="cmt">// Forma 2: valor simple — sin delegación</span>
+<span class="kw">val</span> contador = <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="num">0</span>) }
+<span class="cmt">// Uso: contador.value++  (necesita .value)</span>
+
+<span class="cmt">// Forma 3: lista mutable observable</span>
+<span class="kw">val</span> lista = <span class="fn">remember</span> { <span class="fn">mutableStateListOf</span>&lt;<span class="cls">String</span>&gt;() }
+<span class="cmt">// Uso: lista.add("item")  lista.remove(item)  lista.removeAt(i)</span></code></pre>
+
+    <table>
+      <tr>
+        <th>Patrón</th>
+        <th>Sintaxis</th>
+        <th>Cuándo usar</th>
+      </tr>
+      <tr>
+        <td><code>mutableStateOf</code></td>
+        <td><code>var x by remember { mutableStateOf(valor) }</code></td>
+        <td>Un valor primitivo o String</td>
+      </tr>
+      <tr>
+        <td><code>mutableStateListOf</code></td>
+        <td><code>val lista = remember { mutableStateListOf&lt;T&gt;() }</code></td>
+        <td>Lista que Compose puede observar por cambios</td>
+      </tr>
+      <tr>
+        <td>Sin <code>remember</code> ❌</td>
+        <td><code>var x = mutableStateOf(0)</code></td>
+        <td>Nunca — se reinicia en cada recomposición</td>
+      </tr>
+      <tr>
+        <td><code>mutableListOf</code> ❌</td>
+        <td><code>val lista = remember { mutableListOf&lt;T&gt;() }</code></td>
+        <td>Nunca — Compose no detecta cambios en la lista</td>
+      </tr>
+    </table>
+
+    <div class="grid-2">
+      <div>
+        <div class="code-label err-label">❌ Incorrecto — var sin remember</div>
+        <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">Contador</span>() {
+    <span class="err"><span class="kw">var</span> cuenta = <span class="num">0</span></span>  <span class="cmt">// ❌ Se reinicia en cada recomposición</span>
+    <span class="fn">Button</span>(onClick = { cuenta++ }) {
+        <span class="fn">Text</span>(<span class="str">"$cuenta"</span>)
+    }
+}</code></pre>
+      </div>
+      <div>
+        <div class="code-label ok-label">✅ Correcto — con remember</div>
+        <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">Contador</span>() {
+    <span class="ok"><span class="kw">var</span> cuenta <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="num">0</span>) }</span>
+    <span class="fn">Button</span>(onClick = { cuenta++ }) {
+        <span class="fn">Text</span>(<span class="str">"$cuenta"</span>)
+    }
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: RECOMPOSICIÓN -->
+  <section id="recomposicion">
+    <div class="section-header">
+      <div class="section-icon icon-green">🔄</div>
+      <div>
+        <div class="section-num">SECCIÓN 3</div>
+        <h2>Recomposición y Ciclo de Vida</h2>
+      </div>
+    </div>
+
+    <div class="layer-box">
+      <div class="layer" style="background:rgba(124,58,237,0.1)">
+        <div class="layer-icon">🟢</div>
+        <div class="layer-name">Entra en composición</div>
+        <div class="layer-desc">El composable se ejecuta por primera vez y aparece en la UI</div>
+      </div>
+      <div class="layer" style="background:rgba(6,182,212,0.1)">
+        <div class="layer-icon">🔵</div>
+        <div class="layer-name">Recomposición</div>
+        <div class="layer-desc">Cuando el estado que lee cambia, Compose vuelve a ejecutar SOLO las funciones afectadas (smart recomposition)</div>
+      </div>
+      <div class="layer" style="background:rgba(239,68,68,0.1)">
+        <div class="layer-icon">🔴</div>
+        <div class="layer-name">Sale de composición</div>
+        <div class="layer-desc">El composable se elimina de la UI (ej: navegación a otra pantalla)</div>
+      </div>
+    </div>
+
+    <div class="highlight hl-green">
+      <div class="label">Smart Recomposition</div>
+      <p style="margin:0">Compose es inteligente: <strong>solo recompone lo que realmente cambió</strong>. Si tenés 20 ítems en una lista y cambia uno, solo ese composable se re-ejecuta. Esto hace que Compose sea muy performante. No debés hacer cálculos costosos ni operaciones de IO dentro del cuerpo de un composable.</p>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="code-label err-label">❌ No hacer: lógica en el cuerpo</div>
+        <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MiApp</span>() {
+    <span class="err"><span class="cmt">// ❌ Esto se ejecuta en CADA recomposición</span>
+    <span class="kw">val</span> resultado = calcularAlgoCostoso()
+    guardarEnBaseDeDatos(resultado)</span>
+    <span class="fn">Text</span>(resultado.toString())
+}</code></pre>
+      </div>
+      <div>
+        <div class="code-label ok-label">✅ Correcto: separar lógica</div>
+        <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MiApp</span>(viewModel: <span class="cls">MiViewModel</span>) {
+    <span class="cmt">// ✅ El ViewModel maneja la lógica</span>
+    <span class="kw">val</span> resultado <span class="kw">by</span> viewModel.resultado.collectAsState()
+    <span class="fn">Text</span>(resultado.toString())
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="highlight hl-amber">
+      <div class="label">Regla de las funciones pequeñas</div>
+      <p style="margin:0">Las funciones Composable deben ser pequeñas porque Compose recompone a nivel de función. Una función grande que contiene mucho estado obliga a recomponer todo cuando cambia una pequeña parte. Funciones pequeñas = recomposiciones más eficientes + mejor reutilización + más legible.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 4: STATE HOISTING -->
+  <section id="state-hoisting">
+    <div class="section-header">
+      <div class="section-icon icon-amber">⬆️</div>
+      <div>
+        <div class="section-num">SECCIÓN 4</div>
+        <h2>State Hoisting</h2>
+      </div>
+    </div>
+
+    <p><strong>State Hoisting</strong> (elevación de estado) es el patrón de mover el estado hacia arriba en la jerarquía de composables para hacer los componentes más reutilizables y testeable.</p>
+
+    <div class="highlight hl-amber">
+      <div class="label">Principio</div>
+      <p style="margin:0">Un composable debe recibir el <strong>valor del estado</strong> como parámetro y exponer un <strong>callback</strong> para notificar cambios al componente padre. Esto hace al componente "stateless" (sin estado propio) y más reutilizable.</p>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="code-label err-label">❌ Sin State Hoisting (stateful)</div>
+        <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">CampoBusqueda</span>() {
+    <span class="cmt">// El estado está DENTRO del composable</span>
+    <span class="err"><span class="kw">var</span> texto <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">""</span>) }</span>
+    <span class="fn">OutlinedTextField</span>(
+        value = texto,
+        onValueChange = { texto = it }
+    )
+    <span class="cmt">// ❌ Nadie puede leer 'texto' desde afuera</span>
+}</code></pre>
+      </div>
+      <div>
+        <div class="code-label ok-label">✅ Con State Hoisting (stateless)</div>
+        <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">CampoBusqueda</span>(
+    <span class="cmt">// Recibe el estado como parámetro</span>
+    <span class="ok">texto: <span class="cls">String</span>,
+    onTextoChange: (<span class="cls">String</span>) -> <span class="cls">Unit</span></span>
+) {
+    <span class="fn">OutlinedTextField</span>(
+        value = texto,
+        onValueChange = onTextoChange
+    )
+}
+
+<span class="cmt">// Uso desde el padre:</span>
+<span class="kw">var</span> busqueda <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">""</span>) }
+<span class="fn">CampoBusqueda</span>(texto = busqueda, onTextoChange = { busqueda = it })</code></pre>
+      </div>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q">Q: ¿Cuándo aplicar State Hoisting?</div>
+      <div class="qa-a">Cuando múltiples composables necesitan acceder al mismo estado, cuando el componente debe ser reutilizable en diferentes contextos, o cuando el padre necesita reaccionar a los cambios del hijo. En general, sube el estado hasta el ancestro común más bajo que lo necesita.</div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 5: SCAFFOLD -->
+  <section id="scaffold">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">🏗️</div>
+      <div>
+        <div class="section-num">SECCIÓN 5</div>
+        <h2>Scaffold y estructura de pantalla</h2>
+      </div>
+    </div>
+
+    <p><code>Scaffold</code> es el composable que proporciona la estructura base de una pantalla Material. Maneja automáticamente los <code>paddingValues</code> para que el contenido no quede debajo de la TopAppBar.</p>
+
+    <div class="code-label">Estructura completa con Scaffold</div>
+    <pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">PantallaCompleta</span>() {
+    <span class="fn">Scaffold</span>(
+        topBar = {
+            <span class="fn">TopAppBar</span>(
+                title = { <span class="fn">Text</span>(<span class="str">"Mi App"</span>) },
+                colors = <span class="fn">TopAppBarDefaults</span>.topAppBarColors(
+                    containerColor = <span class="cls">MaterialTheme</span>.colorScheme.primaryContainer
+                )
+            )
+        },
+        floatingActionButton = {
+            <span class="fn">FloatingActionButton</span>(onClick = { <span class="cmt">/* acción */</span> }) {
+                <span class="fn">Icon</span>(<span class="cls">Icons</span>.Filled.Add, contentDescription = <span class="str">"Agregar"</span>)
+            }
+        }
+    ) { paddingValues -&gt;
+        <span class="cmt">// ⚠️ SIEMPRE pasar paddingValues al contenedor principal</span>
+        <span class="fn">LazyColumn</span>(
+            modifier = <span class="cls">Modifier</span>.<span class="fn">padding</span>(paddingValues)
+        ) {
+            <span class="cmt">/* contenido */</span>
+        }
+    }
+}</code></pre>
+
+    <div class="highlight hl-red">
+      <div class="label">Error común con Scaffold</div>
+      <p style="margin:0">Olvidar aplicar <code>paddingValues</code> al contenido hace que la lista quede parcialmente <strong>tapada</strong> por la TopAppBar. El lambda de Scaffold siempre recibe <code>paddingValues</code> como parámetro — usálos en el <code>Modifier.padding(paddingValues)</code> del primer elemento de contenido.</p>
+    </div>
+
+    <div class="code-label">LazyColumn con items y key (buena práctica)</div>
+    <pre><code><span class="fn">LazyColumn</span>(modifier = <span class="cls">Modifier</span>.<span class="fn">padding</span>(paddingValues)) {
+    <span class="cmt">// ✅ Usar items() — NO forEach dentro de Column</span>
+    <span class="fn">items</span>(
+        items = listaDeItems,
+        key = { item -&gt; item.id }  <span class="cmt">// key mejora performance</span>
+    ) { item -&gt;
+        <span class="fn">ItemCard</span>(item = item)
+    }
+}</code></pre>
+
+    <div class="highlight hl-purple">
+      <div class="label">forEach vs items()</div>
+      <p style="margin:0">Usar <code>forEach</code> dentro de un <code>LazyColumn</code> rompe el lazy loading: todos los elementos se crean de una vez. El propósito de LazyColumn es crear solo los elementos visibles. Siempre usar <code>items(lista)</code> dentro de <code>LazyColumn</code>.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: MATERIAL 3 -->
+  <section id="material3">
+    <div class="section-header">
+      <div class="section-icon icon-purple">🎨</div>
+      <div>
+        <div class="section-num">SECCIÓN 6</div>
+        <h2>Material Design 3 (Material You)</h2>
+      </div>
+    </div>
+
+    <p>Material Design 3 es la nueva versión del sistema de diseño de Google. Introduce <strong>Dynamic Color</strong> (colores que se adaptan al wallpaper del usuario) y una personalización más profunda.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="color:var(--accent-light)">MaterialTheme</h3>
+        <p style="font-size:0.88rem">El composable raíz que provee el tema a toda la app. Contiene tres sistemas: <code>colorScheme</code>, <code>typography</code> y <code>shapes</code>. Todos los composables Material acceden a estos valores automáticamente.</p>
+        <pre style="margin-top:0.75rem"><code><span class="fn">MaterialTheme</span>(
+    colorScheme = <span class="fn">lightColorScheme</span>(...),
+    typography = <span class="cls">Typography</span>(),
+    shapes = <span class="cls">Shapes</span>()
+) {
+    <span class="fn">MiApp</span>()
+}</code></pre>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent2)">ColorScheme</h3>
+        <p style="font-size:0.88rem">La paleta de colores semánticos. Los más usados:</p>
+        <table style="margin-top:0.5rem">
+          <tr><td><code>primary</code></td><td>Color principal de la app</td></tr>
+          <tr><td><code>primaryContainer</code></td><td>Fondo de elementos primarios</td></tr>
+          <tr><td><code>secondary</code></td><td>Color secundario</td></tr>
+          <tr><td><code>surface</code></td><td>Fondo de Cards y diálogos</td></tr>
+          <tr><td><code>background</code></td><td>Fondo general de la pantalla</td></tr>
+          <tr><td><code>error</code></td><td>Errores y validaciones</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Componente</th>
+        <th>Uso</th>
+        <th>Parámetros clave</th>
+      </tr>
+      <tr>
+        <td><code>Scaffold</code></td>
+        <td>Estructura base de pantalla</td>
+        <td><code>topBar</code>, <code>floatingActionButton</code>, <code>bottomBar</code></td>
+      </tr>
+      <tr>
+        <td><code>TopAppBar</code></td>
+        <td>Barra superior con título y acciones</td>
+        <td><code>title</code>, <code>navigationIcon</code>, <code>actions</code>, <code>colors</code></td>
+      </tr>
+      <tr>
+        <td><code>Card</code></td>
+        <td>Contenedor elevado con sombra</td>
+        <td><code>modifier</code>, <code>elevation</code>, <code>colors</code></td>
+      </tr>
+      <tr>
+        <td><code>Button</code></td>
+        <td>Botón relleno (acción principal)</td>
+        <td><code>onClick</code>, <code>enabled</code>, <code>colors</code></td>
+      </tr>
+      <tr>
+        <td><code>OutlinedButton</code></td>
+        <td>Botón con borde (acción secundaria)</td>
+        <td><code>onClick</code>, <code>border</code></td>
+      </tr>
+      <tr>
+        <td><code>TextButton</code></td>
+        <td>Botón de texto (acción terciaria)</td>
+        <td><code>onClick</code></td>
+      </tr>
+      <tr>
+        <td><code>OutlinedTextField</code></td>
+        <td>Campo de texto con borde</td>
+        <td><code>value</code>, <code>onValueChange</code>, <code>label</code>, <code>placeholder</code>, <code>isError</code></td>
+      </tr>
+      <tr>
+        <td><code>FloatingActionButton</code></td>
+        <td>Botón flotante de acción principal</td>
+        <td><code>onClick</code>, dentro: un <code>Icon</code></td>
+      </tr>
+      <tr>
+        <td><code>LazyColumn</code></td>
+        <td>Lista vertical con lazy rendering</td>
+        <td><code>modifier</code>, dentro: <code>items()</code></td>
+      </tr>
+    </table>
+
+    <div class="code-label">Jerarquía tipográfica Material 3</div>
+    <pre><code><span class="cmt">// De mayor a menor tamaño:</span>
+<span class="cls">MaterialTheme</span>.typography.displayLarge      <span class="cmt">// 57.sp — Títulos grandes</span>
+<span class="cls">MaterialTheme</span>.typography.displayMedium     <span class="cmt">// 45.sp</span>
+<span class="cls">MaterialTheme</span>.typography.headlineLarge     <span class="cmt">// 32.sp — Encabezados principales</span>
+<span class="cls">MaterialTheme</span>.typography.headlineMedium    <span class="cmt">// 28.sp</span>
+<span class="cls">MaterialTheme</span>.typography.headlineSmall     <span class="cmt">// 24.sp</span>
+<span class="cls">MaterialTheme</span>.typography.titleLarge        <span class="cmt">// 22.sp — Títulos de sección</span>
+<span class="cls">MaterialTheme</span>.typography.bodyLarge         <span class="cmt">// 16.sp — Texto principal</span>
+<span class="cls">MaterialTheme</span>.typography.bodyMedium        <span class="cmt">// 14.sp — Texto secundario</span>
+<span class="cls">MaterialTheme</span>.typography.labelSmall        <span class="cmt">// 11.sp — Etiquetas pequeñas</span></code></pre>
+
+    <div class="highlight hl-cyan">
+      <div class="label">Contenedores: Column, Row y Box</div>
+      <p style="margin:0"><code>Column</code>: apila elementos verticalmente. <code>Row</code>: los coloca horizontalmente. <code>Box</code>: superpone elementos (útil para overlays). Los tres tienen parámetros <code>verticalArrangement</code> / <code>horizontalArrangement</code> para distribuir el espacio y <code>verticalAlignment</code> / <code>horizontalAlignment</code> para alinear.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 7: MODIFIER -->
+  <section>
+    <div class="section-header">
+      <div class="section-icon icon-green">🎛️</div>
+      <div>
+        <div class="section-num">SECCIÓN 6.5</div>
+        <h2>Modifier — Estilismo en Compose</h2>
+      </div>
+    </div>
+
+    <p>Los <code>Modifier</code>s son la forma de dar estilo, tamaño, comportamiento y posición a los elementos en Compose. Se encadenan con <code>.</code> y el <strong>orden importa</strong>.</p>
+
+    <div class="grid-2">
+      <div>
+        <div class="code-label ok-label">✅ Orden correcto</div>
+        <pre><code><span class="fn">Box</span>(
+    modifier = <span class="cls">Modifier</span>
+        .<span class="fn">fillMaxWidth</span>()
+        .<span class="fn">padding</span>(<span class="num">16</span>.dp)    <span class="cmt">// padding fuera del fondo</span>
+        .<span class="fn">background</span>(<span class="cls">Color</span>.Blue)
+        .<span class="fn">padding</span>(<span class="num">8</span>.dp)     <span class="cmt">// padding interior</span>
+)</code></pre>
+      </div>
+      <div>
+        <div class="code-label err-label">❌ Orden incorrecto</div>
+        <pre><code><span class="fn">Text</span>(
+    text = <span class="str">"Hola"</span>,
+    modifier = <span class="cls">Modifier</span>
+        <span class="err">.<span class="fn">clickable</span> { ... }
+        .<span class="fn">padding</span>(<span class="num">16</span>.dp)</span>
+    <span class="cmt">// ❌ El padding está fuera del área clickeable</span>
+    <span class="cmt">// Debería ser: .padding().clickable()</span>
+)</code></pre>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Modifier</th>
+        <th>Descripción</th>
+        <th>Unidad</th>
+      </tr>
+      <tr>
+        <td><code>.padding(16.dp)</code></td>
+        <td>Espacio interior o exterior</td>
+        <td><code>.dp</code> para tamaños</td>
+      </tr>
+      <tr>
+        <td><code>.fillMaxWidth()</code></td>
+        <td>Ocupa todo el ancho disponible</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>.fillMaxSize()</code></td>
+        <td>Ocupa todo el espacio disponible</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>.size(48.dp)</code></td>
+        <td>Tamaño fijo</td>
+        <td><code>.dp</code></td>
+      </tr>
+      <tr>
+        <td><code>.background(color)</code></td>
+        <td>Color de fondo</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>.clickable { ... }</code></td>
+        <td>Hace el elemento clicable</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>fontSize = 16.sp</code></td>
+        <td>Tamaño de texto (escala con preferencias del sistema)</td>
+        <td><code>.sp</code> para texto</td>
+      </tr>
+    </table>
+
+    <div class="highlight hl-amber">
+      <div class="label">dp vs sp</div>
+      <p style="margin:0">Usar <code>.dp</code> para todo excepto tamaños de texto. Para texto, siempre <code>.sp</code> (scale-independent pixels): respeta la configuración de accesibilidad del usuario que puede aumentar el tamaño de fuente en el sistema. Usar <code>.dp</code> en texto es un error de accesibilidad.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 8: VIEWMODEL -->
+  <section id="viewmodel">
+    <div class="section-header">
+      <div class="section-icon icon-red">🏛️</div>
+      <div>
+        <div class="section-num">SECCIÓN 7</div>
+        <h2>Arquitectura con ViewModel</h2>
+      </div>
+    </div>
+
+    <p>La arquitectura recomendada separa la app en tres capas. El ViewModel actúa como intermediario entre la UI y los datos.</p>
+
+    <div class="layer-box">
+      <div class="layer" style="background:rgba(239,68,68,0.1)">
+        <div class="layer-icon">🖥️</div>
+        <div class="layer-name">Capa UI</div>
+        <div class="layer-desc">Composables que muestran el estado y capturan eventos del usuario. NO contienen lógica de negocio.</div>
+      </div>
+      <div class="layer" style="background:rgba(245,158,11,0.1)">
+        <div class="layer-icon">⚙️</div>
+        <div class="layer-name">ViewModel</div>
+        <div class="layer-desc">Mantiene el estado de la UI (<code>StateFlow</code>/<code>LiveData</code>). Procesa los eventos del usuario. Sobrevive a rotaciones de pantalla.</div>
+      </div>
+      <div class="layer" style="background:rgba(16,185,129,0.1)">
+        <div class="layer-icon">🗄️</div>
+        <div class="layer-name">Capa de Datos</div>
+        <div class="layer-desc">Repository, base de datos (Room), API remota (Retrofit). El ViewModel se comunica con esta capa.</div>
+      </div>
+    </div>
+
+    <div class="code-label">Patrón ViewModel básico</div>
+    <pre><code><span class="cmt">// ViewModel — maneja el estado</span>
+<span class="kw">class</span> <span class="cls">MiViewModel</span> : <span class="cls">ViewModel</span>() {
+    <span class="kw">private val</span> _items = <span class="fn">mutableStateListOf</span>&lt;<span class="cls">String</span>&gt;()
+    <span class="kw">val</span> items: <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; = _items
+
+    <span class="kw">fun</span> <span class="fn">agregar</span>(item: <span class="cls">String</span>) { _items.add(item) }
+    <span class="kw">fun</span> <span class="fn">eliminar</span>(item: <span class="cls">String</span>) { _items.remove(item) }
+}
+
+<span class="cmt">// Composable — solo muestra y envía eventos</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MiPantalla</span>(viewModel: <span class="cls">MiViewModel</span> = <span class="fn">viewModel</span>()) {
+    <span class="kw">val</span> items = viewModel.items
+    <span class="fn">LazyColumn</span> {
+        <span class="fn">items</span>(items) { item -&gt;
+            <span class="fn">ItemRow</span>(
+                item = item,
+                onDelete = { viewModel.<span class="fn">eliminar</span>(item) }
+            )
+        }
+    }
+}</code></pre>
+
+    <div class="highlight hl-green">
+      <div class="label">Por qué usar ViewModel</div>
+      <p style="margin:0">El ViewModel sobrevive a rotaciones de pantalla (cambios de configuración). Sin ViewModel, si el usuario rota el teléfono, el estado se pierde y la UI se reinicia. Con ViewModel, el estado persiste durante todo el ciclo de vida de la pantalla.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 9: ERRORES COMUNES -->
+  <section id="errores">
+    <div class="section-header">
+      <div class="section-icon icon-red">⚠️</div>
+      <div>
+        <div class="section-num">SECCIÓN 8</div>
+        <h2>Los 3 Errores Más Comunes</h2>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="error-title">❌ Error 1: Estado sin remember</div>
+      <p>Declarar una variable de estado sin <code>remember</code>. En cada recomposición, la variable se reinicia a su valor inicial. La UI nunca refleja los cambios del usuario.</p>
+      <div class="code-label err-label">Incorrecto</div>
+      <pre><code><span class="err"><span class="kw">var</span> nombre = <span class="fn">mutableStateOf</span>(<span class="str">""</span>)</span>  <span class="cmt">// ❌ Sin remember</span></code></pre>
+      <div class="fix">✅ Corrección: <code>var nombre by remember { mutableStateOf("") }</code></div>
+    </div>
+
+    <div class="error-card">
+      <div class="error-title">❌ Error 2: Lista sin mutableStateListOf</div>
+      <p>Usar <code>mutableListOf</code> en lugar de <code>mutableStateListOf</code>. Compose no puede observar los cambios en una <code>mutableListOf</code> normal, entonces la UI nunca se actualiza cuando se agrega o elimina un elemento.</p>
+      <div class="code-label err-label">Incorrecto</div>
+      <pre><code><span class="err"><span class="kw">val</span> lista = <span class="fn">remember</span> { <span class="fn">mutableListOf</span>&lt;<span class="cls">String</span>&gt;() }</span>  <span class="cmt">// ❌</span></code></pre>
+      <div class="fix">✅ Corrección: <code>val lista = remember { mutableStateListOf&lt;String&gt;() }</code></div>
+    </div>
+
+    <div class="error-card">
+      <div class="error-title">❌ Error 3: forEach en LazyColumn</div>
+      <p>Usar <code>forEach</code> dentro del cuerpo de un <code>LazyColumn</code> o directamente dentro de un <code>Column</code> cuando se tiene una lista grande. Esto crea todos los elementos a la vez, eliminando el beneficio del lazy rendering y causando problemas de performance.</p>
+      <div class="code-label err-label">Incorrecto</div>
+      <pre><code><span class="fn">LazyColumn</span> {
+    <span class="err">lista.<span class="fn">forEach</span> { item -&gt;
+        <span class="fn">ItemCard</span>(item)  <span class="cmt">// ❌ Todos se crean de una vez</span>
+    }</span>
+}</code></pre>
+      <div class="fix">✅ Corrección: usar <code>items(lista) { item → ItemCard(item) }</code> dentro del LazyColumn</div>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q">Q: Resumen rápido de errores frecuentes en el parcial</div>
+      <div class="qa-a">
+        <strong>1.</strong> <code>var x = ""</code> sin <code>remember</code> → se reinicia en cada recomposición.<br>
+        <strong>2.</strong> <code>mutableListOf</code> en lugar de <code>mutableStateListOf</code> → lista no observable.<br>
+        <strong>3.</strong> <code>forEach</code> dentro de <code>LazyColumn</code> → no es lazy.<br>
+        <strong>4.</strong> <code>removeAt(0)</code> en lugar de <code>remove(item)</code> → elimina siempre el primero.<br>
+        <strong>5.</strong> División entera: <code>a/b</code> cuando ambos son <code>Int</code> → usar <code>a.toDouble()/b</code>.<br>
+        <strong>6.</strong> <code>toInt()</code> en lugar de <code>toIntOrNull()</code> → crash con input vacío.<br>
+        <strong>7.</strong> <code>@composable</code> con minúscula → no es válida la anotación.<br>
+        <strong>8.</strong> <code>.dp</code> faltante en Modifier → el compilador toma el número como un tipo incorrecto.<br>
+        <strong>9.</strong> Usar <code>.sp</code> para tamaños no textuales → incorrecto semánticamente.<br>
+        <strong>10.</strong> Inicializar objetos dentro de lambdas de Scaffold → se recrean en cada recomposición.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="background:var(--surface); border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--muted); font-size:0.85rem; margin-top:3rem;">
+  <p>Aplicaciones Distribuidas · UADE · <a href="index.html" style="color:var(--accent-light); text-decoration:none;">Portal principal →</a></p>
+</footer>
+
+</body>
+</html>

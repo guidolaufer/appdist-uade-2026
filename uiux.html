@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI/UX Fundamentos — Aplicaciones Distribuidas</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #263249;
+    --accent: #06b6d4;
+    --accent2: #8b5cf6;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, #0c4a6e 0%, #1e1b4b 100%);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(6,182,212,0.2);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  header p {
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1rem;
+  }
+
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  nav a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(6,182,212,0.1);
+  }
+
+  main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+  section { margin-bottom: 3rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .icon-cyan { background: rgba(6,182,212,0.2); }
+  .icon-purple { background: rgba(139,92,246,0.2); }
+  .icon-green { background: rgba(16,185,129,0.2); }
+  .icon-amber { background: rgba(245,158,11,0.2); }
+  .icon-red { background: rgba(239,68,68,0.2); }
+  .icon-blue { background: rgba(59,130,246,0.2); }
+  .icon-pink { background: rgba(236,72,153,0.2); }
+
+  .section-header h2 { font-size: 1.5rem; font-weight: 700; color: #fff; }
+  .section-header .section-num {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  p { color: #cbd5e1; margin-bottom: 1rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+  .card p { margin-bottom: 0.5rem; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+
+  .highlight {
+    border-left: 3px solid;
+    background: rgba(255,255,255,0.03);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+  }
+  .hl-cyan { border-color: var(--accent); }
+  .hl-purple { border-color: var(--accent2); }
+  .hl-green { border-color: var(--accent3); }
+  .hl-amber { border-color: var(--accent4); }
+  .hl-red { border-color: var(--accent5); }
+
+  .highlight .label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+  .hl-cyan .label { color: var(--accent); }
+  .hl-purple .label { color: var(--accent2); }
+  .hl-green .label { color: var(--accent3); }
+  .hl-amber .label { color: var(--accent4); }
+  .hl-red .label { color: var(--accent5); }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th {
+    background: rgba(255,255,255,0.06);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: #cbd5e1;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  code {
+    background: rgba(6,182,212,0.15);
+    color: var(--accent);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0.1rem;
+  }
+  .tag-cyan { background: rgba(6,182,212,0.2); color: var(--accent); border: 1px solid rgba(6,182,212,0.4); }
+  .tag-purple { background: rgba(139,92,246,0.2); color: #a78bfa; border: 1px solid rgba(139,92,246,0.4); }
+  .tag-green { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+  .tag-amber { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.4); }
+  .tag-red { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+
+  .step-flow {
+    display: flex;
+    gap: 0;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+  .step-item {
+    flex: 1;
+    min-width: 120px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1rem 0.75rem;
+    text-align: center;
+    position: relative;
+  }
+  .step-item:first-child { border-radius: 10px 0 0 10px; }
+  .step-item:last-child { border-radius: 0 10px 10px 0; }
+  .step-item + .step-item::before {
+    content: '→';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 1rem;
+    z-index: 1;
+  }
+  .step-num {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+  }
+  .step-title { font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
+  .step-sub { font-size: 0.72rem; color: var(--muted); }
+
+  .formula-box {
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    font-family: 'Cascadia Code', monospace;
+  }
+  .formula { font-size: 1.4rem; color: var(--accent); font-weight: 600; margin-bottom: 0.5rem; }
+  .formula-legend { font-size: 0.82rem; color: var(--muted); line-height: 1.8; }
+
+  .principle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+  }
+  .principle-card:hover { border-color: var(--accent); }
+  .principle-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .principle-card h4 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+  .principle-card p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+
+  .compare-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .compare-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .compare-col h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-col ul { list-style: none; }
+  .compare-col li {
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    padding: 0.25rem 0;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .compare-col li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  .proto-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .proto-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .proto-card:hover { transform: translateY(-3px); border-color: var(--accent2); }
+  .proto-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .proto-card h4 { color: #fff; font-size: 0.9rem; margin-bottom: 0.4rem; }
+  .proto-card p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(6,182,212,0.3);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .back-link:hover { background: rgba(6,182,212,0.1); }
+
+  .qa-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+  .qa-q { font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; font-size: 0.9rem; }
+  .qa-a { color: #cbd5e1; font-size: 0.88rem; }
+
+  @media (max-width: 600px) {
+    .compare-box { grid-template-columns: 1fr; }
+    .step-flow { flex-direction: column; }
+    .step-item + .step-item::before { content: '↓'; left: 50%; top: -12px; transform: translateX(-50%); }
+    .step-item:first-child, .step-item:last-child { border-radius: 10px; }
+    .step-item { border-radius: 10px !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Aplicaciones Distribuidas · UADE</div>
+  <h1>UI/UX Fundamentos</h1>
+  <p>Diseño centrado en el usuario, Design Thinking, Ley de Fitts, UX Research y principios de diseño móvil</p>
+</header>
+
+<nav>
+  <a href="#hci">HCI & Definiciones</a>
+  <a href="#design-thinking">Design Thinking</a>
+  <a href="#prototipado">Prototipado</a>
+  <a href="#desafios">Desafíos Móvil</a>
+  <a href="#ux-research">UX Research</a>
+  <a href="#fitts">Ley de Fitts</a>
+  <a href="#principios">Principios</a>
+  <a href="#elementos">Elementos UI</a>
+  <a href="#etapas-diseño">Etapas de Diseño</a>
+  <a href="index.html">← Portal</a>
+</nav>
+
+<main>
+  <a href="index.html" class="back-link">← Volver al portal</a>
+
+  <!-- SECCIÓN 1: HCI Y DEFINICIONES -->
+  <section id="hci">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">🖥️</div>
+      <div>
+        <div class="section-num">SECCIÓN 1</div>
+        <h2>HCI, UI, UX y CX</h2>
+      </div>
+    </div>
+
+    <div class="highlight hl-cyan">
+      <div class="label">Definición clave</div>
+      <p style="margin:0"><strong>HCI (Human-Computer Interaction)</strong> es el campo que estudia cómo las personas interactúan con las computadoras y cómo diseñar sistemas que sean eficientes, seguros y placenteros de usar.</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3 style="color: var(--accent)">UI — User Interface</h3>
+        <p style="font-size:0.88rem">Se enfoca en la <strong>estética e interacción visual</strong>: colores, tipografía, botones, íconos, layout. Es lo que el usuario <em>ve</em>.</p>
+        <div><span class="tag tag-cyan">Visual</span> <span class="tag tag-cyan">Estético</span></div>
+      </div>
+      <div class="card">
+        <h3 style="color: var(--accent2)">UX — User Experience</h3>
+        <p style="font-size:0.88rem">Se enfoca en la <strong>lógica y usabilidad</strong>: flujos de navegación, facilidad de uso, satisfacción global. Es lo que el usuario <em>siente</em>.</p>
+        <div><span class="tag tag-purple">Usabilidad</span> <span class="tag tag-purple">Flujo</span></div>
+      </div>
+      <div class="card">
+        <h3 style="color: var(--accent3)">CX — Customer Experience</h3>
+        <p style="font-size:0.88rem">Experiencia <strong>completa del cliente</strong> con la empresa: incluye soporte, marketing, entrega y toda interacción más allá de la app.</p>
+        <div><span class="tag tag-green">Global</span> <span class="tag tag-green">Negocio</span></div>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Aspecto</th>
+        <th>UI</th>
+        <th>UX</th>
+        <th>CX</th>
+      </tr>
+      <tr>
+        <td>Pregunta</td>
+        <td>¿Se ve bien?</td>
+        <td>¿Es fácil de usar?</td>
+        <td>¿Fue una buena experiencia total?</td>
+      </tr>
+      <tr>
+        <td>Alcance</td>
+        <td>La interfaz visual</td>
+        <td>La interacción completa con el producto</td>
+        <td>Toda la relación con la marca/empresa</td>
+      </tr>
+      <tr>
+        <td>Ejemplo</td>
+        <td>Los colores y botones de una app</td>
+        <td>Qué tan fácil es hacer una compra</td>
+        <td>Compra + envío + soporte post-venta</td>
+      </tr>
+    </table>
+
+    <div class="highlight hl-amber">
+      <div class="label">Evolución histórica</div>
+      <p style="margin:0"><strong>Años 80</strong>: Foco en eficiencia, efectividad, seguridad, utilidad y aprendizaje (visión ingenieril). <strong>Post-2000</strong>: El foco se amplió hacia satisfacción, motivación, emoción, empatía y felicidad. El diseño pasó de ser una herramienta técnica a un factor de éxito de negocio.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: DESIGN THINKING -->
+  <section id="design-thinking">
+    <div class="section-header">
+      <div class="section-icon icon-purple">💡</div>
+      <div>
+        <div class="section-num">SECCIÓN 2</div>
+        <h2>Design Thinking</h2>
+      </div>
+    </div>
+
+    <p>Design Thinking es un proceso iterativo y centrado en el usuario para resolver problemas complejos. No es lineal: se puede volver a fases anteriores según los resultados del testeo.</p>
+
+    <div class="step-flow">
+      <div class="step-item">
+        <span class="step-num" style="color: var(--accent)">01</span>
+        <div class="step-title">Empathize</div>
+        <div class="step-sub">Empatizar</div>
+      </div>
+      <div class="step-item">
+        <span class="step-num" style="color: var(--accent2)">02</span>
+        <div class="step-title">Define</div>
+        <div class="step-sub">Definir</div>
+      </div>
+      <div class="step-item">
+        <span class="step-num" style="color: var(--accent3)">03</span>
+        <div class="step-title">Ideate</div>
+        <div class="step-sub">Idear</div>
+      </div>
+      <div class="step-item">
+        <span class="step-num" style="color: var(--accent4)">04</span>
+        <div class="step-title">Prototype</div>
+        <div class="step-sub">Prototipar</div>
+      </div>
+      <div class="step-item">
+        <span class="step-num" style="color: var(--accent5)">05</span>
+        <div class="step-title">Test</div>
+        <div class="step-sub">Testear</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="color:var(--accent)">1. Empatizar (Empathize)</h3>
+        <p style="font-size:0.88rem">Comprender profundamente las necesidades, frustraciones y contexto de los usuarios. Se usan entrevistas, observación contextual y estudios de campo. Es la base: sin empatía, el resto del proceso es inválido.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent2)">2. Definir (Define)</h3>
+        <p style="font-size:0.88rem">Sintetizar lo aprendido en la etapa de empatía para formular el problema real del usuario. Se define el perfil de usuario (<em>Personas</em>) y el viaje del usuario (<em>User Journey</em>). El alcance y complejidad técnica se establecen aquí.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent3)">3. Idear (Ideate)</h3>
+        <p style="font-size:0.88rem">Generar la mayor cantidad posible de soluciones mediante <strong>brainstorming</strong> sin juzgar la viabilidad de inmediato. Las ideas "locas" son bienvenidas. Se aporta desde la perspectiva técnica y se evalúa factibilidad.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent4)">4. Prototipar (Prototype)</h3>
+        <p style="font-size:0.88rem">Construir representaciones tangibles y de <strong>bajo costo</strong> de las ideas más prometedoras. Un prototipo puede ser un boceto en papel, un wireframe digital o una simulación interactiva. El objetivo es <em>validar rápido</em>, no la perfección.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent5)">5. Testear (Test)</h3>
+      <p style="font-size:0.88rem">Probar los prototipos con usuarios <strong>reales</strong> para ver cómo interactúan. La retroalimentación obtenida es vital para refinar la solución. Los resultados pueden llevar a volver a fases anteriores (Empatizar o Definir). Se analizan los resultados basados en datos, se identifican puntos de fricción y se integran los hallazgos.</p>
+    </div>
+
+    <div class="highlight hl-purple">
+      <div class="label">Carácter iterativo</div>
+      <p style="margin:0">Design Thinking <strong>no es lineal</strong>. Testear puede revelar que el problema estuvo mal definido desde el principio, haciendo necesario volver a Empatizar. Esta iteración es una feature, no un bug.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: PROTOTIPADO -->
+  <section id="prototipado">
+    <div class="section-header">
+      <div class="section-icon icon-green">🎨</div>
+      <div>
+        <div class="section-num">SECCIÓN 3</div>
+        <h2>Wireframes, Mockups y Prototipos</h2>
+      </div>
+    </div>
+
+    <p>El proceso de diseño sigue una secuencia de fidelidad creciente antes de escribir código:</p>
+
+    <div class="proto-cards">
+      <div class="proto-card">
+        <div class="proto-icon">✏️</div>
+        <h4>Wireframes</h4>
+        <p>El <strong>esqueleto</strong> de la app. Bocetos simples que muestran qué elementos deben aparecer y dónde. Pueden ser a mano alzada.</p>
+      </div>
+      <div class="proto-card">
+        <div class="proto-icon">🖼️</div>
+        <h4>Mockups</h4>
+        <p>Representación <strong>visual detallada</strong>: colores reales, imágenes, tipografía, sombras. Alta fidelidad estética pero sin interactividad real.</p>
+      </div>
+      <div class="proto-card">
+        <div class="proto-icon">▶️</div>
+        <h4>Prototipos</h4>
+        <p>Incluyen o <strong>simulan la interacción real</strong>. Permiten evaluar la UX directamente. Alta fidelidad funcional.</p>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Tipo</th>
+        <th>Fidelidad</th>
+        <th>Propósito</th>
+        <th>Herramientas</th>
+      </tr>
+      <tr>
+        <td><strong>Wireframe baja fidelidad</strong></td>
+        <td><span class="tag tag-red">Baja</span></td>
+        <td>Conceptualizar idea inicial rápido</td>
+        <td>Papel, lápiz, editor básico</td>
+      </tr>
+      <tr>
+        <td><strong>Wireframe alta fidelidad</strong></td>
+        <td><span class="tag tag-amber">Media</span></td>
+        <td>Esquema detallado con anotaciones</td>
+        <td>Figma, Adobe XD (escala de grises)</td>
+      </tr>
+      <tr>
+        <td><strong>Mockup</strong></td>
+        <td><span class="tag tag-cyan">Alta (visual)</span></td>
+        <td>Aprobación cliente, visualización final</td>
+        <td>Figma, Sketch, Photoshop</td>
+      </tr>
+      <tr>
+        <td><strong>Prototipo interactivo</strong></td>
+        <td><span class="tag tag-green">Alta (funcional)</span></td>
+        <td>Test con usuarios, validar UX</td>
+        <td>Figma (interactive), InVision, Framer</td>
+      </tr>
+    </table>
+
+    <div class="compare-box">
+      <div class="compare-col">
+        <h4 style="color:var(--accent)">Wireframe — Lo que es</h4>
+        <ul>
+          <li>Boceto de distribución de elementos</li>
+          <li>Sin colores, sin tipografía final</li>
+          <li>Muestra estructura y navegación</li>
+          <li>Punto de partida conceptual</li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <h4 style="color:var(--accent2)">Mockup — Lo que añade</h4>
+        <ul>
+          <li>Colores reales de la marca</li>
+          <li>Tipografía e iconografía final</li>
+          <li>Sombras y efectos visuales</li>
+          <li>Se asemeja casi exactamente al resultado final</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 4: DESAFÍOS MÓVIL -->
+  <section id="desafios">
+    <div class="section-header">
+      <div class="section-icon icon-amber">📱</div>
+      <div>
+        <div class="section-num">SECCIÓN 4</div>
+        <h2>Desafíos del Diseño Móvil</h2>
+      </div>
+    </div>
+
+    <p>El diseño móvil presenta desafíos únicos que lo diferencian fundamentalmente del diseño de escritorio. Superar estas limitaciones es clave para la usabilidad y adopción del producto.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🌍 Contexto y entorno</h3>
+        <p style="font-size:0.88rem"><strong>Problema:</strong> Los usuarios están en movimiento, con distracciones, a veces con una sola mano, bajo diferentes condiciones de luz.</p>
+        <p style="font-size:0.88rem; margin-bottom:0"><strong>Solución:</strong> Diseñar para uso rápido, garantizar legibilidad en distintas condiciones, hacer los elementos accesibles con el pulgar, minimizar pasos.</p>
+      </div>
+      <div class="card">
+        <h3>📐 Pantalla limitada</h3>
+        <p style="font-size:0.88rem"><strong>Problema:</strong> No se puede replicar una interfaz de escritorio en 6 pulgadas. Demasiada info abruma al usuario.</p>
+        <p style="font-size:0.88rem; margin-bottom:0"><strong>Solución:</strong> Enfoque minimalista, jerarquía de información clara, mostrar solo lo más relevante y usar navegación para el resto.</p>
+      </div>
+      <div class="card">
+        <h3>👆 Interacción táctil</h3>
+        <p style="font-size:0.88rem"><strong>Problema:</strong> Los dedos son menos precisos que un cursor. Elementos pequeños son difíciles de seleccionar.</p>
+        <p style="font-size:0.88rem; margin-bottom:0"><strong>Solución:</strong> Área de toque mínima de <code>44×44px</code>. Gestos intuitivos (tocar, deslizar, pellizcar). Feedback visual inmediato.</p>
+      </div>
+      <div class="card">
+        <h3>⚡ Rendimiento y conectividad</h3>
+        <p style="font-size:0.88rem"><strong>Problema:</strong> Recursos limitados de CPU, batería, y redes inestables generan frustración.</p>
+        <p style="font-size:0.88rem; margin-bottom:0"><strong>Solución:</strong> Comprimir imágenes, minimizar peticiones al servidor, diseño offline-first, feedback de carga claro.</p>
+      </div>
+      <div class="card">
+        <h3>📱 Fragmentación</h3>
+        <p style="font-size:0.88rem"><strong>Problema:</strong> Miles de dispositivos con diferentes pantallas, resoluciones, versiones de SO. Lo que funciona en un Pixel puede romperse en un Samsung antiguo.</p>
+        <p style="font-size:0.88rem; margin-bottom:0"><strong>Solución:</strong> Diseño <strong>responsive/adaptativo</strong>, seguir las guías de cada plataforma (Material Design para Android, HIG para iOS).</p>
+      </div>
+      <div class="card">
+        <h3>🔄 Desafíos emergentes</h3>
+        <p style="font-size:0.88rem; margin-bottom:0">Nuevos dispositivos (wearables, plegables), interacción multimodal (voz + touch), privacidad y seguridad (pagos, biometría), redes sociales móviles, interfaces en automóviles.</p>
+      </div>
+    </div>
+
+    <div class="highlight hl-amber">
+      <div class="label">Diseño centrado en contexto</div>
+      <p style="margin:0">El contexto incluye: <strong>ubicación física</strong> (hogar, transporte público), <strong>dispositivo</strong> (smartphone, tablet, smartwatch), <strong>condiciones ambientales</strong> (luz, ruido), <strong>tarea y objetivo</strong>, <strong>conectividad</strong> y <strong>privacidad</strong>. Un buen diseño considera todos estos factores.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 5: UX RESEARCH -->
+  <section id="ux-research">
+    <div class="section-header">
+      <div class="section-icon icon-red">🔬</div>
+      <div>
+        <div class="section-num">SECCIÓN 5</div>
+        <h2>UX Research</h2>
+      </div>
+    </div>
+
+    <div class="highlight hl-red">
+      <div class="label">Definición</div>
+      <p style="margin:0">El <strong>UX Research</strong> es el proceso sistemático de estudiar a los usuarios para entender sus comportamientos, necesidades y motivaciones. Su propósito es <em>eliminar suposiciones</em> y basar las decisiones de diseño en datos reales.</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3 style="color:var(--accent3)">Reduce riesgo</h3>
+        <p style="font-size:0.85rem">Valida la necesidad de un producto o función antes de construirlo. Evita invertir meses en algo que nadie usará.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent4)">Ahorra dinero</h3>
+        <p style="font-size:0.85rem">Identificar problemas en la fase de prototipado es infinitamente más barato que corregirlos post-lanzamiento.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent)">Aumenta ROI</h3>
+        <p style="font-size:0.85rem">Los productos que resuelven problemas reales tienen más retención, lealtad y, en última instancia, mayores ingresos.</p>
+      </div>
+    </div>
+
+    <div class="compare-box">
+      <div class="compare-col">
+        <h4 style="color:var(--accent2)">Investigación Cualitativa — ¿Por qué?</h4>
+        <ul>
+          <li>Entiende las <em>razones</em> detrás de los comportamientos</li>
+          <li><strong>Entrevistas de usuario:</strong> conversaciones 1:1 profundas</li>
+          <li><strong>Pruebas de usabilidad:</strong> usuario realiza tareas reales</li>
+          <li><strong>Observación contextual:</strong> usuario en su entorno natural</li>
+          <li>Responde: "¿Por qué los usuarios se frustran aquí?"</li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <h4 style="color:var(--accent)">Investigación Cuantitativa — ¿Qué?</h4>
+        <ul>
+          <li>Recopila <em>datos medibles</em> y estadísticos</li>
+          <li><strong>Encuestas:</strong> grandes volúmenes, tendencias y patrones</li>
+          <li><strong>Analytics:</strong> clics, flujos, tiempo en pantalla (Google Analytics)</li>
+          <li><strong>A/B Testing:</strong> comparar versión A vs B según métricas</li>
+          <li>Responde: "¿Cuántos usuarios abandonan aquí?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q">Q: ¿Cuándo usar cualitativa vs cuantitativa?</div>
+      <div class="qa-a">Usa <strong>cualitativa</strong> al inicio del proyecto para descubrir problemas desconocidos y entender el contexto. Usa <strong>cuantitativa</strong> para validar hipótesis a escala o medir el impacto de un cambio. Lo ideal es combinar ambas: la cuantitativa dice <em>qué</em> está pasando, la cualitativa explica el <em>por qué</em>.</div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: LEY DE FITTS -->
+  <section id="fitts">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">📐</div>
+      <div>
+        <div class="section-num">SECCIÓN 6</div>
+        <h2>Ley de Fitts</h2>
+      </div>
+    </div>
+
+    <p>La Ley de Fitts modela el tiempo que tarda una persona en apuntar a un objetivo según su tamaño y distancia. Es fundamental para diseñar elementos interactivos eficientes.</p>
+
+    <div class="formula-box">
+      <div class="formula">T = a + b · log₂(D/W + 1)</div>
+      <div class="formula-legend">
+        <strong>T</strong> = Tiempo de movimiento &nbsp;|&nbsp;
+        <strong>D</strong> = Distancia al objetivo &nbsp;|&nbsp;
+        <strong>W</strong> = Ancho del objetivo<br>
+        <strong>a, b</strong> = Constantes empíricas (dependen del dispositivo: mouse, joystick, dedos)
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🎯 Objetivos grandes = más rápidos</h3>
+        <p style="font-size:0.88rem">El tiempo disminuye logarítmicamente al aumentar el tamaño del objetivo. Botones importantes (como "Comprar" o "Enviar") deben ser <strong>grandes</strong>. Área mínima recomendada: 44×44px.</p>
+      </div>
+      <div class="card">
+        <h3>📍 Objetivos cercanos = más rápidos</h3>
+        <p style="font-size:0.88rem">La distancia es un factor clave. Los elementos de menú y acciones frecuentes deben estar <strong>cerca del foco de atención</strong> del usuario para minimizar el movimiento del dedo.</p>
+      </div>
+      <div class="card">
+        <h3>↗️ Bordes y esquinas son "infinitos"</h3>
+        <p style="font-size:0.88rem">Los objetivos en bordes o esquinas son los más rápidos de alcanzar: el cursor/dedo no puede ir más allá. Las esquinas son lugares privilegiados para botones de navegación o acción primaria.</p>
+      </div>
+      <div class="card">
+        <h3>☀️ Menús radiales son más eficientes</h3>
+        <p style="font-size:0.88rem">Una vez abierto un menú radial o "pop-up", todos sus elementos son accesibles desde una distancia muy corta: selección muy eficiente. Ideal para acciones frecuentes.</p>
+      </div>
+    </div>
+
+    <div class="highlight hl-cyan">
+      <div class="label">Implicación práctica en Android</div>
+      <p style="margin:0">En Jetpack Compose: los botones de acción primaria deben ser al menos <code>.size(48.dp)</code>. Los elementos del menú inferior (BottomNavigation) están en el borde inferior para máxima accesibilidad con el pulgar. El FloatingActionButton en la esquina inferior derecha sigue exactamente esta ley.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 7: PRINCIPIOS DE DISEÑO -->
+  <section id="principios">
+    <div class="section-header">
+      <div class="section-icon icon-purple">✨</div>
+      <div>
+        <div class="section-num">SECCIÓN 7</div>
+        <h2>10 Principios del Diseño</h2>
+      </div>
+    </div>
+
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(6,182,212,0.3)">1</div>
+      <div>
+        <h4>Usabilidad</h4>
+        <p>El diseño debe ser fácil de usar y permitir que los usuarios completen sus tareas de manera eficiente y efectiva. Es el principio fundamental de toda UX.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(139,92,246,0.3)">2</div>
+      <div>
+        <h4>Consistencia</h4>
+        <p>Las interfaces deben ser coherentes en toda la aplicación. Botones, menús y colores deben seguir un patrón constante para evitar confusiones. Material Design 3 de Google formaliza esta consistencia.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(16,185,129,0.3)">3</div>
+      <div>
+        <h4>Simplicidad</h4>
+        <p>Menos es más. Un diseño limpio y simple tiende a ser más efectivo. Eliminar elementos innecesarios y simplificar la estructura de información mejora la experiencia del usuario.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(245,158,11,0.3)">4</div>
+      <div>
+        <h4>Feedback</h4>
+        <p>Los usuarios deben saber qué está sucediendo cuando interactúan con la interfaz. Esto incluye mensajes de error, confirmaciones de acciones y animaciones. En Compose: <code>CircularProgressIndicator</code>, <code>Snackbar</code>.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(239,68,68,0.3)">5</div>
+      <div>
+        <h4>Jerarquía visual</h4>
+        <p>Usar tamaños de fuente, colores y espaciado para resaltar elementos importantes y guiar la atención del usuario. En Material 3: <code>displayLarge</code> → <code>headlineMedium</code> → <code>bodyLarge</code>.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(6,182,212,0.3)">6</div>
+      <div>
+        <h4>Accesibilidad</h4>
+        <p>Diseñar para todos los usuarios, incluyendo aquellos con discapacidades. Requiere contraste visual adecuado, soporte para lectores de pantalla (<code>contentDescription</code> en Compose), y tamaños de texto escalables.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(139,92,246,0.3)">7</div>
+      <div>
+        <h4>Feedback del usuario</h4>
+        <p>Escuchar y recopilar comentarios de usuarios reales de forma continua. La retroalimentación ayuda a identificar problemas y áreas de mejora que el equipo de diseño no puede anticipar.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(16,185,129,0.3)">8</div>
+      <div>
+        <h4>Testeo y prototipado</h4>
+        <p>Realizar pruebas de usabilidad y crear prototipos antes de lanzar. Identificar problemas en el prototipo es infinitamente más barato que corregirlos en producción.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(245,158,11,0.3)">9</div>
+      <div>
+        <h4>Flexibilidad y adaptabilidad</h4>
+        <p>Diseñar interfaces responsive que se adapten a diferentes dispositivos y tamaños de pantalla para garantizar una experiencia consistente en múltiples plataformas.</p>
+      </div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-num" style="background:rgba(239,68,68,0.3)">10</div>
+      <div>
+        <h4>Historia de usuario (User Story)</h4>
+        <p>Comprender las necesidades, metas y comportamientos de los usuarios a través de user stories. Fundamental para diseñar experiencias relevantes y útiles. Se complementa con flujos de pantalla y diagramas de navegación.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 8: ELEMENTOS UI MÓVIL -->
+  <section id="elementos">
+    <div class="section-header">
+      <div class="section-icon icon-blue">🧩</div>
+      <div>
+        <div class="section-num">SECCIÓN 8</div>
+        <h2>Elementos de Mobile UI Design</h2>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🔠 Tipografía legible</h3>
+        <p style="font-size:0.88rem">El texto debe ser lo suficientemente grande y legible en pantallas pequeñas. Seleccionar fuentes legibles, espaciado adecuado y buena alineación es crucial. Material 3 define una escala tipográfica completa.</p>
+      </div>
+      <div class="card">
+        <h3>🔣 Diseño de Íconos</h3>
+        <p style="font-size:0.88rem">Los íconos representan funciones y acciones de manera visual. Deben ser reconocibles, significativos y consistentes. En Android: se usan los Material Icons de Google.</p>
+      </div>
+      <div class="card">
+        <h3>🎨 Color e impacto emocional</h3>
+        <p style="font-size:0.88rem">El color provoca una respuesta instantánea e involuntaria en el usuario. La selección depende del tipo de app y modelo de negocio. La temperatura cromática (colores fríos/cálidos) influye en la aceptación del producto.</p>
+      </div>
+      <div class="card">
+        <h3>🖼️ Imágenes y multimedia</h3>
+        <p style="font-size:0.88rem">Las imágenes son comunes en diseño móvil pero deben optimizarse para cargar rápidamente sin afectar el rendimiento. Usar formatos modernos (WebP) y lazy loading.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 9: ETAPAS DEL DISEÑO DE APP -->
+  <section id="etapas-diseño">
+    <div class="section-header">
+      <div class="section-icon icon-pink">🚀</div>
+      <div>
+        <div class="section-num">SECCIÓN 9</div>
+        <h2>Etapas del Diseño de Apps Móviles</h2>
+      </div>
+    </div>
+
+    <p>El proceso completo para diseñar una app móvil desde la idea hasta el producto final sigue estas etapas:</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3 style="color:var(--accent)">1. Conceptualización</h3>
+        <p style="font-size:0.85rem">Una idea de app que tiene en cuenta las necesidades y problemas de los usuarios, basada en investigación preliminar y comprobación de viabilidad del concepto.</p>
+        <div style="margin-top:0.5rem"><span class="tag tag-cyan">Ideación</span> <span class="tag tag-cyan">Investigación</span> <span class="tag tag-cyan">Formalización</span></div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent2)">2. Definición</h3>
+        <p style="font-size:0.85rem">Descripción detallada del usuario objetivo (metodología <strong>Personas</strong> y <strong>Viaje del usuario</strong>). Definición de funcionalidades, alcance y complejidad técnica.</p>
+        <div style="margin-top:0.5rem"><span class="tag tag-purple">Personas</span> <span class="tag tag-purple">User Journey</span></div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent3)">3. Diseño</h3>
+        <p style="font-size:0.85rem">Wireframes → Prototipos → Test con usuarios → Diseño visual. Es un ciclo iterativo: el testeo puede volver a cualquier paso anterior.</p>
+        <div style="margin-top:0.5rem"><span class="tag tag-green">Wireframes</span> <span class="tag tag-green">Prototipos</span> <span class="tag tag-green">Testing</span></div>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Prioridad</th>
+        <th>Etapa</th>
+        <th>Descripción</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-red">1° — Base</span></td>
+        <td><strong>Usabilidad y funcionalidad</strong></td>
+        <td>La base de la aplicación. Deben definirse <em>antes</em> de cualquier diseño visual. Navegación sencilla y puramente funcional.</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-amber">2° — Visual</span></td>
+        <td><strong>Diseño visual</strong></td>
+        <td>Una vez asegurada la usabilidad y estructura funcional, se procede con la identidad visual y estética. Combinar con criterio las tendencias actuales.</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-cyan">3° — Integración</span></td>
+        <td><strong>Desarrollo técnico</strong></td>
+        <td>El diseño y el desarrollo van ligados. La comunicación fluida entre diseñador y desarrollador evita fricciones en la implementación.</td>
+      </tr>
+    </table>
+
+    <div class="highlight hl-green">
+      <div class="label">Regla de oro del diseño de apps</div>
+      <p style="margin:0">Primero <strong>funcionalidad</strong>, luego <strong>estética</strong>. Una app hermosa que es difícil de usar fracasará. Una app simple pero funcional puede tener éxito. El diseño es importante, pero siempre al servicio de la usabilidad.</p>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q">Q: ¿Por qué la usabilidad va antes que el diseño visual?</div>
+      <div class="qa-a">Porque un diseño visual elaborado sobre una estructura de navegación deficiente es costoso de corregir y puede confundir aún más al usuario. Es más fácil y barato embellecer algo funcional que hacer funcional algo bello. Los wireframes permiten validar la navegación sin gastar tiempo en detalles visuales que quizás se cambien.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="background:var(--surface); border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--muted); font-size:0.85rem; margin-top:3rem;">
+  <p>Aplicaciones Distribuidas · UADE · <a href="index.html" style="color:var(--accent); text-decoration:none;">Portal principal →</a></p>
+</footer>
+
+</body>
+</html>
